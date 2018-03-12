@@ -31,7 +31,7 @@ android {
     buildToolsVersion "26.0.2"
 
     defaultConfig {
-        applicationId "org.smartregister.tbr"
+        applicationId "org.smartregister.ug.hpv"
         minSdkVersion 18
         targetSdkVersion 22
         versionCode 1
@@ -40,7 +40,7 @@ android {
         buildConfigField "long", "MAX_SERVER_TIME_DIFFERENCE", "1800000l"
         buildConfigField "boolean", "TIME_CHECK", "false"
         buildConfigField "String", "SYNC_TYPE", '"teamId"'
-        resValue "string", 'opensrp_url', '"https://tbreach-stage.smartregister.org/opensrp/"'
+        resValue "string", 'opensrp_url', '"https://ug-hpv.smartregister.org/opensrp/"'
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     dexOptions {
@@ -139,28 +139,29 @@ android {
         }
 
     }
-    task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
+}
 
-        reports {
-            xml.enabled = true
-            html.enabled = true
-        }
+task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'createDebugCoverageReport']) {
 
-        getReports().getXml().setDestination(file("${buildDir}/reports/jacoco/jacocoRootReport/merged.xml"))
-        getReports().getHtml().setDestination(file("${buildDir}/reports/jacoco/jacocoRootReport/html"))
-
-        def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*', '**/*Test*.*', 'android/**/*.*', '**/*$ViewBinder*.*']
-        def debugTree = fileTree(dir: "$project.buildDir/intermediates/classes/debug", excludes: fileFilter)
-        def mainSrc = "$project.projectDir/src/main/java"
-
-        sourceDirectories = files([mainSrc])
-        classDirectories = files([debugTree])
-        executionData = fileTree(dir: project.buildDir, includes: [
-                'jacoco/testDebugUnitTest.exec', 'outputs/code-coverage/connected/*coverage.ec'
-        ])
+    reports {
+        xml.enabled = true
+        html.enabled = true
     }
 
-    coveralls {
-        jacocoReportPath = "${buildDir}/reports/jacoco/jacocoRootReport/merged.xml"
-    }
+    getReports().getXml().setDestination(file("${buildDir}/reports/jacoco/jacocoRootReport/merged.xml"))
+    getReports().getHtml().setDestination(file("${buildDir}/reports/jacoco/jacocoRootReport/html"))
+
+    def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*', '**/*Test*.*', 'android/**/*.*', '**/*$ViewBinder*.*']
+    def debugTree = fileTree(dir: "$project.buildDir/intermediates/classes/debug", excludes: fileFilter)
+    def mainSrc = "$project.projectDir/src/main/java"
+
+    sourceDirectories = files([mainSrc])
+    classDirectories = files([debugTree])
+    executionData = fileTree(dir: project.buildDir, includes: [
+            'jacoco/testDebugUnitTest.exec', 'outputs/code-coverage/connected/*coverage.ec'
+    ])
+}
+
+coveralls {
+    jacocoReportPath = "${buildDir}/reports/jacoco/jacocoRootReport/merged.xml"
 }
