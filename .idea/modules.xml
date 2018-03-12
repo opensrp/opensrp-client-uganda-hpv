@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/opensrp-client-uganda-hpv.iml" filepath="$PROJECT_DIR$/opensrp-client-uganda-hpv.iml" />
+      <module fileurl="file://$PROJECT_DIR$/opensrp-uganda-hpv/opensrp-uganda-hpv.iml" filepath="$PROJECT_DIR$/opensrp-uganda-hpv/opensrp-uganda-hpv.iml" />
+    </modules>
+  </component>
+</project>
