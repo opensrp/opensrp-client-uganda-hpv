@@ -1,10 +1,21 @@
 package org.smartregister.ug.hpv.util;
 
+import org.smartregister.ug.hpv.BuildConfig;
+
 /**
  * Created by ndegwamartin on 14/03/2018.
  */
 
 public class Constants {
+
+    public static final long MAX_SERVER_TIME_DIFFERENCE = BuildConfig.MAX_SERVER_TIME_DIFFERENCE;
+    public static final boolean TIME_CHECK = BuildConfig.TIME_CHECK;
+    public static final String LAST_SYNC_TIMESTAMP = "LAST_SYNC_TIMESTAMP";
+    public static final String LAST_CHECK_TIMESTAMP = "LAST_SYNC_CHECK_TIMESTAMP";
+    public static final String LAST_VIEWS_SYNC_TIMESTAMP = "LAST_VIEWS_SYNC_TIMESTAMP";
+
+    public static final String PATIENT_TABLE_NAME = "ec_patient";
+    public static final String CONTACT_TABLE_NAME = "ec_contact";
 
     public static final class REGISTER_COLUMNS {
         public static final String ID = "id";
@@ -16,6 +27,9 @@ public class Constants {
     public static final class VIEW_CONFIGS {
         public static final String HOME_REGISTER_HEADER = "home_register_header";
         public static final String HOME_REGISTER = "home_register";
+        public static final String COMMON_REGISTER_HEADER = "common_register_header";
+        public static final String COMMON_REGISTER_ROW = "common_register_row";
+
 
     }
 
@@ -30,7 +44,7 @@ public class Constants {
         public static final String BASE_ENTITY_ID = "base_entity_id";
         public static final String FIRST_ENCOUNTER = "first_encounter";
         public static final String LAST_INTERACTED_WITH = "last_interacted_with";
-        public static final String DIAGNOSIS_DATE = "diagnosis_date";
+        public static final String CLIENT = "client";
         public static final String TREATMENT_INITIATION_DATE = "treatment_initiation_date";
         public static final String BASELINE = "baseline";
         public static final String NEXT_VISIT_DATE = "next_visit_date";

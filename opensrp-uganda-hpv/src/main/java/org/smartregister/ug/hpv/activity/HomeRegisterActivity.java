@@ -5,20 +5,12 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import org.json.JSONObject;
-import org.smartregister.tbr.R;
-import org.smartregister.tbr.fragment.PresumptivePatientRegisterFragment;
+import org.smartregister.ug.hpv.fragment.HomeRegisterFragment;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static org.smartregister.util.JsonFormUtils.generateRandomUUIDString;
-import static util.TbrConstants.ENKETO_FORMS.DIAGNOSIS;
-import static util.TbrConstants.ENKETO_FORMS.SCREENING_FORM;
-import static util.TbrConstants.VIEW_CONFIGS.COMMON_REGISTER_HEADER;
-import static util.TbrConstants.VIEW_CONFIGS.COMMON_REGISTER_ROW;
-import static util.TbrConstants.VIEW_CONFIGS.PRESUMPTIVE_REGISTER;
-import static util.TbrConstants.VIEW_CONFIGS.PRESUMPTIVE_REGISTER_HEADER;
-import static util.TbrConstants.VIEW_CONFIGS.PRESUMPTIVE_REGISTER_ROW;
+import static org.smartregister.ug.hpv.util.Constants.VIEW_CONFIGS.HOME_REGISTER;
 
 /**
  * Created by ndegwamartin on 14/03/2018.
@@ -28,19 +20,14 @@ public class HomeRegisterActivity extends BaseRegisterActivity {
 
     @Override
     protected Fragment getRegisterFragment() {
-        return new PresumptivePatientRegisterFragment();
+        return new HomeRegisterFragment();
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.addNewPatient:
-                String entityId = generateRandomUUIDString();
-                startFormActivity(SCREENING_FORM, entityId, null);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+
+        return super.onOptionsItemSelected(item);
+
     }
 
     @Override
@@ -50,14 +37,6 @@ public class HomeRegisterActivity extends BaseRegisterActivity {
 
     @Override
     public List<String> getViewIdentifiers() {
-        return Arrays.asList(PRESUMPTIVE_REGISTER, PRESUMPTIVE_REGISTER_HEADER, PRESUMPTIVE_REGISTER_ROW, COMMON_REGISTER_HEADER, COMMON_REGISTER_ROW);
-    }
-
-    @Override
-    protected List<String> buildFormNameList() {
-        formNames = super.buildFormNameList();
-        formNames.add(0, SCREENING_FORM);
-        formNames.add(DIAGNOSIS);
-        return formNames;
+        return Arrays.asList(HOME_REGISTER);
     }
 }

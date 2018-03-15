@@ -1,4 +1,4 @@
-package org.smartregister.tbr.provider;
+package org.smartregister.ug.hpv.provider;
 
 import android.content.Context;
 import android.database.Cursor;

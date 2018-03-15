@@ -57,7 +57,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:maxWidth="@dimen/title_label_text_max_width"
-            android:text="@string/tbreach" />
+            android:text="@string/hpv" />
 
         <org.smartregister.view.customcontrols.CustomFontTextView
             android:id="@+id/btn_report_month"

@@ -85,7 +85,7 @@ android {
     }
     apt {
         arguments {
-            eventBusIndex "org.smartregister.tbr.TBREventBusIndex"
+            eventBusIndex "org.smartregister.ug.HPVEventBusIndex"
         }
     }
     dependencies {

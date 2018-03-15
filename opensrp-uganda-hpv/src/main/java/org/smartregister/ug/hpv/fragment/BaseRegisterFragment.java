@@ -1,19 +1,12 @@
 package org.smartregister.ug.hpv.fragment;
 
-import android.content.Intent;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
-import android.text.Spannable;
-import android.text.SpannableString;
 import android.text.TextWatcher;
-import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -32,8 +25,8 @@ import org.smartregister.cursoradapter.SecuredNativeSmartRegisterCursorAdapterFr
 import org.smartregister.cursoradapter.SmartRegisterPaginatedCursorAdapter;
 import org.smartregister.cursoradapter.SmartRegisterQueryBuilder;
 import org.smartregister.provider.SmartRegisterClientsProvider;
-import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.activity.BaseRegisterActivity;
+import org.smartregister.ug.hpv.provider.PatientRegisterProvider;
 import org.smartregister.ug.hpv.servicemode.HpvServiceModeOption;
 import org.smartregister.ug.hpv.util.Constants;
 import org.smartregister.ug.hpv.util.DBConstants;
@@ -48,13 +41,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-
 import static android.view.View.GONE;
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
-import static org.apache.commons.lang3.StringUtils.SPACE;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.smartregister.ug.hpv.activity.BaseRegisterActivity.TOOLBAR_TITLE;
+import static org.smartregister.ug.hpv.util.Constants.VIEW_CONFIGS.COMMON_REGISTER_HEADER;
 
 /**
  * Created by ndegwamartin on 14/03/2018.
@@ -115,8 +107,8 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
             @Override
             public DialogOption[] sortingOptions() {
                 return new DialogOption[]{
-                        new CursorCommonObjectSort(getResources().getString(R.string.alphabetical_sort), KEY.FIRST_NAME),
-                        new CursorCommonObjectSort(getResources().getString(R.string.participant_id), KEY.PARTICIPANT_ID)
+                        new CursorCommonObjectSort(getResources().getString(R.string.alphabetical_sort), Constants.KEY.FIRST_NAME),
+                        new CursorCommonObjectSort(getResources().getString(R.string.participant_id), Constants.KEY.PARTICIPANT_ID)
                 };
             }
 
@@ -150,19 +142,6 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
             ((EditText) getView().findViewById(R.id.edt_search)).setHint(config.getSearchBarText());
         visibleColumns = ConfigurableViewsLibrary.getInstance().getConfigurableViewsHelper().getRegisterActiveColumns(getViewConfigurationIdentifier());
 
-    }
-
-    public void showResultMenu(View view) {
-        PopupMenu popup = new PopupMenu(getActivity(), view);
-        popup.inflate(R.menu.menu_register_result);
-        popup.setOnMenuItemClickListener(resultMenuListener);
-        MenuItem item = popup.getMenu().getItem(0);
-        String patientName = patient.getColumnmaps().get(Constants.KEY.FIRST_NAME) + SPACE + patient.getColumnmaps().get(Constants.KEY.LAST_NAME);
-        item.setTitle(item.getTitle() + SPACE + patientName);
-        SpannableString s = new SpannableString(item.getTitle());
-        s.setSpan(new StyleSpan(Typeface.BOLD), 0, item.getTitle().length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        item.setTitle(s);
-        popup.show();
     }
 
     protected void updateSearchView() {
@@ -315,5 +294,19 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
 
     private void goToPatientDetailActivity(String viewConfigurationIdentifier) {
     }
+
+    class RegisterActionHandler implements View.OnClickListener {
+
+        @Override
+        public void onClick(View view) {
+            BaseRegisterActivity registerActivity = (BaseRegisterActivity) getActivity();
+            if (view.getTag() != null && view.getTag() instanceof CommonPersonObjectClient) {
+                patient = (CommonPersonObjectClient) view.getTag();
+            }
+        }
+    }
+
+}
+
 
 }
