@@ -85,17 +85,17 @@ android {
     }
     apt {
         arguments {
-            eventBusIndex "org.smartregister.ug.HPVEventBusIndex"
+            eventBusIndex "org.smartregister.ug.hpv.HPVEventBusIndex"
         }
     }
     dependencies {
-        compile('org.smartregister:opensrp-client-core:1.1.0@aar') {
+        compile('org.smartregister:opensrp-client-core:1.2.3-SNAPSHOT@aar') {
             transitive = true
             exclude group: 'com.github.bmelnychuk', module: 'atv'
             exclude group: 'com.google.guava', module: 'guava'
         }
 
-        compile('org.smartregister:opensrp-client-enketo:1.0.0@aar') {
+        compile('org.smartregister:opensrp-client-enketo:1.0.3-SNAPSHOT@aar') {
             transitive = true
         }
 

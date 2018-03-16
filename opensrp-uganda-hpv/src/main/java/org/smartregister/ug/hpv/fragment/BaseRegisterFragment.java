@@ -25,6 +25,7 @@ import org.smartregister.cursoradapter.SecuredNativeSmartRegisterCursorAdapterFr
 import org.smartregister.cursoradapter.SmartRegisterPaginatedCursorAdapter;
 import org.smartregister.cursoradapter.SmartRegisterQueryBuilder;
 import org.smartregister.provider.SmartRegisterClientsProvider;
+import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.activity.BaseRegisterActivity;
 import org.smartregister.ug.hpv.provider.PatientRegisterProvider;
 import org.smartregister.ug.hpv.servicemode.HpvServiceModeOption;
@@ -68,7 +69,7 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
             @Override
             public ServiceModeOption serviceMode() {
                 return new HpvServiceModeOption(null, "Linda Clinic", new int[]{
-                        R.string.patient_name, R.string.participant_id, R.string.mobile_phone_number
+                        R.string.patient_name, R.string.participant_id, R.string.app_name
                 }, new int[]{5, 3, 2});
             }
 
@@ -84,7 +85,7 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
 
             @Override
             public String nameInShortFormForTitle() {
-                return context().getStringResource(R.string.tbreach);
+                return context().getStringResource(R.string.hpv);
             }
         };
     }
@@ -187,7 +188,7 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
 
         String tableName = DBConstants.PATIENT_TABLE_NAME;
 
-        PatientRegisterProvider hhscp = new PatientRegisterProvider(getActivity(), visibleColumns, registerActionHandler, ConfigurableViewsLibrary.getInstance().getResultsRepository(), ConfigurableViewsLibrary.getInstance().getContext().detailsRepository());
+        PatientRegisterProvider hhscp = new PatientRegisterProvider(getActivity(), visibleColumns, registerActionHandler, ConfigurableViewsLibrary.getInstance().getContext().detailsRepository());
         clientAdapter = new SmartRegisterPaginatedCursorAdapter(getActivity(), null, hhscp, context().commonrepository(tableName));
         clientsView.setAdapter(clientAdapter);
 
@@ -309,4 +310,4 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
 }
 
 
-}
+

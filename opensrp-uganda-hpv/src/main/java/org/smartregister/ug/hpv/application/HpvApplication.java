@@ -168,9 +168,8 @@ public class HpvApplication extends DrishtiApplication {
     }
 
     private static String[] getFtsSortFields() {
-        return new String[]{org.smartregister.ug.hpv.util.Constants.KEY.PARTICIPANT_ID, org.smartregister.ug.hpv.util.Constants.KEY.PROGRAM_ID, org.smartregister.ug.hpv.util.Constants.KEY.FIRST_NAME, org.smartregister.ug.hpv.util.Constants.KEY.LAST_NAME};
-,
-                org.smartregister.ug.hpv.util.Constants.KEY.LAST_INTERACTED_WITH, org.smartregister.ug.hpv.util.Constants.KEY.DATE_REMOVED};
+        return new String[]{org.smartregister.ug.hpv.util.Constants.KEY.PARTICIPANT_ID, org.smartregister.ug.hpv.util.Constants.KEY.PROGRAM_ID, org.smartregister.ug.hpv.util.Constants.KEY.FIRST_NAME, org.smartregister.ug.hpv.util.Constants.KEY.LAST_NAME
+              ,  org.smartregister.ug.hpv.util.Constants.KEY.LAST_INTERACTED_WITH, org.smartregister.ug.hpv.util.Constants.KEY.DATE_REMOVED};
     }
 
 
