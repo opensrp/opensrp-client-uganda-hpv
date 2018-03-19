@@ -19,7 +19,7 @@ import org.smartregister.cursoradapter.SmartRegisterCLientsProviderForCursorAdap
 import org.smartregister.repository.DetailsRepository;
 import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.util.Constants;
-import org.smartregister.ug.hpv.util.TbrSpannableStringBuilder;
+import org.smartregister.ug.hpv.util.CustomSpannableStringBuilder;
 import org.smartregister.util.DateUtil;
 import org.smartregister.view.contract.SmartRegisterClient;
 import org.smartregister.view.contract.SmartRegisterClients;
@@ -133,12 +133,12 @@ public class PatientRegisterProvider implements SmartRegisterCLientsProviderForC
         attachOnclickListener(patient, client);
     }
 
-    private boolean populateXpertResult(Map<String, String> testResults, TbrSpannableStringBuilder stringBuilder, boolean withOtherResults) {
+    private boolean populateXpertResult(Map<String, String> testResults, CustomSpannableStringBuilder stringBuilder, boolean withOtherResults) {
 
         return false;
     }
 
-    private void processXpertResult(String result, TbrSpannableStringBuilder stringBuilder) {
+    private void processXpertResult(String result, CustomSpannableStringBuilder stringBuilder) {
         if (result == null)
             return;
         switch (result) {
@@ -166,14 +166,14 @@ public class PatientRegisterProvider implements SmartRegisterCLientsProviderForC
         View button = view.findViewById(R.id.result_lnk);
         TextView details = (TextView) view.findViewById(R.id.result_details);
         details.setText("");
-        populateResultsColumn(pc, client, new TbrSpannableStringBuilder(), false, null, button, details);
+        populateResultsColumn(pc, client, new CustomSpannableStringBuilder(), false, null, button, details);
     }
 
-    private void populateResultsColumn(CommonPersonObjectClient pc, SmartRegisterClient client, TbrSpannableStringBuilder stringBuilder, boolean singleResult, Long baseline, View button, TextView details) {
+    private void populateResultsColumn(CommonPersonObjectClient pc, SmartRegisterClient client, CustomSpannableStringBuilder stringBuilder, boolean singleResult, Long baseline, View button, TextView details) {
 
     }
 
-    private void populateSmearResult(TbrSpannableStringBuilder stringBuilder, String result, boolean hasXpert, boolean smearOnlyColumn) {
+    private void populateSmearResult(CustomSpannableStringBuilder stringBuilder, String result, boolean hasXpert, boolean smearOnlyColumn) {
         if (result == null) return;
         else if (hasXpert && !smearOnlyColumn)
             stringBuilder.append(",\n");

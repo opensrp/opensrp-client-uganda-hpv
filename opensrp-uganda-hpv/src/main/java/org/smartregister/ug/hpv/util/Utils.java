@@ -9,11 +9,14 @@ import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 import android.widget.Toast;
 
+import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
+import org.joda.time.DateTime;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.ug.hpv.application.HpvApplication;
 import org.smartregister.ug.hpv.event.BaseEvent;
 
+import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 
@@ -86,6 +89,25 @@ public class Utils {
         SharedPreferences.Editor editor = settings.edit();
         editor.putString(key, value);
         editor.commit();
+    }
+    public static Date dobStringToDate(String dobString) {
+        DateTime dateTime = dobStringToDateTime(dobString);
+        if (dateTime != null) {
+            return dateTime.toDate();
+        }
+        return null;
+    }
+
+    public static DateTime dobStringToDateTime(String dobString) {
+        try {
+            if (StringUtils.isBlank(dobString)) {
+                return null;
+            }
+            return new DateTime(dobString);
+
+        } catch (Exception e) {
+            return null;
+        }
     }
 
 }

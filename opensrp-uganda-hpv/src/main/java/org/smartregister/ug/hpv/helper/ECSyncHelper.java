@@ -9,6 +9,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.smartregister.configurableviews.helper.PrefsHelper;
 import org.smartregister.domain.Response;
+import org.smartregister.domain.db.EventClient;
 import org.smartregister.repository.EventClientRepository;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.ug.hpv.application.HpvApplication;
@@ -16,6 +17,7 @@ import org.smartregister.ug.hpv.service.SyncService;
 import org.smartregister.util.Utils;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static org.smartregister.configurableviews.util.Constants.CONFIGURATION.LOGIN;
@@ -50,6 +52,68 @@ public class ECSyncHelper implements PrefsHelper {
         this.eventClientRepository = eventClientRepository;
     }
 
+    public boolean saveAllClientsAndEvents(JSONObject jsonObject) {
+        try {
+            if (jsonObject == null) {
+                return false;
+            }
+
+            JSONArray events = jsonObject.has("events") ? jsonObject.getJSONArray("events") : new JSONArray();
+            JSONArray clients = jsonObject.has("clients") ? jsonObject.getJSONArray("clients") : new JSONArray();
+
+            batchSave(events, clients);
+
+
+            return true;
+        } catch (Exception e) {
+            Log.e(getClass().getName(), "Exception", e);
+            return false;
+        }
+    }
+
+    public List<EventClient> allEventClients(long startSyncTimeStamp, long lastSyncTimeStamp) {
+        try {
+            return eventClientRepository.fetchEventClients(startSyncTimeStamp, lastSyncTimeStamp);
+        } catch (Exception e) {
+            Log.e(getClass().getName(), "Exception", e);
+        }
+        return new ArrayList<>();
+    }
+
+    public List<EventClient> getEvents(Date lastSyncDate, String syncStatus) {
+        try {
+            return eventClientRepository.fetchEventClients(lastSyncDate, syncStatus);
+        } catch (Exception e) {
+            Log.e(getClass().getName(), "Exception", e);
+        }
+        return new ArrayList<>();
+    }
+
+    public JSONObject getClient(String baseEntityId) {
+        try {
+            return eventClientRepository.getClientByBaseEntityId(baseEntityId);
+        } catch (Exception e) {
+            Log.e(getClass().getName(), "Exception", e);
+        }
+        return null;
+    }
+
+    public void addClient(String baseEntityId, JSONObject jsonObject) {
+        try {
+            eventClientRepository.addorUpdateClient(baseEntityId, jsonObject);
+        } catch (Exception e) {
+            Log.e(getClass().getName(), "Exception", e);
+        }
+    }
+
+    public void addEvent(String baseEntityId, JSONObject jsonObject) {
+        try {
+            eventClientRepository.addEvent(baseEntityId, jsonObject);
+        } catch (Exception e) {
+            Log.e(getClass().getName(), "Exception", e);
+        }
+    }
+
     public JSONObject fetchAsJsonObject(String filter, String filterValue) throws Exception {
         try {
             HTTPAgent httpAgent = HpvApplication.getInstance().getContext().getHttpAgent();
@@ -78,25 +142,6 @@ public class ECSyncHelper implements PrefsHelper {
         } catch (Exception e) {
             Log.e(getClass().getName(), "Exception", e);
             throw new SyncException(SEARCH_URL + " threw exception", e);
-        }
-    }
-
-    public boolean saveAllClientsAndEvents(JSONObject jsonObject) {
-        try {
-            if (jsonObject == null) {
-                return false;
-            }
-
-            JSONArray events = jsonObject.has("events") ? jsonObject.getJSONArray("events") : new JSONArray();
-            JSONArray clients = jsonObject.has("clients") ? jsonObject.getJSONArray("clients") : new JSONArray();
-
-            batchSave(events, clients);
-
-
-            return true;
-        } catch (Exception e) {
-            Log.e(getClass().getName(), "Exception", e);
-            return false;
         }
     }
 
@@ -184,5 +229,29 @@ public class ECSyncHelper implements PrefsHelper {
         public SyncException(String s, Throwable e) {
             Log.e(getClass().getName(), "SyncException: " + s, e);
         }
+    }
+
+    public void batchInsertClients(JSONArray clients) {
+        eventClientRepository.batchInsertClients(clients);
+    }
+
+    private void batchInsertEvents(JSONArray events) {
+        eventClientRepository.batchInsertEvents(events, getLastSyncTimeStamp());
+    }
+
+    public <T> T convert(JSONObject jo, Class<T> t) {
+        return eventClientRepository.convert(jo, t);
+    }
+
+    public JSONObject convertToJson(Object object) {
+        return eventClientRepository.convertToJson(object);
+    }
+
+    public boolean deleteClient(String baseEntityId) {
+        return eventClientRepository.deleteClient(baseEntityId);
+    }
+
+    public boolean deleteEventsByBaseEntityId(String baseEntityId) {
+        return eventClientRepository.deleteEventsByBaseEntityId(baseEntityId, "MOVE_TO_CATCHMENT_EVENT");
     }
 }

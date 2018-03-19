@@ -11,17 +11,10 @@
           }
         },
         {
-          "column_name": "participant_id",
+          "column_name": "opensrp_id",
           "type": "Client",
           "json_mapping": {
-            "field": "identifiers.TBREACH ID"
-          }
-        },
-        {
-          "column_name": "program_id",
-          "type": "Client",
-          "json_mapping": {
-            "field": "identifiers.TBREACH Program ID"
+            "field": "identifiers.OPENSRP_ID"
           }
         },
         {
@@ -53,26 +46,45 @@
           }
         },
         {
-          "column_name": "mobile_phone_number",
+          "column_name": "school",
           "type": "Client",
           "json_mapping": {
-            "field": "attributes.Primary Contact Number"
+            "field": "school"
           }
         },
         {
-          "column_name": "presumptive",
-          "type": "Event",
+          "column_name": "class",
+          "type": "Client",
           "json_mapping": {
-            "field": "obs.fieldCode",
-            "concept": "TBR:presumptive tuberculosis case"
+            "field": "attributes.Class"
           }
         },
         {
-          "column_name": "confirmed_tb",
-          "type": "Event",
+          "column_name": "caretaker_name",
+          "type": "Client",
           "json_mapping": {
-            "field": "obs.fieldCode",
-            "concept": "TBR: confirmed tb patient"
+            "field": "attributes.Caretaker_Name"
+          }
+        },
+        {
+          "column_name": "caretaker_phone",
+          "type": "Client",
+          "json_mapping": {
+            "field": "attributes.Caretaker_Phone_Number"
+          }
+        },
+        {
+          "column_name": "vht_name",
+          "type": "Client",
+          "json_mapping": {
+            "field": "attributes.VHT_Name"
+          }
+        },
+        {
+          "column_name": "vht_phone",
+          "type": "Client",
+          "json_mapping": {
+            "field": "attributes.VHT_Phone _Number"
           }
         },
         {
@@ -97,41 +109,17 @@
           }
         },
         {
-          "column_name": "dose_one_date",
-          "type": "Event",
-          "json_mapping": {
-            "field": "obs.fieldCode",
-            "concept": "TBR: treatment start date"
-          }
-        },
-        {
-          "column_name": "baseline",
-          "type": "Client",
-          "json_mapping": {
-            "field": "attributes.baseline"
-          }
-        },
-        {
-          "column_name": "next_visit_date",
-          "type": "Event",
-          "json_mapping": {
-            "field": "obs.fieldCode",
-            "concept": "TBR: next visit date"
-          }
-        },
-        {
-          "column_name": "smear_due_date",
-          "type": "Event",
-          "json_mapping": {
-            "field": "obs.fieldCode",
-            "concept": "TBR: smear due date"
-          }
-        },
-        {
           "column_name": "date_removed",
           "type": "Client",
           "json_mapping": {
             "field": "attributes.dateRemoved"
+          }
+        },
+        {
+          "column_name": "address2",
+          "type": "Client",
+          "json_mapping": {
+            "field": "addresses.addressFields.address2"
           }
         }
       ]

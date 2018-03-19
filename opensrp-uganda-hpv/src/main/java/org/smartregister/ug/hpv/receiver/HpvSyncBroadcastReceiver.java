@@ -22,9 +22,9 @@ public class HpvSyncBroadcastReceiver extends BroadcastReceiver {
 
         ServiceTools.startService(context, SyncService.class);
 
-        UserConfigurableViewsSyncTask pathUpdateActionsTask = new UserConfigurableViewsSyncTask(context);
+        UserConfigurableViewsSyncTask hpvUpdateActionsTask = new UserConfigurableViewsSyncTask(context);
 
-        pathUpdateActionsTask.syncFromServer();
+        hpvUpdateActionsTask.syncFromServer();
     }
 
 

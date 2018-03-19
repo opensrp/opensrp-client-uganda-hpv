@@ -9,7 +9,7 @@ import android.text.style.ForegroundColorSpan;
  * Created by samuelgithengi on 11/13/17.
  */
 
-public class TbrSpannableStringBuilder extends SpannableStringBuilder {
+public class CustomSpannableStringBuilder extends SpannableStringBuilder {
 
     public SpannableStringBuilder append(CharSequence text, ForegroundColorSpan colorSpan) {
         int start = length();

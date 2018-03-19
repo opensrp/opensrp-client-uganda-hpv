@@ -28,6 +28,7 @@ import org.smartregister.ug.hpv.event.TriggerSyncEvent;
 import org.smartregister.ug.hpv.event.ViewConfigurationSyncCompleteEvent;
 import org.smartregister.ug.hpv.receiver.HpvSyncBroadcastReceiver;
 import org.smartregister.ug.hpv.repository.HpvRepository;
+import org.smartregister.ug.hpv.repository.UniqueIdRepository;
 import org.smartregister.ug.hpv.service.SyncService;
 import org.smartregister.ug.hpv.util.DBConstants;
 import org.smartregister.ug.hpv.util.ServiceTools;
@@ -49,6 +50,7 @@ public class HpvApplication extends DrishtiApplication {
     private EventClientRepository eventClientRepository;
     private static CommonFtsObject commonFtsObject;
     private ConfigurableViewsHelper configurableViewsHelper;
+    private UniqueIdRepository uniqueIdRepository;
 
     private static final String TAG = HpvApplication.class.getCanonicalName();
     private String password;
@@ -169,7 +171,7 @@ public class HpvApplication extends DrishtiApplication {
 
     private static String[] getFtsSortFields() {
         return new String[]{org.smartregister.ug.hpv.util.Constants.KEY.PARTICIPANT_ID, org.smartregister.ug.hpv.util.Constants.KEY.PROGRAM_ID, org.smartregister.ug.hpv.util.Constants.KEY.FIRST_NAME, org.smartregister.ug.hpv.util.Constants.KEY.LAST_NAME
-              ,  org.smartregister.ug.hpv.util.Constants.KEY.LAST_INTERACTED_WITH, org.smartregister.ug.hpv.util.Constants.KEY.DATE_REMOVED};
+                , org.smartregister.ug.hpv.util.Constants.KEY.LAST_INTERACTED_WITH, org.smartregister.ug.hpv.util.Constants.KEY.DATE_REMOVED};
     }
 
 
@@ -184,6 +186,13 @@ public class HpvApplication extends DrishtiApplication {
             eventClientRepository = new EventClientRepository(getRepository());
         }
         return eventClientRepository;
+    }
+
+    public UniqueIdRepository uniqueIdRepository() {
+        if (uniqueIdRepository == null) {
+            uniqueIdRepository = new UniqueIdRepository((HpvRepository) getRepository());
+        }
+        return uniqueIdRepository;
     }
 
 
