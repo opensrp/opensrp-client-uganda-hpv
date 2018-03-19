@@ -1,4 +1,4 @@
-package org.smartregister.ug.hpv.activity.activity;
+package org.smartregister.ug.hpv.activity;
 
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.AppCompatActivity;
@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import org.smartregister.ug.hpv.activity.R;
+import org.smartregister.ug.hpv.R;
 
 public class LoginActivity extends AppCompatActivity {
     @Override
