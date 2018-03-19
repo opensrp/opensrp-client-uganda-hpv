@@ -98,6 +98,7 @@ android {
                 transitive = true
             }
             compile fileTree(dir: 'libs', include: ['*.jar'])
+            compile group: 'commons-validator', name: 'commons-validator', version: '1.4.0'
             compile 'com.android.support:design:22.2.1'
             compile 'com.google.code.gson:gson:2.8.2'
             compile 'com.android.support:appcompat-v7:22.2.1'
