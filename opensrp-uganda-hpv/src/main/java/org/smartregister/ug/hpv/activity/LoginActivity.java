@@ -1,31 +1,59 @@
 package org.smartregister.ug.hpv.activity;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import org.smartregister.domain.jsonmapping.LoginResponseData;
 
 import org.joda.time.DateTime;
 import org.smartregister.Context;
+import org.smartregister.domain.LoginResponse;
+import org.smartregister.domain.TimeStatus;
+import org.smartregister.event.Listener;
+import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.sync.DrishtiSyncScheduler;
 import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.application.HpvApplication;
+import static android.preference.PreferenceManager.getDefaultSharedPreferences;
+
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import util.UgandaHpvConstants;
 
+import static org.smartregister.domain.LoginResponse.NO_INTERNET_CONNECTIVITY;
+import static org.smartregister.domain.LoginResponse.UNAUTHORIZED;
+import static org.smartregister.domain.LoginResponse.UNKNOWN_RESPONSE;
 import static org.smartregister.util.Log.logError;
 
 public class LoginActivity extends AppCompatActivity {
     private EditText userNameEditText;
     private EditText passwordEditText;
+    private ProgressDialog progressDialog;
+    private RemoteLoginTask remoteLoginTask;
+    private android.content.Context appContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +62,10 @@ public class LoginActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(false);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(android.R.color.black)));
+
+        appContext = this;
+        initializeLoginFields();
+        initializeProgressDialog();
     }
 
     @Override
@@ -54,8 +86,9 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        initializeLoginFields();
-        // TODO: finish implementation
+        if (!getOpenSRPContext().IsUserLoggedOut()) {
+            goToHome(false);
+        }
     }
 
     private void initializeLoginFields() {
@@ -63,8 +96,15 @@ public class LoginActivity extends AppCompatActivity {
         passwordEditText = (EditText) findViewById(R.id.login_password_edit_text);
     }
 
+    private void initializeProgressDialog() {
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setCancelable(false);
+        progressDialog.setTitle(getString(org.smartregister.R.string.loggin_in_dialog_title));
+        progressDialog.setMessage(getString(org.smartregister.R.string.loggin_in_dialog_message));
+    }
+
     public void login(final View view) {
-        getOpenSRPContext().allSharedPreferences().saveForceRemoteLogin(false); // TODO: remove this after testing
+        // getOpenSRPContext().allSharedPreferences().saveForceRemoteLogin(false); // TODO: remove this after testing
         login(view, !getOpenSRPContext().allSharedPreferences().fetchForceRemoteLogin());
     }
 
@@ -115,7 +155,69 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void remoteLogin(final View view, final String userName, final String password) {
-        // TODO: implement this
+       if (!getOpenSRPContext().allSharedPreferences().fetchBaseURL("").isEmpty()) {
+            tryRemoteLogin(userName, password, new Listener<LoginResponse>(){
+                public void onEvent(LoginResponse loginResponse) {
+                    view.setClickable(true);
+                    if (loginResponse == LoginResponse.SUCCESS) {
+                        if (getOpenSRPContext().userService().isUserInPioneerGroup(userName)) {
+                            TimeStatus timeStatus = getOpenSRPContext().userService().validateDeviceTime(
+                                    loginResponse.payload(), UgandaHpvConstants.MAX_SERVER_TIME_DIFFERENCE
+                            );
+                            if (!UgandaHpvConstants.TIME_CHECK || timeStatus.equals(TimeStatus.OK)) {
+                                remoteLoginWith(userName, password, loginResponse.payload());
+                                // TODO: uncomment this code
+                                // Intent intent = new Intent(appContext, PullUniqueIdsIntentService.class);
+                                // appContext.startService(intent);
+                            } else {
+                                if (timeStatus.equals(TimeStatus.TIMEZONE_MISMATCH)) {
+                                    TimeZone serverTimeZone = getOpenSRPContext().userService()
+                                            .getServerTimeZone(loginResponse.payload());
+                                    showErrorDialog(getString(timeStatus.getMessage(),
+                                            serverTimeZone.getDisplayName()));
+                                } else {
+                                    showErrorDialog(getString(timeStatus.getMessage()));
+                                }
+                            }
+                        } else {
+                            // Valid user from wrong group trying to log in
+                            showErrorDialog(getString(R.string.unauthorized_group));
+                        }
+                    } else {
+                        if (loginResponse == null) {
+                            showErrorDialog("Sorry, your login failed. Please try again");
+                        } else {
+                            if (loginResponse == NO_INTERNET_CONNECTIVITY) {
+                                showErrorDialog(getResources().getString(R.string.no_internet_connectivity));
+                            } else if (loginResponse == UNKNOWN_RESPONSE) {
+                                showErrorDialog(getResources().getString(R.string.unknown_response));
+                            } else if (loginResponse == UNAUTHORIZED) {
+                                showErrorDialog(getResources().getString(R.string.unauthorized));
+                            } else {
+                                showErrorDialog(loginResponse.message());
+                            }
+                        }
+                    }
+                }
+            });
+       } else {
+           view.setClickable(true);
+           showErrorDialog("OpenSRP Base URL is missing. Please add it in Setting and try again");
+       }
+    }
+
+    private void tryRemoteLogin(final String userName, final String password, final Listener<LoginResponse> afterLogincheck) {
+        if (remoteLoginTask != null && !remoteLoginTask.isCancelled()) {
+            remoteLoginTask.cancel(true);
+        }
+        remoteLoginTask = new RemoteLoginTask(userName, password, afterLogincheck);
+        remoteLoginTask.execute();
+    }
+
+    private void remoteLoginWith(String userName, String password, LoginResponseData userInfo) {
+        getOpenSRPContext().userService().remoteLogin(userName, password, userInfo);
+        goToHome(true);
+        DrishtiSyncScheduler.startOnlyIfConnectedToNetwork(getApplicationContext()); // TODO: maybe change to path version
     }
 
     private void goToHome(boolean remote) {
@@ -156,4 +258,42 @@ public class LoginActivity extends AppCompatActivity {
     public static Context getOpenSRPContext() {
         return HpvApplication.getInstance().getContext();
     }
+
+
+    /**
+     *  ============================ AsyncTasks =====================================
+     */
+    private class RemoteLoginTask extends AsyncTask<Void, Void, LoginResponse> {
+        private final String username;
+        private final String password;
+        private final Listener<LoginResponse> afterLoginCheck;
+
+        private RemoteLoginTask(String username, String password, Listener<LoginResponse> afterLoginCheck) {
+            this.username = username;
+            this.password = password;
+            this.afterLoginCheck = afterLoginCheck;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog.show();
+        }
+
+        @Override
+        protected LoginResponse doInBackground(Void... params) {
+            return getOpenSRPContext().userService().isValidRemoteLogin(username, password);
+        }
+
+        @Override
+        protected void onPostExecute(LoginResponse loginResponse) {
+            super.onPostExecute(loginResponse);
+            if (!isDestroyed()) {
+                progressDialog.dismiss();
+                afterLoginCheck.onEvent(loginResponse);
+            }
+        }
+    }
 }
+
+

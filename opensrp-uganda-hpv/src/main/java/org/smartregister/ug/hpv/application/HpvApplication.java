@@ -5,6 +5,7 @@ import android.content.Intent;
 import com.crashlytics.android.Crashlytics;
 
 import org.smartregister.Context;
+import org.smartregister.CoreLibrary;
 import org.smartregister.commonregistry.CommonFtsObject;
 import org.smartregister.ug.hpv.BuildConfig;
 import org.smartregister.view.activity.DrishtiApplication;
@@ -18,10 +19,13 @@ public class HpvApplication extends DrishtiApplication {
     @Override
     public void onCreate() {
         super.onCreate();
-        mInstance = this;
 
+        mInstance = this;
         context = Context.getInstance();
         context.updateApplicationContext(getApplicationContext());
+
+        //Initialize Modules
+        CoreLibrary.init(getContext());
     }
 
     @Override

@@ -57,13 +57,27 @@ android {
                 minifyEnabled false
                 zipAlignEnabled true
                 proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+                resValue "string", 'opensrp_url', '""'
+                buildConfigField "int", "OPENMRS_UNIQUE_ID_INITIAL_BATCH_SIZE", '250'
+                buildConfigField "int", "OPENMRS_UNIQUE_ID_BATCH_SIZE", '100'
+                buildConfigField "int", "OPENMRS_UNIQUE_ID_SOURCE", '1'
+                buildConfigField "int", "DATABASE_VERSION", '10'
+                buildConfigField "long", "MAX_SERVER_TIME_DIFFERENCE", "1800000l"
+                buildConfigField "boolean", "TIME_CHECK", "true"
             }
 
             debug {
+                resValue "string", 'opensrp_url', '"https://ug-hpv.smartregister.org/opensrp/"'
+                buildConfigField "int", "OPENMRS_UNIQUE_ID_INITIAL_BATCH_SIZE", '250'
+                buildConfigField "int", "OPENMRS_UNIQUE_ID_BATCH_SIZE", '100'
+                buildConfigField "int", "OPENMRS_UNIQUE_ID_SOURCE", '2'
+                buildConfigField "int", "DATABASE_VERSION", '10'
+                buildConfigField "long", "MAX_SERVER_TIME_DIFFERENCE", "1800000l"
+                buildConfigField "boolean", "TIME_CHECK", "false"
                 testCoverageEnabled true
             }
-
         }
+
         packagingOptions {
             exclude 'META-INF/DEPENDENCIES.txt'
             exclude 'META-INF/LICENSE.txt'
@@ -88,10 +102,10 @@ android {
             }
         }
         dependencies {
-            compile('org.smartregister:opensrp-client-core:1.1.0@aar') {
+
+            compile('org.smartregister:opensrp-client-core:1.2.3-SNAPSHOT@aar') {
                 transitive = true
                 exclude group: 'com.github.bmelnychuk', module: 'atv'
-                exclude group: 'com.google.guava', module: 'guava'
             }
 
             compile('org.smartregister:opensrp-client-enketo:1.0.0@aar') {
