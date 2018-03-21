@@ -15,11 +15,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.TextView;
+
 import org.smartregister.domain.jsonmapping.LoginResponseData;
 
 import org.joda.time.DateTime;
@@ -65,7 +69,10 @@ public class LoginActivity extends AppCompatActivity {
 
         appContext = this;
         initializeLoginFields();
+        initializeBuildDetails();
+        setDoneActionHandlerOnPasswordField();
         initializeProgressDialog();
+        setLanguage();
     }
 
     @Override
@@ -91,6 +98,18 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    private void setDoneActionHandlerOnPasswordField() {
+        passwordEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    login(findViewById(R.id.login_login_btn));
+                }
+                return false;
+            }
+        });
+    }
+
     private void initializeLoginFields() {
         userNameEditText = (EditText) findViewById(R.id.login_user_name_edit_text);
         passwordEditText = (EditText) findViewById(R.id.login_password_edit_text);
@@ -101,6 +120,15 @@ public class LoginActivity extends AppCompatActivity {
         progressDialog.setCancelable(false);
         progressDialog.setTitle(getString(org.smartregister.R.string.loggin_in_dialog_title));
         progressDialog.setMessage(getString(org.smartregister.R.string.loggin_in_dialog_message));
+    }
+
+    private void initializeBuildDetails() {
+        TextView buildDetailsView = (TextView) findViewById(R.id.login_build_text_view);
+        try {
+            buildDetailsView.setText("Version " + getVersion() + ", Built on: " + getBuildDate());
+        } catch (Exception e) {
+            logError("Error fetching build details: " + e);
+        }
     }
 
     public void login(final View view) {
@@ -255,6 +283,53 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    private  String getVersion() throws PackageManager.NameNotFoundException {
+        PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+        return packageInfo.versionName;
+    }
+
+    private String getBuildDate() throws PackageManager.NameNotFoundException, IOException {
+        ApplicationInfo applicationInfo = getPackageManager().getApplicationInfo(getPackageName(), 0);
+        ZipFile zipFile = new ZipFile(applicationInfo.sourceDir);
+        ZipEntry zipEntry = zipFile.getEntry("classes.dex");
+        return new SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(new Date(zipEntry.getTime()));
+    }
+
+    public static void setLanguage() {
+        AllSharedPreferences allSharedPreferences = new AllSharedPreferences(getDefaultSharedPreferences(getOpenSRPContext().applicationContext()));
+        String preferredLocale = allSharedPreferences.fetchLanguagePreference();
+        Resources resources = getOpenSRPContext().applicationContext().getResources();
+
+        DisplayMetrics displayMetrics = resources.getDisplayMetrics();
+        Configuration configuration = resources.getConfiguration();
+        configuration.locale = new Locale(preferredLocale);
+        resources.updateConfiguration(configuration, displayMetrics);
+    }
+
+    public static String switchLanguagePreference() {
+        AllSharedPreferences allSharedPreferences = new AllSharedPreferences(getDefaultSharedPreferences(getOpenSRPContext().applicationContext()));
+
+        String preferredLocal = allSharedPreferences.fetchLanguagePreference();
+        if (UgandaHpvConstants.URDU_LOCALE.equals(preferredLocal)) {
+            allSharedPreferences.saveLanguagePreference(UgandaHpvConstants.URDU_LOCALE);
+            Resources resources = getOpenSRPContext().applicationContext().getResources();
+            // Change locale settings in app
+            DisplayMetrics displayMetrics = resources.getDisplayMetrics();
+            Configuration configuration = resources.getConfiguration();
+            configuration.locale = new Locale(UgandaHpvConstants.URDU_LOCALE);
+            resources.updateConfiguration(configuration, displayMetrics);
+            return UgandaHpvConstants.URDU_LANGUAGE;
+        } else {
+            allSharedPreferences.saveLanguagePreference(UgandaHpvConstants.ENGLISH_LANGUAGE);
+            Resources resources = getOpenSRPContext().applicationContext().getResources();
+            // change locale settings in the app
+            DisplayMetrics displayMetrics = resources.getDisplayMetrics();
+            Configuration configuration = resources.getConfiguration();
+            configuration.locale = new Locale(UgandaHpvConstants.ENGLISH_LOCALE);
+            resources.updateConfiguration(configuration, displayMetrics);
+            return UgandaHpvConstants.ENGLISH_LANGUAGE;
+        }
+    }
     public static Context getOpenSRPContext() {
         return HpvApplication.getInstance().getContext();
     }

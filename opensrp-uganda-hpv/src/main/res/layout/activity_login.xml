@@ -27,6 +27,15 @@
             android:layout_gravity="center"
             android:layout_alignParentTop="true"
             android:paddingTop="15dp"/>
+        <TextView
+            android:id="@+id/login_build_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#90c4dc"
+            android:textSize="16sp"
+            android:typeface="sans"
+            android:layout_marginBottom="5dp"
+            android:layout_gravity="center"/>
     </LinearLayout>
 
 
@@ -139,15 +148,5 @@
             android:scaleType="centerCrop"
             android:src="@drawable/ic_opensrp_logo"
             />
-
-        <TextView
-            android:id="@+id/login_build_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#90c4dc"
-            android:textSize="16sp"
-            android:typeface="sans"
-            android:layout_marginBottom="5dp"
-            android:layout_gravity="center"/>
     </LinearLayout>
 </RelativeLayout>
