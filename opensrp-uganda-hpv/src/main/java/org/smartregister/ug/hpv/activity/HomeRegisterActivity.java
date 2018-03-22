@@ -2,13 +2,8 @@ package org.smartregister.ug.hpv.activity;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.view.MenuItem;
-import android.widget.Toast;
 
-import org.json.JSONObject;
-import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.fragment.HomeRegisterFragment;
 
 import java.util.Arrays;
@@ -25,13 +20,6 @@ public class HomeRegisterActivity extends BaseRegisterActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-        Fragment mBaseFragment = getRegisterFragment();
-        fragmentTransaction.add(R.id.home_fragment_container, mBaseFragment);
-        fragmentTransaction.commit();
 
     }
 
@@ -44,6 +32,11 @@ public class HomeRegisterActivity extends BaseRegisterActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         return super.onOptionsItemSelected(item);
+
+    }
+
+    @Override
+    protected void onCreation() {
 
     }
 

@@ -10,7 +10,7 @@
     <include layout="@layout/register_list_header" />
 
     <org.smartregister.view.customcontrols.CustomFontTextView
-        android:id="@+id/results_header"
+        android:id="@+id/id_header"
         style="@style/CustomFontTextViewStyle.ClientList.Medium"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -18,20 +18,20 @@
         android:layout_marginRight="7dp"
         android:layout_weight="3.4"
         android:gravity="center_horizontal"
-        android:text="results"
+        android:text="@string/id"
         android:textAllCaps="true"
         android:textColor="@color/dark_grey"
         android:textSize="16sp" />
 
     <org.smartregister.view.customcontrols.CustomFontTextView
-        android:id="@+id/diagnose_header"
+        android:id="@+id/dose_header"
         style="@style/CustomFontTextViewStyle.ClientList.Medium"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_weight="2.6"
         android:gravity="center_horizontal"
-        android:text="diagnose"
+        android:text="@string/dose_d"
         android:textAllCaps="true"
         android:textColor="@color/dark_grey"
         android:textSize="16sp" />

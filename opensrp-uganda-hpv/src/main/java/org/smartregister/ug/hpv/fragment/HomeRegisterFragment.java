@@ -16,7 +16,7 @@ public class HomeRegisterFragment extends BaseRegisterFragment {
 
     @Override
     protected void populateClientListHeaderView(View view) {
-        View headerLayout = getLayoutInflater(null).inflate(R.layout.register_presumptive_list_header, null);
+        View headerLayout = getLayoutInflater(null).inflate(R.layout.register_home_list_header, null);
         populateClientListHeaderView(view, headerLayout, Constants.VIEW_CONFIGS.HOME_REGISTER_HEADER);
     }
 

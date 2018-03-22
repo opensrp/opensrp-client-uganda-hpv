@@ -22,7 +22,7 @@ import org.smartregister.configurableviews.util.Constants;
 import org.smartregister.repository.EventClientRepository;
 import org.smartregister.repository.Repository;
 import org.smartregister.sync.DrishtiSyncScheduler;
-import org.smartregister.ug.hpv.LoginActivity;
+import org.smartregister.ug.hpv.activity.LoginActivity;
 import org.smartregister.ug.hpv.event.LanguageConfigurationEvent;
 import org.smartregister.ug.hpv.event.TriggerSyncEvent;
 import org.smartregister.ug.hpv.event.ViewConfigurationSyncCompleteEvent;
@@ -165,13 +165,13 @@ public class HpvApplication extends DrishtiApplication {
     }
 
     private static String[] getFtsSearchFields() {
-        return new String[]{org.smartregister.ug.hpv.util.Constants.KEY.PARTICIPANT_ID, org.smartregister.ug.hpv.util.Constants.KEY.PROGRAM_ID, org.smartregister.ug.hpv.util.Constants.KEY.FIRST_NAME, org.smartregister.ug.hpv.util.Constants.KEY.LAST_NAME};
+        return new String[]{DBConstants.KEY.OPENSRP_ID, DBConstants.KEY.FIRST_NAME, DBConstants.KEY.LAST_NAME, DBConstants.KEY.DATE_REMOVED, DBConstants.KEY.CARETAKER_NAME, DBConstants.KEY.CARETAKER_PHONE, DBConstants.KEY.VHT_NAME, DBConstants.KEY.VHT_PHONE};
 
     }
 
     private static String[] getFtsSortFields() {
-        return new String[]{org.smartregister.ug.hpv.util.Constants.KEY.PARTICIPANT_ID, org.smartregister.ug.hpv.util.Constants.KEY.PROGRAM_ID, org.smartregister.ug.hpv.util.Constants.KEY.FIRST_NAME, org.smartregister.ug.hpv.util.Constants.KEY.LAST_NAME
-                , org.smartregister.ug.hpv.util.Constants.KEY.LAST_INTERACTED_WITH, org.smartregister.ug.hpv.util.Constants.KEY.DATE_REMOVED};
+        return new String[]{DBConstants.KEY.OPENSRP_ID, DBConstants.KEY.PROGRAM_ID, DBConstants.KEY.FIRST_NAME, DBConstants.KEY.LAST_NAME
+                , DBConstants.KEY.LAST_INTERACTED_WITH, DBConstants.KEY.DATE_REMOVED};
     }
 
 

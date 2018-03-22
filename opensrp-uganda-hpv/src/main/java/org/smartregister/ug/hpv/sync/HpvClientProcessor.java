@@ -9,6 +9,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.smartregister.sync.ClientProcessor;
 import org.smartregister.ug.hpv.util.Constants;
+import org.smartregister.ug.hpv.util.DBConstants;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -82,10 +83,10 @@ public class HpvClientProcessor extends ClientProcessor {
                         continue;
                     }
                     //iterate through the events
-                    if (event.has(Constants.KEY.CLIENT)) {
-                        processEvent(event, event.getJSONObject(Constants.KEY.CLIENT), clientClassificationJson);
+                    if (event.has(DBConstants.KEY.CLIENT)) {
+                        processEvent(event, event.getJSONObject(DBConstants.KEY.CLIENT), clientClassificationJson);
 
-                        // processEvent(event, event.getJSONObject(Constants.KEY.CLIENT), clientClassificationJson, Arrays.asList(new String[]{"deathdate", "attributes.dateRemoved"}));
+                        // processEvent(event, event.getJSONObject(DBConstants.KEY.CLIENT), clientClassificationJson, Arrays.asList(new String[]{"deathdate", "attributes.dateRemoved"}));
                     }
                 }
             }

@@ -29,7 +29,6 @@ import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.activity.BaseRegisterActivity;
 import org.smartregister.ug.hpv.provider.PatientRegisterProvider;
 import org.smartregister.ug.hpv.servicemode.HpvServiceModeOption;
-import org.smartregister.ug.hpv.util.Constants;
 import org.smartregister.ug.hpv.util.DBConstants;
 import org.smartregister.view.activity.SecuredNativeSmartRegisterActivity;
 import org.smartregister.view.dialog.DialogOption;
@@ -69,7 +68,7 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
             @Override
             public ServiceModeOption serviceMode() {
                 return new HpvServiceModeOption(null, "Linda Clinic", new int[]{
-                        R.string.patient_name, R.string.participant_id, R.string.app_name
+                        R.string.name, R.string.opensrp_id, R.string.dose_d
                 }, new int[]{5, 3, 2});
             }
 
@@ -108,8 +107,8 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
             @Override
             public DialogOption[] sortingOptions() {
                 return new DialogOption[]{
-                        new CursorCommonObjectSort(getResources().getString(R.string.alphabetical_sort), Constants.KEY.FIRST_NAME),
-                        new CursorCommonObjectSort(getResources().getString(R.string.participant_id), Constants.KEY.PARTICIPANT_ID)
+                        new CursorCommonObjectSort(getResources().getString(R.string.alphabetical_sort), DBConstants.KEY.FIRST_NAME),
+                        new CursorCommonObjectSort(getResources().getString(R.string.opensrp_id), DBConstants.KEY.OPENSRP_ID)
                 };
             }
 
@@ -202,15 +201,18 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
         SmartRegisterQueryBuilder queryBUilder = new SmartRegisterQueryBuilder();
         String[] columns = new String[]{
                 tableName + ".relationalid",
-                tableName + "." + Constants.KEY.LAST_INTERACTED_WITH,
-                tableName + "." + Constants.KEY.FIRST_ENCOUNTER,
-                tableName + "." + Constants.KEY.BASE_ENTITY_ID,
-                tableName + "." + Constants.KEY.FIRST_NAME,
-                tableName + "." + Constants.KEY.LAST_NAME,
-                tableName + "." + Constants.KEY.PARTICIPANT_ID,
-                tableName + "." + Constants.KEY.PROGRAM_ID,
-                tableName + "." + Constants.KEY.GENDER,
-                tableName + "." + Constants.KEY.DOB};
+                tableName + "." + DBConstants.KEY.LAST_INTERACTED_WITH,
+                tableName + "." + DBConstants.KEY.BASE_ENTITY_ID,
+                tableName + "." + DBConstants.KEY.FIRST_NAME,
+                tableName + "." + DBConstants.KEY.LAST_NAME,
+                tableName + "." + DBConstants.KEY.CARETAKER_NAME,
+                tableName + "." + DBConstants.KEY.DOB,
+                tableName + "." + DBConstants.KEY.OPENSRP_ID,
+                tableName + "." + DBConstants.KEY.CLASS,
+                tableName + "." + DBConstants.KEY.SCHOOL,
+                tableName + "." + DBConstants.KEY.DOSE_ONE_DATE,
+                tableName + "." + DBConstants.KEY.DOSE_TWO_DATE,
+                tableName + "." + DBConstants.KEY.GENDER};
         String[] allColumns = ArrayUtils.addAll(columns, getAdditionalColumns(tableName));
         queryBUilder.SelectInitiateMainTable(tableName, allColumns);
         mainSelect = queryBUilder.mainCondition(mainCondition);
@@ -241,8 +243,8 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
         if (!visibleColumns.isEmpty()) {
             Map<String, Integer> mapping = new HashMap();
             mapping.put(org.smartregister.ug.hpv.util.Constants.REGISTER_COLUMNS.NAME, R.id.patient_header);
-            mapping.put(org.smartregister.ug.hpv.util.Constants.REGISTER_COLUMNS.ID, R.id.results_header);
-            mapping.put(org.smartregister.ug.hpv.util.Constants.REGISTER_COLUMNS.DOSE, R.id.diagnose_header);
+            mapping.put(org.smartregister.ug.hpv.util.Constants.REGISTER_COLUMNS.ID, R.id.id_header);
+            mapping.put(org.smartregister.ug.hpv.util.Constants.REGISTER_COLUMNS.DOSE, R.id.dose_header);
             helper.processRegisterColumns(mapping, headerLayout, visibleColumns, R.id.register_headers);
         }
 

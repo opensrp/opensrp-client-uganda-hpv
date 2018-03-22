@@ -34,9 +34,9 @@ import org.smartregister.event.Listener;
 import org.smartregister.ug.hpv.HpvJsonFormInteractor;
 import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.application.HpvApplication;
-import org.smartregister.ug.hpv.provider.MotherLookUpSmartClientsProvider;
-import org.smartregister.ug.hpv.util.Constants;
+import org.smartregister.ug.hpv.provider.CaretakerLookUpSmartClientsProvider;
 import org.smartregister.ug.hpv.util.CaretakerLookUpUtils;
+import org.smartregister.ug.hpv.util.DBConstants;
 import org.smartregister.ug.hpv.viewstates.HpvJsonFormFragmentViewState;
 import org.smartregister.util.Utils;
 
@@ -61,7 +61,7 @@ public class HpvJsonFormFragment extends JsonFormFragment {
     public static HpvJsonFormFragment getFormFragment(String stepName) {
         HpvJsonFormFragment jsonFormFragment = new HpvJsonFormFragment();
         Bundle bundle = new Bundle();
-        bundle.putString(Constants.KEY.STEPNAME, stepName);
+        bundle.putString(DBConstants.KEY.STEPNAME, stepName);
         jsonFormFragment.setArguments(bundle);
         return jsonFormFragment;
     }
@@ -119,7 +119,7 @@ public class HpvJsonFormFragment extends JsonFormFragment {
             mothers.add(entry.getKey());
         }
 
-        final MotherLookUpSmartClientsProvider motherLookUpSmartClientsProvider = new MotherLookUpSmartClientsProvider(getActivity());
+        final CaretakerLookUpSmartClientsProvider caretakerLookUpSmartClientsProvider = new CaretakerLookUpSmartClientsProvider(getActivity());
         BaseAdapter baseAdapter = new BaseAdapter() {
             @Override
             public int getCount() {
@@ -140,7 +140,7 @@ public class HpvJsonFormFragment extends JsonFormFragment {
             public View getView(int position, View convertView, ViewGroup parent) {
                 View v;
                 if (convertView == null) {
-                    v = motherLookUpSmartClientsProvider.inflatelayoutForCursorAdapter();
+                    v = caretakerLookUpSmartClientsProvider.inflatelayoutForCursorAdapter();
                 } else {
                     v = convertView;
                 }
@@ -148,7 +148,7 @@ public class HpvJsonFormFragment extends JsonFormFragment {
                 CommonPersonObject commonPersonObject = mothers.get(position);
                 List<CommonPersonObject> children = map.get(commonPersonObject);
 
-                motherLookUpSmartClientsProvider.getView(commonPersonObject, children, v);
+                caretakerLookUpSmartClientsProvider.getView(commonPersonObject, children, v);
 
                 v.setOnClickListener(lookUpRecordOnClickLister);
                 v.setTag(Utils.convert(commonPersonObject));
@@ -164,8 +164,8 @@ public class HpvJsonFormFragment extends JsonFormFragment {
 
     private void clearMotherLookUp() {
         Map<String, List<View>> lookupMap = getLookUpMap();
-        if (lookupMap.containsKey(Constants.KEY.MOTHER)) {
-            List<View> lookUpViews = lookupMap.get(Constants.KEY.MOTHER);
+        if (lookupMap.containsKey(DBConstants.KEY.MOTHER)) {
+            List<View> lookUpViews = lookupMap.get(DBConstants.KEY.MOTHER);
             if (lookUpViews != null && !lookUpViews.isEmpty()) {
                 for (View view : lookUpViews) {
                     if (view instanceof MaterialEditText) {
@@ -178,8 +178,8 @@ public class HpvJsonFormFragment extends JsonFormFragment {
                 }
 
                 Map<String, String> metadataMap = new HashMap<>();
-                metadataMap.put(Constants.KEY.ENTITY_ID, "");
-                metadataMap.put(Constants.KEY.VALUE, "");
+                metadataMap.put(DBConstants.KEY.ENTITY_ID, "");
+                metadataMap.put(DBConstants.KEY.VALUE, "");
 
                 writeMetaDataValue(FormUtils.LOOK_UP_JAVAROSA_PROPERTY, metadataMap);
 
@@ -279,8 +279,8 @@ public class HpvJsonFormFragment extends JsonFormFragment {
         if (pc != null) {
 
             Map<String, List<View>> lookupMap = getLookUpMap();
-            if (lookupMap.containsKey(Constants.KEY.MOTHER)) {
-                List<View> lookUpViews = lookupMap.get(Constants.KEY.MOTHER);
+            if (lookupMap.containsKey(DBConstants.KEY.MOTHER)) {
+                List<View> lookUpViews = lookupMap.get(DBConstants.KEY.MOTHER);
                 if (lookUpViews != null && !lookUpViews.isEmpty()) {
 
                     for (View view : lookUpViews) {
@@ -319,8 +319,8 @@ public class HpvJsonFormFragment extends JsonFormFragment {
                     }
 
                     Map<String, String> metadataMap = new HashMap<>();
-                    metadataMap.put(Constants.KEY.ENTITY_ID, Constants.KEY.MOTHER);
-                    metadataMap.put(Constants.KEY.VALUE, getValue(pc.getColumnmaps(), CaretakerLookUpUtils.baseEntityId, false));
+                    metadataMap.put(DBConstants.KEY.ENTITY_ID, DBConstants.KEY.MOTHER);
+                    metadataMap.put(DBConstants.KEY.VALUE, getValue(pc.getColumnmaps(), CaretakerLookUpUtils.baseEntityId, false));
 
                     writeMetaDataValue(FormUtils.LOOK_UP_JAVAROSA_PROPERTY, metadataMap);
 

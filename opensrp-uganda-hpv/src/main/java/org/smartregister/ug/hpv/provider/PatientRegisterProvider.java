@@ -20,6 +20,7 @@ import org.smartregister.repository.DetailsRepository;
 import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.util.Constants;
 import org.smartregister.ug.hpv.util.CustomSpannableStringBuilder;
+import org.smartregister.ug.hpv.util.DBConstants;
 import org.smartregister.util.DateUtil;
 import org.smartregister.view.contract.SmartRegisterClient;
 import org.smartregister.view.contract.SmartRegisterClients;
@@ -113,19 +114,19 @@ public class PatientRegisterProvider implements SmartRegisterCLientsProviderForC
 
     private void populatePatientColumn(CommonPersonObjectClient pc, SmartRegisterClient client, View view) {
 
-        String firstName = org.smartregister.util.Utils.getValue(pc.getColumnmaps(), Constants.KEY.FIRST_NAME, true);
-        String lastName = org.smartregister.util.Utils.getValue(pc.getColumnmaps(), Constants.KEY.LAST_NAME, true);
+        String firstName = org.smartregister.util.Utils.getValue(pc.getColumnmaps(), DBConstants.KEY.FIRST_NAME, true);
+        String lastName = org.smartregister.util.Utils.getValue(pc.getColumnmaps(), DBConstants.KEY.LAST_NAME, true);
         String patientName = getName(firstName, lastName);
 
         fillValue((TextView) view.findViewById(R.id.patient_name), patientName);
 
-        fillValue((TextView) view.findViewById(R.id.participant_id), "#" + org.smartregister.util.Utils.getValue(pc.getColumnmaps(), Constants.KEY.PARTICIPANT_ID, false));
+        fillValue((TextView) view.findViewById(R.id.participant_id), "#" + org.smartregister.util.Utils.getValue(pc.getColumnmaps(), DBConstants.KEY.OPENSRP_ID, false));
 
-        String gender = org.smartregister.util.Utils.getValue(pc.getColumnmaps(), Constants.KEY.GENDER, true);
+        String gender = org.smartregister.util.Utils.getValue(pc.getColumnmaps(), DBConstants.KEY.GENDER, true);
 
         fillValue((TextView) view.findViewById(R.id.gender), gender);
 
-        String dobString = getDuration(org.smartregister.util.Utils.getValue(pc.getColumnmaps(), Constants.KEY.DOB, false));
+        String dobString = getDuration(org.smartregister.util.Utils.getValue(pc.getColumnmaps(), DBConstants.KEY.DOB, false));
 
         fillValue((TextView) view.findViewById(R.id.age), dobString.substring(0, dobString.indexOf("y")));
 

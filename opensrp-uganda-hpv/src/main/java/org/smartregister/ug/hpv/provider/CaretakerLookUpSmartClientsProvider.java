@@ -10,6 +10,7 @@ import org.smartregister.commonregistry.CommonPersonObject;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.util.Constants;
+import org.smartregister.ug.hpv.util.DBConstants;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -25,14 +26,14 @@ import static org.smartregister.util.Utils.getName;
 import static org.smartregister.util.Utils.getValue;
 
 /**
- * Created by Ahmed on 13-Oct-15.
+ * Created by ndegwamartin on 22/03/2018.
  */
-public class MotherLookUpSmartClientsProvider {
+public class CaretakerLookUpSmartClientsProvider {
     private final LayoutInflater inflater;
     private final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yy");
 
 
-    public MotherLookUpSmartClientsProvider(Context context) {
+    public CaretakerLookUpSmartClientsProvider(Context context) {
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
@@ -113,7 +114,7 @@ public class MotherLookUpSmartClientsProvider {
     }
 
     private DateTime dob(CommonPersonObjectClient pc) {
-        String dobString = getValue(pc.getColumnmaps(), Constants.KEY.DOB, false);
+        String dobString = getValue(pc.getColumnmaps(), DBConstants.KEY.DOB, false);
         return dobStringToDateTime(dobString);
     }
 

@@ -2,10 +2,15 @@ package org.smartregister.ug.hpv.activity;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,15 +26,19 @@ import org.smartregister.configurableviews.ConfigurableViewsLibrary;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.provider.SmartRegisterClientsProvider;
 import org.smartregister.ug.hpv.R;
+import org.smartregister.ug.hpv.adapter.HPVRegisterActivityPagerAdapter;
 import org.smartregister.ug.hpv.application.HpvApplication;
 import org.smartregister.ug.hpv.event.ShowProgressDialogEvent;
 import org.smartregister.ug.hpv.event.SyncEvent;
+import org.smartregister.ug.hpv.fragment.BaseRegisterFragment;
 import org.smartregister.ug.hpv.util.Utils;
 import org.smartregister.view.activity.SecuredNativeSmartRegisterActivity;
+import org.smartregister.view.viewpager.OpenSRPViewPager;
 
 import java.util.List;
 import java.util.Map;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
 
 
@@ -39,18 +48,38 @@ import butterknife.ButterKnife;
 
 public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterActivity {
 
-    public static final String TAG = "BaseRegisterActivity";
+    public static final String TAG = BaseRegisterActivity.class.getCanonicalName();
 
     public static String TOOLBAR_TITLE = "org.smartregister.ug.hpv.activity.toolbarTitle";
 
     private ProgressDialog progressDialog;
     private final int MINIUM_LANG_COUNT = 2;
 
+
+    @Bind(R.id.view_pager)
+    protected OpenSRPViewPager mPager;
+    private FragmentPagerAdapter mPagerAdapter;
+    private static final int REQUEST_CODE_GET_JSON = 3432;
+    private int currentPage;
+    public static final int ADVANCED_SEARCH_POSITION = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base_register);
+        ButterKnife.bind(this);
+        Fragment[] otherFragments = {};
 
+        // Instantiate a ViewPager and a PagerAdapter.
+        mPagerAdapter = new HPVRegisterActivityPagerAdapter(getSupportFragmentManager(), getRegisterFragment(), otherFragments);
+        mPager.setOffscreenPageLimit(otherFragments.length);
+        mPager.setAdapter(mPagerAdapter);
+        mPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            @Override
+            public void onPageSelected(int position) {
+                currentPage = position;
+            }
+        });
     }
 
     protected abstract Fragment getRegisterFragment();
@@ -157,7 +186,23 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
     }
 
     public void refreshList(final FetchStatus fetchStatus) {
-        //Refresh list
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            BaseRegisterFragment registerFragment = (BaseRegisterFragment) getRegisterFragment();
+            if (registerFragment != null && fetchStatus.equals(FetchStatus.fetched)) {
+                registerFragment.refreshListView();
+            }
+        } else {
+            Handler handler = new Handler(Looper.getMainLooper());
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    BaseRegisterFragment registerFragment = (BaseRegisterFragment) getRegisterFragment();
+                    if (registerFragment != null && fetchStatus.equals(FetchStatus.fetched)) {
+                        registerFragment.refreshListView();
+                    }
+                }
+            });
+        }
 
     }
 

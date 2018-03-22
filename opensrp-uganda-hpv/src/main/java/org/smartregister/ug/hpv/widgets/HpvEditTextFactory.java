@@ -18,6 +18,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.util.Constants;
+import org.smartregister.ug.hpv.util.DBConstants;
 import org.smartregister.ug.hpv.watchers.LookUpTextWatcher;
 
 import java.util.ArrayList;
@@ -34,9 +35,9 @@ public class HpvEditTextFactory extends EditTextFactory {
     public void attachJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, MaterialEditText editText) throws Exception {
         super.attachJson(stepName, context, formFragment, jsonObject, editText);
         // lookup hook
-        if (jsonObject.has(Constants.KEY.LOOK_UP) && jsonObject.get(Constants.KEY.LOOK_UP).toString().equalsIgnoreCase(Boolean.TRUE.toString())) {
+        if (jsonObject.has(DBConstants.KEY.LOOK_UP) && jsonObject.get(DBConstants.KEY.LOOK_UP).toString().equalsIgnoreCase(Boolean.TRUE.toString())) {
 
-            String entityId = jsonObject.getString(Constants.KEY.ENTITY_ID);
+            String entityId = jsonObject.getString(DBConstants.KEY.ENTITY_ID);
 
             Map<String, List<View>> lookupMap = formFragment.getLookUpMap();
             List<View> lookUpViews = new ArrayList<>();
@@ -56,7 +57,7 @@ public class HpvEditTextFactory extends EditTextFactory {
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
-        if (jsonObject.has(Constants.KEY.NUMBER_PICKER) && jsonObject.get(Constants.KEY.NUMBER_PICKER).toString().equalsIgnoreCase(Boolean.TRUE.toString())) {
+        if (jsonObject.has(DBConstants.KEY.NUMBER_PICKER) && jsonObject.get(DBConstants.KEY.NUMBER_PICKER).toString().equalsIgnoreCase(Boolean.TRUE.toString())) {
             List<View> views = new ArrayList<>(1);
 
             RelativeLayout rootLayout = (RelativeLayout) LayoutInflater.from(context).inflate(
