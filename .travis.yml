@@ -50,7 +50,7 @@ script:
   - echo "Travis branch is in pull request $TRAVIS_PULL+REQUEST"
   - chmod 755 gradlew
   - ls -la
-  - ./gradlew opensrp-tbr:clean
+  - ./gradlew opensrp-uganda-hpv:clean
   #Run All Instrumentation Tests
   - ./gradlew opensrp-uganda-hpv:connectedAndroidTest
   #Run All Unit tests Unit
