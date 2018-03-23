@@ -6,6 +6,7 @@ import android.view.View;
 import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.helper.DBQueryHelper;
 import org.smartregister.ug.hpv.util.Constants;
+import org.smartregister.ug.hpv.view.LocationPickerView;
 
 
 /**
@@ -28,6 +29,10 @@ public class HomeRegisterFragment extends BaseRegisterFragment {
     @Override
     protected String[] getAdditionalColumns(String tableName) {
         return new String[]{};
+    }
+
+    public LocationPickerView getLocationPickerView() {
+        return getClinicSelection();
     }
 
 

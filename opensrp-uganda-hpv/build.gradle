@@ -62,6 +62,9 @@ android {
 
         debug {
             testCoverageEnabled true
+            buildConfigField "int", "OPENMRS_UNIQUE_ID_INITIAL_BATCH_SIZE", '250'
+            buildConfigField "int", "OPENMRS_UNIQUE_ID_BATCH_SIZE", '100'
+            buildConfigField "int", "OPENMRS_UNIQUE_ID_SOURCE", '2'
         }
 
     }
@@ -78,7 +81,6 @@ android {
         exclude 'META-INF/LGPL2.1'
         exclude 'LICENSE.txt'
     }
-
 
     testOptions {
         unitTests.returnDefaultValues = true

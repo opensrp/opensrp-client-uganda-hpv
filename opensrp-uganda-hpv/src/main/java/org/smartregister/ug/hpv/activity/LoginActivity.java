@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.Button;
 
 import org.smartregister.ug.hpv.R;
-import org.smartregister.ug.hpv.activity.HomeRegisterActivity;
+import org.smartregister.ug.hpv.application.HpvApplication;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -21,6 +21,15 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 goToHome();
+            }
+        });
+
+
+        Button login = (Button) findViewById(R.id.omrs_ids_button);
+        login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               HpvApplication.getInstance().startPullUniqueIdsService();
             }
         });
 

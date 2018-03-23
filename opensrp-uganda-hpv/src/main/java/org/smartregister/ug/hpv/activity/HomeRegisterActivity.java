@@ -2,9 +2,12 @@ package org.smartregister.ug.hpv.activity;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.MenuItem;
 
 import org.smartregister.ug.hpv.fragment.HomeRegisterFragment;
+import org.smartregister.ug.hpv.util.JsonFormUtils;
+import org.smartregister.ug.hpv.view.LocationPickerView;
 
 import java.util.Arrays;
 import java.util.List;
@@ -44,4 +47,6 @@ public class HomeRegisterActivity extends BaseRegisterActivity {
     public List<String> getViewIdentifiers() {
         return Arrays.asList(HOME_REGISTER);
     }
+
+
 }

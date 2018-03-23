@@ -22,6 +22,7 @@
     <string name="dismiss">Cancel</string>
     <string name="dose_d">DOSE (D)</string>
     <string name="id">ID</string>
+    <string name="service_location">Service Location</string>
 
 
 </resources>

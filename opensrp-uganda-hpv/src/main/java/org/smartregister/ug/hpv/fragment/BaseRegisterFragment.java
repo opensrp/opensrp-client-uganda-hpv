@@ -11,8 +11,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.json.JSONException;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.configurableviews.ConfigurableViewsLibrary;
 import org.smartregister.configurableviews.helper.ConfigurableViewsHelper;
@@ -25,11 +27,16 @@ import org.smartregister.cursoradapter.SecuredNativeSmartRegisterCursorAdapterFr
 import org.smartregister.cursoradapter.SmartRegisterPaginatedCursorAdapter;
 import org.smartregister.cursoradapter.SmartRegisterQueryBuilder;
 import org.smartregister.provider.SmartRegisterClientsProvider;
+import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.activity.BaseRegisterActivity;
+import org.smartregister.ug.hpv.activity.HomeRegisterActivity;
 import org.smartregister.ug.hpv.provider.PatientRegisterProvider;
 import org.smartregister.ug.hpv.servicemode.HpvServiceModeOption;
+import org.smartregister.ug.hpv.util.Constants;
 import org.smartregister.ug.hpv.util.DBConstants;
+import org.smartregister.ug.hpv.util.JsonFormUtils;
+import org.smartregister.ug.hpv.view.LocationPickerView;
 import org.smartregister.view.activity.SecuredNativeSmartRegisterActivity;
 import org.smartregister.view.dialog.DialogOption;
 import org.smartregister.view.dialog.FilterOption;
@@ -59,6 +66,9 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
     protected RegisterActionHandler registerActionHandler = new RegisterActionHandler();
 
     private String viewConfigurationIdentifier;
+    private ClientActionHandler clientActionHandler = new ClientActionHandler();
+
+    private LocationPickerView clinicSelection;
 
     @Override
     protected SecuredNativeSmartRegisterActivity.DefaultOptionsProvider getDefaultOptionsProvider() {
@@ -69,7 +79,7 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
             public ServiceModeOption serviceMode() {
                 return new HpvServiceModeOption(null, "Linda Clinic", new int[]{
                         R.string.name, R.string.opensrp_id, R.string.dose_d
-                }, new int[]{5, 3, 2});
+                }, new int[]{4, 3, 2});
             }
 
             @Override
@@ -123,11 +133,19 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.register_activity, container, false);
+
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.register_toolbar);
         AppCompatActivity activity = ((AppCompatActivity) getActivity());
+
         activity.setSupportActionBar(toolbar);
         activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         activity.getSupportActionBar().setTitle(activity.getIntent().getStringExtra(TOOLBAR_TITLE));
+        activity.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+
+        activity.getSupportActionBar().setLogo(R.drawable.round_white_background);
+        activity.getSupportActionBar().setDisplayUseLogoEnabled(false);
+        activity.getSupportActionBar().setDisplayShowTitleEnabled(false);
+
         viewConfigurationIdentifier = ((BaseRegisterActivity) getActivity()).getViewIdentifiers().get(0);
         setupViews(view);
         return view;
@@ -170,6 +188,28 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
         initializeQueries();
         updateSearchView();
         populateClientListHeaderView(view);
+        setServiceModeViewDrawableRight(null);
+
+        View qrCode = view.findViewById(R.id.scan_qr_code);
+        qrCode.setOnClickListener(clientActionHandler);
+
+        TextView nameInitials = (TextView) view.findViewById(R.id.name_inits);
+
+        AllSharedPreferences allSharedPreferences = context().allSharedPreferences();
+        String preferredName = allSharedPreferences.getANMPreferredName(allSharedPreferences.fetchRegisteredANM());
+        if (!preferredName.isEmpty()) {
+            String[] preferredNameArray = preferredName.split(" ");
+            String initials = "";
+            if (preferredNameArray.length > 1) {
+                initials = String.valueOf(preferredNameArray[0].charAt(0)) + String.valueOf(preferredNameArray[1].charAt(0));
+            } else if (preferredNameArray.length == 1) {
+                initials = String.valueOf(preferredNameArray[0].charAt(0));
+            }
+            nameInitials.setText(initials);
+        }
+
+        clinicSelection = (LocationPickerView) view.findViewById(R.id.clinic_selection);
+        clinicSelection.init(context());
     }
 
     @Override
@@ -181,6 +221,7 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
         }
         updateSearchView();
         processViewConfigurations();
+        updateLocationText();
     }
 
     protected void initializeQueries() {
@@ -279,7 +320,8 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
     }
 
     @Override
-    protected void startRegistration() {//Implement Abstract Method
+    protected void startRegistration() {
+        ((HomeRegisterActivity) getActivity()).startFormActivity("child_enrollment", null, null);
     }
 
     @Override
@@ -309,6 +351,51 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
         }
     }
 
+    private class ClientActionHandler implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
+            CommonPersonObjectClient client = null;
+            if (view.getTag() != null && view.getTag() instanceof CommonPersonObjectClient) {
+                client = (CommonPersonObjectClient) view.getTag();
+            }
+
+            switch (view.getId()) {
+                case R.id.child_profile_info_layout:
+
+                    // ChildImmunizationActivity.launchActivity(getActivity(), client, null);
+                    break;
+
+                case R.id.global_search:
+                    // ((ChildSmartRegisterActivity) getActivity()).startAdvancedSearch();
+                    break;
+
+                case R.id.scan_qr_code:
+                    ((HomeRegisterActivity) getActivity()).startQrCodeScanner();
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+
+    protected void updateLocationText() {
+        if (clinicSelection != null) {
+            clinicSelection.setText(JsonFormUtils.getOpenMrsReadableName(
+                    clinicSelection.getSelectedItem()));
+            try {
+
+                String locationId = JsonFormUtils.getOpenMrsLocationId(context(), clinicSelection.getSelectedItem());
+                context().allSharedPreferences().savePreference(Constants.CURRENT_LOCATION_ID, locationId);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public LocationPickerView getClinicSelection() {
+        return clinicSelection;
+    }
 }
 
 

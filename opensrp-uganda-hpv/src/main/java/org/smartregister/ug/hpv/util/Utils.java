@@ -7,6 +7,7 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.widget.Toast;
 
 import org.apache.commons.lang3.StringUtils;
@@ -108,6 +109,12 @@ public class Utils {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public static int convertDpToPx(Context context, int dp) {
+        Resources r = context.getResources();
+        float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics());
+        return Math.round(px);
     }
 
 }

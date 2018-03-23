@@ -7,6 +7,9 @@ import org.smartregister.ug.hpv.BuildConfig;
  */
 
 public class Constants {
+    public static final int OPENMRS_UNIQUE_ID_INITIAL_BATCH_SIZE = BuildConfig.OPENMRS_UNIQUE_ID_INITIAL_BATCH_SIZE;
+    public static final int OPENMRS_UNIQUE_ID_BATCH_SIZE = BuildConfig.OPENMRS_UNIQUE_ID_BATCH_SIZE;
+    public static final int OPENMRS_UNIQUE_ID_SOURCE = BuildConfig.OPENMRS_UNIQUE_ID_SOURCE;
 
     public static final long MAX_SERVER_TIME_DIFFERENCE = BuildConfig.MAX_SERVER_TIME_DIFFERENCE;
     public static final boolean TIME_CHECK = BuildConfig.TIME_CHECK;
@@ -16,6 +19,7 @@ public class Constants {
 
     public static final String PATIENT_TABLE_NAME = "ec_patient";
     public static final String CONTACT_TABLE_NAME = "ec_contact";
+    public static final String CURRENT_LOCATION_ID = "CURRENT_LOCATION_ID";
 
     public static final class REGISTER_COLUMNS {
         public static final String ID = "id";

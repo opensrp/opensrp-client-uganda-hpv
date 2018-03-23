@@ -3,11 +3,11 @@
     android:shape="rectangle">
     <stroke
         android:width="0.5dp"
-        android:color="@color/scan_qr_code_bg_stk_grey" />
+        android:color="#434343" />
     <corners android:radius="5dp" />
 
     <gradient
         android:angle="0"
-        android:endColor="@color/scan_qr_code_bg_end_grey"
-        android:startColor="@color/scan_qr_code_bg_st_grey"/>
+        android:endColor="#616161"
+        android:startColor="#616161"/>
 </shape>

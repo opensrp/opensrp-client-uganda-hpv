@@ -2,16 +2,14 @@ package org.smartregister.ug.hpv.activity;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,10 +26,15 @@ import org.smartregister.provider.SmartRegisterClientsProvider;
 import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.adapter.HPVRegisterActivityPagerAdapter;
 import org.smartregister.ug.hpv.application.HpvApplication;
+import org.smartregister.ug.hpv.barcode.Barcode;
+import org.smartregister.ug.hpv.barcode.BarcodeIntentIntegrator;
 import org.smartregister.ug.hpv.event.ShowProgressDialogEvent;
 import org.smartregister.ug.hpv.event.SyncEvent;
 import org.smartregister.ug.hpv.fragment.BaseRegisterFragment;
+import org.smartregister.ug.hpv.fragment.HomeRegisterFragment;
+import org.smartregister.ug.hpv.util.JsonFormUtils;
 import org.smartregister.ug.hpv.util.Utils;
+import org.smartregister.ug.hpv.view.LocationPickerView;
 import org.smartregister.view.activity.SecuredNativeSmartRegisterActivity;
 import org.smartregister.view.viewpager.OpenSRPViewPager;
 
@@ -63,6 +66,9 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
     private int currentPage;
     public static final int ADVANCED_SEARCH_POSITION = 1;
 
+
+    private android.support.v4.app.Fragment mBaseFragment = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,8 +76,10 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
         ButterKnife.bind(this);
         Fragment[] otherFragments = {};
 
+        mBaseFragment = getRegisterFragment();
+
         // Instantiate a ViewPager and a PagerAdapter.
-        mPagerAdapter = new HPVRegisterActivityPagerAdapter(getSupportFragmentManager(), getRegisterFragment(), otherFragments);
+        mPagerAdapter = new HPVRegisterActivityPagerAdapter(getSupportFragmentManager(), mBaseFragment, otherFragments);
         mPager.setOffscreenPageLimit(otherFragments.length);
         mPager.setAdapter(mPagerAdapter);
         mPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
@@ -80,6 +88,7 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
                 currentPage = position;
             }
         });
+
     }
 
     protected abstract Fragment getRegisterFragment();
@@ -187,7 +196,7 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
 
     public void refreshList(final FetchStatus fetchStatus) {
         if (Looper.myLooper() == Looper.getMainLooper()) {
-            BaseRegisterFragment registerFragment = (BaseRegisterFragment) getRegisterFragment();
+            BaseRegisterFragment registerFragment = (BaseRegisterFragment) findFragmentByPosition(0);
             if (registerFragment != null && fetchStatus.equals(FetchStatus.fetched)) {
                 registerFragment.refreshListView();
             }
@@ -196,7 +205,7 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
             handler.post(new Runnable() {
                 @Override
                 public void run() {
-                    BaseRegisterFragment registerFragment = (BaseRegisterFragment) getRegisterFragment();
+                    BaseRegisterFragment registerFragment = (BaseRegisterFragment) findFragmentByPosition(0);
                     if (registerFragment != null && fetchStatus.equals(FetchStatus.fetched)) {
                         registerFragment.refreshListView();
                     }
@@ -234,6 +243,12 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
     }
 
 
+    public android.support.v4.app.Fragment findFragmentByPosition(int position) {
+        FragmentPagerAdapter fragmentPagerAdapter = mPagerAdapter;
+        return getSupportFragmentManager().findFragmentByTag("android:switcher:" + mPager.getId() + ":" + fragmentPagerAdapter.getItemId(position));
+    }
+
+
     @Override
     protected void onStop() {
         super.onStop();
@@ -243,4 +258,24 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
     public abstract List<String> getViewIdentifiers();
 
 
+    public void startQrCodeScanner() {
+        BarcodeIntentIntegrator integ = new BarcodeIntentIntegrator(this);
+        integ.addExtra(Barcode.SCAN_MODE, Barcode.QR_MODE);
+        integ.initiateScan();
+    }
+
+    @Override
+    public void startFormActivity(String formName, String entityId, String metaData) {
+        try {
+            if (mBaseFragment instanceof HomeRegisterFragment) {
+                LocationPickerView locationPickerView = ((HomeRegisterFragment) mBaseFragment).getLocationPickerView();
+                String locationId = JsonFormUtils.getOpenMrsLocationId(context(), locationPickerView.getSelectedItem());
+                JsonFormUtils.startForm(this, context(), REQUEST_CODE_GET_JSON, formName, entityId,
+                        metaData, locationId);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        }
+
+    }
 }
