@@ -14,14 +14,24 @@ import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.text.method.HideReturnsTransformationMethod;
+import android.text.method.PasswordTransformationMethod;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewConfiguration;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import org.smartregister.domain.jsonmapping.LoginResponseData;
@@ -35,6 +45,8 @@ import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.sync.DrishtiSyncScheduler;
 import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.application.HpvApplication;
+import org.smartregister.util.Utils;
+
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
 import java.io.IOException;
@@ -51,13 +63,17 @@ import static org.smartregister.domain.LoginResponse.NO_INTERNET_CONNECTIVITY;
 import static org.smartregister.domain.LoginResponse.UNAUTHORIZED;
 import static org.smartregister.domain.LoginResponse.UNKNOWN_RESPONSE;
 import static org.smartregister.util.Log.logError;
+import static util.UgandaHpvConstants.CONFIGURATION.LOGIN;
+import static util.UgandaHpvConstants.VIEW_CONFIGURATION_PREFIX;
 
 public class LoginActivity extends AppCompatActivity {
     private EditText userNameEditText;
     private EditText passwordEditText;
+    private CheckBox showPasswordCheckBox;
     private ProgressDialog progressDialog;
     private RemoteLoginTask remoteLoginTask;
     private android.content.Context appContext;
+    private static final String TAG = LoginActivity.class.getName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,9 +84,11 @@ public class LoginActivity extends AppCompatActivity {
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(android.R.color.black)));
 
         appContext = this;
+        positionViews();
         initializeLoginFields();
         initializeBuildDetails();
         setDoneActionHandlerOnPasswordField();
+        setListenerOnShowPasswordCheckbox();
         initializeProgressDialog();
         setLanguage();
     }
@@ -110,9 +128,23 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    private void setListenerOnShowPasswordCheckbox() {
+        showPasswordCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    passwordEditText.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                } else {
+                    passwordEditText.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                }
+            }
+        });
+    }
+
     private void initializeLoginFields() {
         userNameEditText = (EditText) findViewById(R.id.login_user_name_edit_text);
         passwordEditText = (EditText) findViewById(R.id.login_password_edit_text);
+        showPasswordCheckBox = (CheckBox) findViewById(R.id.login_show_password_checkbox);
     }
 
     private void initializeProgressDialog() {
@@ -250,7 +282,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void goToHome(boolean remote) {
         if (remote) {
-            // TODO: maybe add this:  Utils.startAsyncTask(new SaveTeamLocationsTask(), null);
+          //  Utils.startAsyncTask(new SaveTeamLocationsTask(), null); // TODO: remove this
         }
         HpvApplication.setCrashlyticsUser(getOpenSRPContext());
         Intent intent = new Intent(this, HomeActivity.class);
@@ -258,6 +290,16 @@ public class LoginActivity extends AppCompatActivity {
         startActivity(intent);
 
         finish();
+    }
+
+    private void processViewCustomizations() {
+        try {
+            String jsonString = Utils.getPreference(this, VIEW_CONFIGURATION_PREFIX + LOGIN, null);
+            if (jsonString == null) return;
+            // TODO: add remaining lines here
+        } catch (Exception e) {
+            Log.d(TAG, e.getMessage());
+        }
     }
 
     private void showErrorDialog(String message) {
@@ -334,6 +376,33 @@ public class LoginActivity extends AppCompatActivity {
         return HpvApplication.getInstance().getContext();
     }
 
+    private void positionViews() {
+        final ScrollView canvasSV = (ScrollView) findViewById(R.id.canvasSV);
+        final RelativeLayout canvasRL = (RelativeLayout) findViewById(R.id.login_layout);
+        final LinearLayout logoCanvasLL = (LinearLayout) findViewById(R.id.bottom_section);
+        final LinearLayout credentialsCanvasLL = (LinearLayout) findViewById(R.id.middle_section);
+
+        canvasSV.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+
+            @Override
+            public void onGlobalLayout() {
+                canvasSV.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+
+                int windowHeight = canvasSV.getHeight();
+                int topMargin = (windowHeight / 2)
+                        - (credentialsCanvasLL.getHeight() / 2)
+                        - logoCanvasLL.getHeight();
+                topMargin = topMargin / 2;
+
+                RelativeLayout.LayoutParams logoCanvasLP = (RelativeLayout.LayoutParams) logoCanvasLL.getLayoutParams();
+                logoCanvasLP.setMargins(0, topMargin, 0, 0);
+                logoCanvasLL.setLayoutParams(logoCanvasLP);
+
+                canvasRL.setMinimumHeight(windowHeight);
+            }
+        });
+    }
+
 
     /**
      *  ============================ AsyncTasks =====================================
@@ -369,6 +438,15 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
     }
+
+    // TODO: uncomment this
+//    private class SaveTeamLocationsTask extends AsyncTask<Void, Void, Void> {
+//        @Override
+//        protected Void doInBackground(Void... params) {
+//            LocationHelper.getInstance().locationsIdsFromHeirarchy();
+//            return null;
+//        }
+//    }
 }
 
 
