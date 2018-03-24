@@ -1,21 +1,171 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="org.smartregister.ug.hpv.activity.LoginActivity">
 
-    <Button
-        android:id="@+id/register_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Home Register" />
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/canvasSV"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="@dimen/login_bottom_margin"
+        android:background="#298DC3"
+        android:layout_weight="1.0"
+        android:id="@+id/login_layout">
 
-    <Button
-        android:id="@+id/omrs_ids_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Get OpenMRS IDs" />
+        <!-- Bottom section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="vertical"
+            android:paddingTop="150dp"
+            android:id="@+id/bottom_section">
 
-</LinearLayout>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Powered by"
+                android:textColor="#A6ffffff"
+                android:paddingTop="10dp"
+                android:paddingBottom="5dp"
+                android:textAlignment="center" />
+
+            <ImageView
+                android:id="@+id/opensrp_logo_image_view"
+                android:layout_width="@dimen/login_opensrp_logo_width"
+                android:layout_height="@dimen/login_opensrp_logo_height"
+                android:layout_gravity="center_horizontal"
+                android:adjustViewBounds="false"
+                android:cropToPadding="false"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_opensrp_logo" />
+        </LinearLayout>
+
+        <!-- Top section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:id="@+id/top_section"
+            android:layout_alignParentTop="true"
+            android:paddingTop="@dimen/login_logo_top_padding" >
+
+            <ImageView
+                android:id="@+id/login_logo"
+                android:contentDescription="logo"
+                android:src="@drawable/little_girl_hpv_logo"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/login_logo_height"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:layout_alignParentTop="true"
+                android:scaleType="centerInside"/>
+
+            <TextView
+                android:id="@+id/login_build_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/login_text_build_margin"
+                android:textColor="#90c4dc"
+                android:textSize="@dimen/login_build_text_view_textSize"
+                android:typeface="sans"
+                android:layout_marginBottom="5dp"
+                android:gravity="center_horizontal" />
+        </LinearLayout>
+
+        <!-- Middle section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_centerInParent="true"
+            android:paddingTop="35dp"
+            android:paddingLeft="@dimen/login_horizontal_margin"
+            android:paddingRight="@dimen/login_horizontal_margin"
+            android:id="@+id/middle_section" >
+
+            <EditText
+                android:id="@+id/login_user_name_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/login_view_component_height"
+                android:hint="Username"
+                android:ems="10"
+                android:typeface="sans"
+                android:maxLines="1"
+                android:textCursorDrawable="@null"
+                android:background="@drawable/rounded_corner_edit_text"
+                android:paddingLeft="10dp"
+                android:cursorVisible="true"
+                android:textColorHint="#bfbfbf"
+                android:textColor="#666666"
+                android:layout_weight="8"
+                android:textSize="@dimen/login_edit_text_textSize" />
+
+            <EditText
+                android:id="@+id/login_password_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/login_view_component_height"
+                android:hint="Password"
+                android:ems="10"
+                android:background="@drawable/rounded_corner_edit_text"
+                android:paddingLeft="10dp"
+                android:typeface="sans"
+                android:maxLines="1"
+                android:layout_marginTop="15dp"
+                android:textCursorDrawable="@null"
+                android:cursorVisible="true"
+                android:textColorHint="#bfbfbf"
+                android:textColor="#666666"
+                android:layout_gravity="center_horizontal"
+                android:layout_weight="8"
+                android:inputType="textPassword"
+                android:textSize="@dimen/login_edit_text_textSize" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="10dp">
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#fff"
+                    android:layout_centerVertical="true"
+                    android:id="@+id/login_show_password_checkbox"
+                    android:layout_marginLeft="5dp"
+                    android:button="@drawable/white_checkbox_bg_selector"
+                    android:width="20dp"
+                    android:height="20dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/login_show_password_checkbox"
+                    android:layout_centerVertical="true"
+                    android:text="Show Password"
+                    android:textColor="@android:color/white"
+                    android:layout_marginLeft="5dp"
+                    android:textSize="@dimen/login_edit_text_textSize"/>
+            </RelativeLayout>
+
+            <Button
+                android:id="@+id/login_login_btn"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/login_view_component_height"
+                android:text="@string/login_text"
+                android:onClick="login"
+                android:ems="10"
+                android:background="@drawable/login_button"
+                android:shadowColor="#ffffff"
+                android:shadowDx="0"
+                android:shadowDy="1"
+                android:shadowRadius="0.5"
+                android:textColor="#666666"
+                android:textSize="18sp"
+                android:layout_marginTop="20dp"
+                android:layout_weight="8"
+                android:layout_gravity="center_horizontal" />
+        </LinearLayout>
+    </RelativeLayout>
+</ScrollView>
