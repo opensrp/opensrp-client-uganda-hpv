@@ -64,7 +64,7 @@ public class HPVClientProcessorForJava extends ClientProcessorForJava {
                     continue;
                 }
 
-                if (eventType.equals(Constants.EventType.BITRH_REGISTRATION) || eventType.equals(Constants.EventType.UPDATE_BITRH_REGISTRATION)) {
+                if (eventType.equals(Constants.EventType.REGISTRATION) || eventType.equals(Constants.EventType.UPDATE_REGISTRATION)) {
                     if (clientClassification == null) {
                         continue;
                     }
@@ -119,7 +119,7 @@ public class HPVClientProcessorForJava extends ClientProcessorForJava {
 
     @Override
     public String[] getOpenmrsGenIds() {
-        return new String[]{"zeir_id"};
+        return new String[]{"opensrp_id"};
     }
 
     private boolean unSync(List<Event> events) {

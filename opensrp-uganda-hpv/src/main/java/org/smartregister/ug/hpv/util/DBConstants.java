@@ -24,7 +24,7 @@ public class DBConstants {
         public static final String CARETAKER_PHONE = "caretaker_phone";
         public static final String VHT_NAME = "vht_name";
         public static final String VHT_PHONE = "vht_phone";
-        public static final String STEPNAME = "stepname";
+        public static final String STEPNAME = "stepName";
         public static final String TREATMENT_MONTH = "month";
         public static final String SMR_NEXT_VISIT_DATE = "smear_due_date";
         public static final String DATE_REMOVED = "date_removed";
@@ -33,7 +33,7 @@ public class DBConstants {
         public static final String PARENT_ENTITY_ID = "parent_entity_id";
         public static final String RELATIONAL_ID = "relational_id";
         public static final String MOTHER = "_index";
-        public static final String ENTITY_ID = "enitity_id";
+        public static final String ENTITY_ID = "entity_id";
         public static final String VALUE = "value";
         public static final String LOOK_UP = "look_up";
         public static final String NUMBER_PICKER = "number_picker";

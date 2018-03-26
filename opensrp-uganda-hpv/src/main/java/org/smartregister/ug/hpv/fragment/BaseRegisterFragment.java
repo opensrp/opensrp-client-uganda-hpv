@@ -321,7 +321,7 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
 
     @Override
     protected void startRegistration() {
-        ((HomeRegisterActivity) getActivity()).startFormActivity("child_enrollment", null, null);
+        ((HomeRegisterActivity) getActivity()).startFormActivity("patient_registration", null, null);
     }
 
     @Override

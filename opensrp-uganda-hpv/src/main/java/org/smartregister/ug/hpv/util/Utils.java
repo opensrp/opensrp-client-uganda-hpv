@@ -17,6 +17,7 @@ import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.ug.hpv.application.HpvApplication;
 import org.smartregister.ug.hpv.event.BaseEvent;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
@@ -116,5 +117,11 @@ public class Utils {
         float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics());
         return Math.round(px);
     }
-
+    public static void putAll(Map<String, String> map, Map<String, String> extend) {
+        Collection<String> values = extend.values();
+        while (true) {
+            if (!(values.remove(null))) break;
+        }
+        map.putAll(extend);
+    }
 }

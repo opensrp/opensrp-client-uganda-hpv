@@ -49,7 +49,7 @@
           "column_name": "school",
           "type": "Client",
           "json_mapping": {
-            "field": "school"
+            "field": "addresses.addressFields.address5"
           }
         },
         {
@@ -113,13 +113,6 @@
           "type": "Client",
           "json_mapping": {
             "field": "attributes.dateRemoved"
-          }
-        },
-        {
-          "column_name": "address2",
-          "type": "Client",
-          "json_mapping": {
-            "field": "addresses.addressFields.address2"
           }
         }
       ]
