@@ -36,14 +36,25 @@ public class Constants {
 
 
     }
-  public static final class EventType {
 
-        public static final String AEFI = "AEFI";
-        public static final String BITRH_REGISTRATION = "Birth Registration";
-        public static final String UPDATE_BITRH_REGISTRATION = "Update Birth Registration";
-        public static final String NEW_WOMAN_REGISTRATION = "New Woman Registration";
-        public static final String DEATH = "Death";
-        public static final String OUT_OF_CATCHMENT_SERVICE = "Out of Catchment Service";
-        public static final String VACCINATION = "Vaccination";
+    public static final class EventType {
+
+        public static final String REGISTRATION = "Registration";
+        public static final String UPDATE_REGISTRATION = "Update Registration";
+        public static final String Remove = "Remove";
+    }
+
+    public static final class KEY {
+        public static final String KEY = "key";
+        public static final String VALUE = "value";
+        public static final String NAME = "name";
+        public static final String LEVEL = "level";
+        public static final String NODE = "node";
+        public static final String NODES = "nodes";
+        public static final String CHILDREN = "children";
+        public static final String LOCATIONID = "locationId";
+        public static final String TREE = "tree";
+        public static final String DEFAULT = "default";
+        public static final String TAGS = "tags";
     }
 }

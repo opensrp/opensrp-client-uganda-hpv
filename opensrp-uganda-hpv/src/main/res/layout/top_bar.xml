@@ -58,7 +58,7 @@
         android:background="@android:color/transparent"
         android:orientation="horizontal"
         android:paddingLeft="2.5dp"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <ImageView
             android:id="@+id/imageView2"

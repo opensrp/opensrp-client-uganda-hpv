@@ -224,9 +224,7 @@ public class LoginActivity extends AppCompatActivity {
                             );
                             if (!UgandaHpvConstants.TIME_CHECK || timeStatus.equals(TimeStatus.OK)) {
                                 remoteLoginWith(userName, password, loginResponse.payload());
-                                // TODO: uncomment this code
-                                // Intent intent = new Intent(appContext, PullUniqueIdsIntentService.class);
-                                // appContext.startService(intent);
+                                HpvApplication.getInstance().startPullUniqueIdsService();
                             } else {
                                 if (timeStatus.equals(TimeStatus.TIMEZONE_MISMATCH)) {
                                     TimeZone serverTimeZone = getOpenSRPContext().userService()

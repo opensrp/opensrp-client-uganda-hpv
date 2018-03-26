@@ -2,9 +2,12 @@ package org.smartregister.ug.hpv.activity;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -20,9 +23,13 @@ import android.widget.TextView;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.json.JSONObject;
+import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.configurableviews.ConfigurableViewsLibrary;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.provider.SmartRegisterClientsProvider;
+import org.smartregister.repository.AllSharedPreferences;
+import org.smartregister.repository.DetailsRepository;
 import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.adapter.HPVRegisterActivityPagerAdapter;
 import org.smartregister.ug.hpv.application.HpvApplication;
@@ -32,12 +39,15 @@ import org.smartregister.ug.hpv.event.ShowProgressDialogEvent;
 import org.smartregister.ug.hpv.event.SyncEvent;
 import org.smartregister.ug.hpv.fragment.BaseRegisterFragment;
 import org.smartregister.ug.hpv.fragment.HomeRegisterFragment;
+import org.smartregister.ug.hpv.util.Constants;
 import org.smartregister.ug.hpv.util.JsonFormUtils;
 import org.smartregister.ug.hpv.util.Utils;
 import org.smartregister.ug.hpv.view.LocationPickerView;
 import org.smartregister.view.activity.SecuredNativeSmartRegisterActivity;
 import org.smartregister.view.viewpager.OpenSRPViewPager;
 
+import java.io.File;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -57,6 +67,7 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
 
     private ProgressDialog progressDialog;
     private final int MINIUM_LANG_COUNT = 2;
+    private static final String CHILD = "child";
 
 
     @Bind(R.id.view_pager)
@@ -65,18 +76,45 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
     private static final int REQUEST_CODE_GET_JSON = 3432;
     private int currentPage;
     public static final int ADVANCED_SEARCH_POSITION = 1;
+    public static final String EXTRA_CHILD_DETAILS = "child_details";
+    private CommonPersonObjectClient childDetails;
 
+    private String location_name = "";
 
     private android.support.v4.app.Fragment mBaseFragment = null;
+    ////////////////////////////////////////////////
+    public DetailsRepository detailsRepository;
+    private Map<String, String> details;
+    private static final int REQUEST_TAKE_PHOTO = 1;
+    private File currentfile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base_register);
         ButterKnife.bind(this);
+
+        Bundle extras = this.getIntent().getExtras();
+        if (extras != null) {
+            Serializable serializable = extras.getSerializable(EXTRA_CHILD_DETAILS);
+            if (serializable != null && serializable instanceof CommonPersonObjectClient) {
+                childDetails = (CommonPersonObjectClient) serializable;
+            }
+        }
+
+
+        location_name = extras.getString("location_name");
+        detailsRepository = detailsRepository == null ? HpvApplication.getInstance().getContext().detailsRepository() : detailsRepository;
+        if (childDetails != null) {
+            details = detailsRepository.getAllDetailsForClient(childDetails.entityId());
+            Utils.putAll(details, childDetails.getColumnmaps());
+        }
+
+
         Fragment[] otherFragments = {};
 
         mBaseFragment = getRegisterFragment();
+        mBaseFragment.setArguments(this.getIntent().getExtras());
 
         // Instantiate a ViewPager and a PagerAdapter.
         mPagerAdapter = new HPVRegisterActivityPagerAdapter(getSupportFragmentManager(), mBaseFragment, otherFragments);
@@ -110,6 +148,7 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
 
         if (id == R.id.action_language) {
             this.showLanguageDialog();
+            HpvApplication.getInstance().startPullUniqueIdsService();
             return true;
         } else if (id == R.id.action_logout) {
             logOutUser();
@@ -278,4 +317,37 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
         }
 
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_CODE_GET_JSON && resultCode == RESULT_OK) {
+            try {
+                String jsonString = data.getStringExtra("json");
+                Log.d("JSONResult", jsonString);
+
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+                AllSharedPreferences allSharedPreferences = new AllSharedPreferences(preferences);
+
+                JSONObject form = new JSONObject(jsonString);
+                if (form.getString(JsonFormUtils.ENCOUNTER_TYPE).equals(Constants.EventType.Remove)) {
+
+                } else if (form.getString(JsonFormUtils.ENCOUNTER_TYPE).equals(Constants.EventType.REGISTRATION)) {
+                    JsonFormUtils.editsave(this, HpvApplication.getInstance().getContext(), jsonString, allSharedPreferences.fetchRegisteredANM(), "photo", CHILD);
+                }
+                //childDataFragment.childDetails = childDetails;
+                //childDataFragment.loadData();
+            } catch (Exception e) {
+                Log.e(TAG, Log.getStackTraceString(e));
+            }
+
+        } else if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
+            String imageLocation = currentfile.getAbsolutePath();
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+            AllSharedPreferences allSharedPreferences = new AllSharedPreferences(preferences);
+
+            JsonFormUtils.saveImage(this, allSharedPreferences.fetchRegisteredANM(), childDetails.entityId(), imageLocation);
+            //updateProfilePicture(gender);
+        }
+    }
+
 }
