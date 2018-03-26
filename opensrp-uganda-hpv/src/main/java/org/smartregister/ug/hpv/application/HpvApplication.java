@@ -1,5 +1,6 @@
 package org.smartregister.ug.hpv.application;
 
+<<<<<<< HEAD
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -55,12 +56,31 @@ public class HpvApplication extends DrishtiApplication {
     private static final String TAG = HpvApplication.class.getCanonicalName();
     private String password;
 
+=======
+import android.content.Intent;
+
+import com.crashlytics.android.Crashlytics;
+
+import org.smartregister.Context;
+import org.smartregister.CoreLibrary;
+import org.smartregister.commonregistry.CommonFtsObject;
+import org.smartregister.ug.hpv.BuildConfig;
+import org.smartregister.view.activity.DrishtiApplication;
+import org.smartregister.view.activity.LoginActivity;
+
+/**
+ * Created by vkaruri on 19/03/2018.
+ */
+
+public class HpvApplication extends DrishtiApplication {
+>>>>>>> master
     @Override
     public void onCreate() {
         super.onCreate();
 
         mInstance = this;
         context = Context.getInstance();
+<<<<<<< HEAD
 
         context.updateApplicationContext(getApplicationContext());
         context.updateCommonFtsObject(createCommonFtsObject());
@@ -109,28 +129,47 @@ public class HpvApplication extends DrishtiApplication {
             password = getContext().userService().getGroupId(username);
         }
         return password;
+=======
+        context.updateApplicationContext(getApplicationContext());
+
+        //Initialize Modules
+        CoreLibrary.init(getContext());
+>>>>>>> master
     }
 
     @Override
     public void logoutCurrentUser() {
+<<<<<<< HEAD
 
        /* Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+=======
+        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+>>>>>>> master
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addCategory(Intent.CATEGORY_HOME);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         getApplicationContext().startActivity(intent);
+<<<<<<< HEAD
         context.userService().logoutSession(); */
     }
 
     public static JsonSpecHelper getJsonSpecHelper() {
         return getInstance().jsonSpecHelper;
+=======
+        context.userService().logoutSession();
+    }
+
+    public static synchronized HpvApplication getInstance() {
+        return (HpvApplication) mInstance;
+>>>>>>> master
     }
 
     public Context getContext() {
         return context;
     }
 
+<<<<<<< HEAD
     protected void cleanUpSyncState() {
         DrishtiSyncScheduler.stop(getApplicationContext());
         context.allSharedPreferences().saveIsSyncInProgress(false);
@@ -264,5 +303,18 @@ public class HpvApplication extends DrishtiApplication {
     public void startPullUniqueIdsService(){
         Intent intent = new Intent(getApplicationContext(), PullUniqueIdsIntentService.class);
         getApplicationContext().startService(intent);
+=======
+    /**
+     * This method sets the Crashlytics user to whichever username was used to log in last. It only
+     * does so if the app is not built for debugging
+     *
+     * @param context The user's context
+     */
+    public static void setCrashlyticsUser(Context context) {
+        if (!BuildConfig.DEBUG && context != null && context.userService() != null
+                && context.userService().getAllSharedPreferences() != null) {
+            Crashlytics.setUserName(context.userService().getAllSharedPreferences().fetchRegisteredANM());
+        }
+>>>>>>> master
     }
 }
