@@ -67,7 +67,6 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
 
     private ProgressDialog progressDialog;
     private final int MINIUM_LANG_COUNT = 2;
-    private static final String CHILD = "child";
 
 
     @Bind(R.id.view_pager)
@@ -332,10 +331,10 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
                 if (form.getString(JsonFormUtils.ENCOUNTER_TYPE).equals(Constants.EventType.Remove)) {
 
                 } else if (form.getString(JsonFormUtils.ENCOUNTER_TYPE).equals(Constants.EventType.REGISTRATION)) {
-                    JsonFormUtils.editsave(this, HpvApplication.getInstance().getContext(), jsonString, allSharedPreferences.fetchRegisteredANM(), "photo", CHILD);
+                    //JsonFormUtils.editsave(this, HpvApplication.getInstance().getContext(), jsonString, allSharedPreferences.fetchRegisteredANM(), "photo", CHILD);
+
+                    JsonFormUtils.saveForm(this, HpvApplication.getInstance().getContext(), jsonString, allSharedPreferences.fetchRegisteredANM());
                 }
-                //childDataFragment.childDetails = childDetails;
-                //childDataFragment.loadData();
             } catch (Exception e) {
                 Log.e(TAG, Log.getStackTraceString(e));
             }

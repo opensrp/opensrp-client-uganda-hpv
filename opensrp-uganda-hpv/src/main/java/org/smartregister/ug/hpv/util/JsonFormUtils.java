@@ -88,7 +88,7 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
         try {
             JSONObject form = new JSONObject(jsonString);
             if (form.getString(ENCOUNTER_TYPE).equals(Constants.EventType.REGISTRATION)) {
-                saveRegistration(context, openSrpContext, jsonString, providerId, "photo", "child");
+                saveRegistration(context, openSrpContext, jsonString, providerId, "photo", "patient");
             }
         } catch (JSONException e) {
             Log.e(TAG, Log.getStackTraceString(e));
@@ -600,36 +600,17 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
             JSONArray questions = form.getJSONObject("step1").getJSONArray("fields");
             ArrayList<String> allLevels = new ArrayList<>();
             allLevels.add("Country");
-            allLevels.add("Province");
             allLevels.add("District");
+            allLevels.add("County");
+            allLevels.add("Sub-county");
             allLevels.add("Health Facility");
-            allLevels.add("Zone");
-            allLevels.add("Residential Area");
-
-            ArrayList<String> healthFacilities = new ArrayList<>();
-            healthFacilities.add("Country");
-            healthFacilities.add("Province");
-            healthFacilities.add("District");
-            healthFacilities.add("Health Facility");
+            allLevels.add("School");
 
             JSONArray defaultLocation = generateDefaultLocationHierarchy(context, allLevels);
-            JSONArray defaultFacility = generateDefaultLocationHierarchy(context, healthFacilities);
-            JSONArray upToFacilities = generateLocationHierarchyTree(context, false, healthFacilities);
-            JSONArray upToFacilitiesWithOther = generateLocationHierarchyTree(context, true, healthFacilities);
             JSONArray entireTree = generateLocationHierarchyTree(context, true, allLevels);
 
             for (int i = 0; i < questions.length(); i++) {
-                if (questions.getJSONObject(i).getString(Constants.KEY.KEY).equals("Home_Facility")) {
-                    questions.getJSONObject(i).put(Constants.KEY.TREE, new JSONArray(upToFacilities.toString()));
-                    if (defaultFacility != null) {
-                        questions.getJSONObject(i).put(Constants.KEY.DEFAULT, defaultFacility.toString());
-                    }
-                } else if (questions.getJSONObject(i).getString(Constants.KEY.KEY).equals("Birth_Facility_Name")) {
-                    questions.getJSONObject(i).put(Constants.KEY.TREE, new JSONArray(upToFacilitiesWithOther.toString()));
-                    if (defaultFacility != null) {
-                        questions.getJSONObject(i).put(Constants.KEY.DEFAULT, defaultFacility.toString());
-                    }
-                } else if (questions.getJSONObject(i).getString(Constants.KEY.KEY).equals("Residential_Area")) {
+                if (questions.getJSONObject(i).getString(Constants.KEY.KEY).equalsIgnoreCase("School")) {
                     questions.getJSONObject(i).put(Constants.KEY.TREE, new JSONArray(entireTree.toString()));
                     if (defaultLocation != null) {
                         questions.getJSONObject(i).put(Constants.KEY.DEFAULT, defaultLocation.toString());
@@ -637,7 +618,7 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
                 }
             }
         } catch (JSONException e) {
-            //Log.e(TAG, Log.getStackTraceString(e));
+            Log.e(TAG, e.getMessage());
         }
     }
 
@@ -1037,9 +1018,9 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
                     ecUpdater.addEvent(baseEvent.getBaseEntityId(), eventJson);
                 }
 
-                String zeirId = baseClient.getIdentifier(DBConstants.KEY.OPENSRP_ID);
+                String opensrpId = baseClient.getIdentifier(DBConstants.KEY.OPENSRP_ID);
                 //mark zeir id as used
-                HpvApplication.getInstance().uniqueIdRepository().close(zeirId);
+                HpvApplication.getInstance().uniqueIdRepository().close(opensrpId);
 
                 String imageLocation = getFieldValue(fields, imageKey);
                 saveImage(context, providerId, entityId, imageLocation);

@@ -46,8 +46,8 @@
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:layout_centerInParent="true"
-            android:visibility="gone"
-            android:indeterminate="true" />
+            android:indeterminate="true"
+            android:visibility="gone" />
     </RelativeLayout>
 
     <LinearLayout
@@ -76,9 +76,9 @@
             android:layout_height="match_parent"
             android:background="@android:color/transparent"
             android:ellipsize="end"
-            android:singleLine="true"
             android:maxWidth="@dimen/title_label_text_max_width"
-            android:text="OPENSRP"/>
+            android:singleLine="true"
+            android:text="OPENSRP" />
 
         <org.smartregister.view.customcontrols.CustomFontTextView
             android:id="@+id/btn_report_month"
@@ -101,7 +101,7 @@
         android:paddingLeft="22dp"
         android:paddingRight="22dp"
         android:src="@drawable/ic_icon_search"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <ImageButton
         android:id="@+id/filter_selection"
@@ -113,7 +113,7 @@
         android:paddingLeft="22dp"
         android:paddingRight="22dp"
         android:src="@drawable/ic_icon_bell"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/filter_count"
@@ -127,20 +127,20 @@
         android:gravity="center"
         android:text="1"
         android:textColor="@color/white"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
 
     <ImageButton
         android:id="@+id/register_client"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@+id/back_btn_layout"
         android:background="@drawable/transparent_gray_background"
         android:gravity="center"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:src="@drawable/ic_action_add"
-        android:layout_alignTop="@+id/back_btn_layout"
-        android:layout_alignParentEnd="true" />
+        android:src="@drawable/ic_action_add" />
 
     <ImageView
         android:layout_width="@dimen/smart_register_nav_bar_separator"
@@ -170,20 +170,29 @@
         android:src="@drawable/separator"
         android:visibility="gone" />
 
+    <ImageView
+        android:id="@+id/location_picker_seperator"
+        android:layout_width="@dimen/smart_register_nav_bar_separator"
+        android:layout_height="fill_parent"
+        android:layout_toRightOf="@+id/back_btn_layout"
+        android:scaleType="fitXY"
+        android:src="@drawable/separator"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"/>
+
     <org.smartregister.ug.hpv.view.LocationPickerView
         android:id="@+id/clinic_selection"
         style="@style/CustomFontTextViewStyle.NavBar.Bold"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
-        android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@id/register_client"
+        android:layout_toRightOf="@id/location_picker_seperator"
         android:background="@drawable/transparent_gray_background"
-        android:gravity="center"
-        android:minWidth="@dimen/loc_picker_text_min_width"
+        android:gravity="left|center_vertical"
         android:maxWidth="@dimen/loc_picker_text_max_width"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp"
-        android:textSize="21sp" />
+        android:minWidth="@dimen/loc_picker_text_min_width"
+        android:paddingLeft="0dp"
+        android:paddingRight="0dp"
+        android:textSize="19sp" />
 
 
     <org.smartregister.view.customcontrols.CustomFontTextView

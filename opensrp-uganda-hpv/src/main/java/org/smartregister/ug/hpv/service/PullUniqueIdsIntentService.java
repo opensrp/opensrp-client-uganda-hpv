@@ -48,8 +48,8 @@ public class PullUniqueIdsIntentService extends IntentService {
             } else {
                 return;
             }
-            JSONObject ids = fetchOpenMRSIds(Constants.OPENMRS_UNIQUE_ID_SOURCE, numberToGenerate);
-
+            //JSONObject ids = fetchOpenMRSIds(Constants.OPENMRS_UNIQUE_ID_SOURCE, numberToGenerate);
+            JSONObject ids = fetchDummyOpenmrsIds();
             if (ids != null && ids.has(IDENTIFIERS)) {
                 parseResponse(ids);
             }

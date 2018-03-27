@@ -49,13 +49,6 @@
     "look_up": {
       "entity_id": "",
       "value": ""
-    },
-    "Sex": {
-      "openmrs_entity_parent": "",
-      "openmrs_entity": "concept",
-      "openmrs_data_type": "person",
-      "openmrs_entity_id": "gender",
-      "value": "female"
     }
   },
   "step1": {
@@ -123,6 +116,14 @@
         }
       },
       {
+        "key": "Sex",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "person",
+        "openmrs_entity_id": "gender",
+        "type": "hidden",
+        "value": "female"
+      },
+      {
         "key": "dob",
         "openmrs_entity_parent": "",
         "openmrs_entity": "person",
@@ -150,7 +151,7 @@
         "hint": "Girl's School *",
         "tree": [],
         "v_required": {
-          "value": false,
+          "value": true,
           "err": "Please enter the girl's school"
         }
       },

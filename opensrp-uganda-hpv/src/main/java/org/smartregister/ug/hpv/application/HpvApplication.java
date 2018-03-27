@@ -22,7 +22,6 @@ import org.smartregister.configurableviews.util.Constants;
 import org.smartregister.repository.EventClientRepository;
 import org.smartregister.repository.Repository;
 import org.smartregister.sync.DrishtiSyncScheduler;
-import org.smartregister.ug.hpv.activity.LoginActivity;
 import org.smartregister.ug.hpv.event.LanguageConfigurationEvent;
 import org.smartregister.ug.hpv.event.TriggerSyncEvent;
 import org.smartregister.ug.hpv.event.ViewConfigurationSyncCompleteEvent;
@@ -109,13 +108,13 @@ public class HpvApplication extends DrishtiApplication {
             String username = getContext().userService().getAllSharedPreferences().fetchRegisteredANM();
             password = getContext().userService().getGroupId(username);
         }
-        return password;
+        return "password1";
     }
 
     @Override
     public void logoutCurrentUser() {
-
-      /* Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+/*
+        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addCategory(Intent.CATEGORY_HOME);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -262,7 +261,7 @@ public class HpvApplication extends DrishtiApplication {
     };
 
 
-    public void startPullUniqueIdsService(){
+    public void startPullUniqueIdsService() {
         Intent intent = new Intent(getApplicationContext(), PullUniqueIdsIntentService.class);
         getApplicationContext().startService(intent);
     }
