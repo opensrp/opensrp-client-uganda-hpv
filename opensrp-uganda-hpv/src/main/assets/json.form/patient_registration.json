@@ -243,6 +243,20 @@
           "value": "(0[0-9]{9})|\s*",
           "err": "Number must begin with 0 and must be a total of 10 digits in length"
         }
+      },
+      {
+        "key": "dose_one_date",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "person_attribute",
+        "openmrs_entity_id": "dose_one_date",
+        "type": "hidden"
+      },
+      {
+        "key": "dose_two_date",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "person_attribute",
+        "openmrs_entity_id": "dose_two_date",
+        "type": "hidden"
       }
     ]
   }

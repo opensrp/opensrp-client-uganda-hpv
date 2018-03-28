@@ -325,7 +325,7 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
                 .withDeathdate(deathdate != null ? deathdate : null, deathdateApprox)
                 .withGender(gender).withDateCreated(new Date());
 
-        c.withAddresses(addresses)
+        c.withRelationships(new HashMap<String, List<String>>()).withAddresses(addresses)
                 .withAttributes(extractAttributes(fields))
                 .withIdentifiers(extractIdentifiers(fields));
         return c;
@@ -982,7 +982,7 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
                 // Replace values for location questions with their corresponding location IDs
                 for (int i = 0; i < fields.length(); i++) {
                     String key = fields.getJSONObject(i).getString(Constants.KEY.KEY);
-                    if ("School".equalsIgnoreCase(key)) {
+                    if (DBConstants.KEY.SCHOOL.equalsIgnoreCase(key)) {
                         try {
                             String rawValue = fields.getJSONObject(i).getString(Constants.KEY.VALUE);
                             JSONArray valueArray = new JSONArray(rawValue);
@@ -991,6 +991,14 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
                                 String lastLocationId = getOpenMrsLocationId(openSrpContext, lastLocationName);
                                 fields.getJSONObject(i).put(Constants.KEY.VALUE, lastLocationId);
                             }
+                        } catch (Exception e) {
+                            Log.e(TAG, Log.getStackTraceString(e));
+                        }
+                    } else if (DBConstants.KEY.DOSE_ONE_DATE.equalsIgnoreCase(key)) {
+                        try {
+
+                            fields.getJSONObject(i).put(DBConstants.KEY.VALUE, Utils.getTodaysDate());
+
                         } catch (Exception e) {
                             Log.e(TAG, Log.getStackTraceString(e));
                         }
@@ -1019,7 +1027,7 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
                 }
 
                 String opensrpId = baseClient.getIdentifier(DBConstants.KEY.OPENSRP_ID);
-                //mark zeir id as used
+                //mark opensro id as used
                 HpvApplication.getInstance().uniqueIdRepository().close(opensrpId);
 
                 String imageLocation = getFieldValue(fields, imageKey);

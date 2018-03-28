@@ -17,6 +17,8 @@ import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.ug.hpv.application.HpvApplication;
 import org.smartregister.ug.hpv.event.BaseEvent;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Locale;
@@ -27,6 +29,9 @@ import java.util.Map;
  */
 
 public class Utils {
+
+    private static final SimpleDateFormat DB_DF = new SimpleDateFormat("yyyy-MM-dd");
+
     public static void showToast(Context context, String message) {
         Toast.makeText(context, message, Toast.LENGTH_LONG).show();
 
@@ -92,6 +97,7 @@ public class Utils {
         editor.putString(key, value);
         editor.commit();
     }
+
     public static Date dobStringToDate(String dobString) {
         DateTime dateTime = dobStringToDateTime(dobString);
         if (dateTime != null) {
@@ -112,11 +118,22 @@ public class Utils {
         }
     }
 
+
+    public static String convertDateFormat(Date date, SimpleDateFormat formatter) {
+
+        return formatter.format(date);
+    }
+
+    public static String getTodaysDate() {
+        return convertDateFormat(Calendar.getInstance().getTime(), DB_DF);
+    }
+
     public static int convertDpToPx(Context context, int dp) {
         Resources r = context.getResources();
         float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics());
         return Math.round(px);
     }
+
     public static void putAll(Map<String, String> map, Map<String, String> extend) {
         Collection<String> values = extend.values();
         while (true) {

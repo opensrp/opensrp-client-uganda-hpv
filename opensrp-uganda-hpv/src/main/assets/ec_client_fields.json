@@ -14,7 +14,7 @@
           "column_name": "opensrp_id",
           "type": "Client",
           "json_mapping": {
-            "field": "identifiers.OPENSRP_ID"
+            "field": "identifiers.OpenSRP_ID"
           }
         },
         {
@@ -53,38 +53,45 @@
           }
         },
         {
+          "column_name": "address",
+          "type": "Client",
+          "json_mapping": {
+            "field": "addresses.addressType"
+          }
+        },
+        {
           "column_name": "class",
           "type": "Client",
           "json_mapping": {
-            "field": "attributes.Class"
+            "field": "attributes.school_class"
           }
         },
         {
           "column_name": "caretaker_name",
           "type": "Client",
           "json_mapping": {
-            "field": "attributes.Caretaker_Name"
+            "field": "attributes.caretaker_name"
           }
         },
         {
           "column_name": "caretaker_phone",
           "type": "Client",
           "json_mapping": {
-            "field": "attributes.Caretaker_Phone_Number"
+            "field": "attributes.caretaker_phone"
           }
         },
         {
           "column_name": "vht_name",
           "type": "Client",
           "json_mapping": {
-            "field": "attributes.VHT_Name"
+            "field": "attributes.vht_name"
           }
         },
         {
           "column_name": "vht_phone",
           "type": "Client",
           "json_mapping": {
-            "field": "attributes.VHT_Phone _Number"
+            "field": "attributes.vht_phone"
           }
         },
         {
@@ -98,14 +105,14 @@
           "column_name": "dose_one_date",
           "type": "Client",
           "json_mapping": {
-            "field": "dateDoseOne"
+            "field": "attributes.dose_one_date"
           }
         },
         {
           "column_name": "dose_two_date",
           "type": "Client",
           "json_mapping": {
-            "field": "dateDoseTwo"
+            "field": "attributes.dose_two_date"
           }
         },
         {

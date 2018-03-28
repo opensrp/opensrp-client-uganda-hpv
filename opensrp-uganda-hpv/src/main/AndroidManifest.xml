@@ -3,16 +3,15 @@
     package="org.smartregister.ug.hpv">
 
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
-
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
 
     <application
@@ -57,10 +56,18 @@
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.vijay.jsonwizard.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/captured_images_path" />
+        </provider>
 
         <service android:name=".service.SyncService" />
         <service android:name=".service.PullUniqueIdsIntentService" />
-
         <receiver android:name=".receiver.HpvSyncBroadcastReceiver" />
 
     </application>
