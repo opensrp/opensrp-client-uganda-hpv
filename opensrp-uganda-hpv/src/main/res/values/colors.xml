@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#358CB7</color>
+    <color name="colorPrimaryDark">#276C91</color>
+    <color name="colorAccent">#358CB7</color>
+    <color name="colorPrimaryBackground">#ddf0fa</color>
 
     <color name="customAppThemeBlue">#218CC5</color>
     <color name="customAppThemeDarkest">#272727</color>
@@ -39,4 +40,9 @@
     <color name="vaccine_na_bg_stk">#D4D4D4</color>
     <color name="vaccine_na_bg_st">#EFEFEF</color>
     <color name="vaccine_na_bg_end">#ECECEC</color>
+
+    <color name="primary">#358CB7</color>
+    <color name="primary_background">#ddf0fa</color>
+    <color name="primary_dark">#276C91</color>
+    <color name="accent">#358CB7</color>
 </resources>

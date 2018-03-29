@@ -54,7 +54,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/identifier_column_"
+        android:id="@+id/extra_column_1"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_marginRight="1dp"
@@ -63,20 +63,10 @@
         android:gravity="center_vertical"
         android:orientation="vertical"
         android:visibility="gone">
-
-        <TextView
-            android:id="@+id/opensrp_id_"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="3dp"
-            android:gravity="center_horizontal"
-            android:textColor="#757575"
-            android:textSize="16sp"
-            android:visibility="gone" />
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/dose_column_"
+        android:id="@+id/extra_column_2"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_marginRight="1dp"
@@ -85,18 +75,6 @@
         android:gravity="center_vertical"
         android:orientation="vertical"
         android:visibility="gone">
-
-        <Button
-            android:id="@+id/dose_button_"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginBottom="3dp"
-            android:text="result"
-            android:textAlignment="center"
-            android:textAllCaps="true"
-            android:textColor="#3269D4"
-            android:textSize="18sp" />
     </LinearLayout>
 
 </merge>

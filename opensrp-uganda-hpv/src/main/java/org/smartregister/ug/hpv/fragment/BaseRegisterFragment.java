@@ -31,7 +31,7 @@ import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.activity.BaseRegisterActivity;
 import org.smartregister.ug.hpv.activity.HomeRegisterActivity;
-import org.smartregister.ug.hpv.provider.PatientRegisterProvider;
+import org.smartregister.ug.hpv.provider.HomeRegisterProvider;
 import org.smartregister.ug.hpv.servicemode.HpvServiceModeOption;
 import org.smartregister.ug.hpv.util.Constants;
 import org.smartregister.ug.hpv.util.DBConstants;
@@ -68,7 +68,7 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
     private String viewConfigurationIdentifier;
     private ClientActionHandler clientActionHandler = new ClientActionHandler();
 
-    private LocationPickerView clinicSelection;
+    private LocationPickerView facilitySelection;
 
     @Override
     protected SecuredNativeSmartRegisterActivity.DefaultOptionsProvider getDefaultOptionsProvider() {
@@ -208,8 +208,8 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
             nameInitials.setText(initials);
         }
 
-        clinicSelection = (LocationPickerView) view.findViewById(R.id.clinic_selection);
-        clinicSelection.init(context());
+        facilitySelection = (LocationPickerView) view.findViewById(R.id.facility_selection);
+        facilitySelection.init(context());
     }
 
     @Override
@@ -228,7 +228,7 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
 
         String tableName = DBConstants.PATIENT_TABLE_NAME;
 
-        PatientRegisterProvider hhscp = new PatientRegisterProvider(getActivity(), visibleColumns, registerActionHandler, ConfigurableViewsLibrary.getInstance().getContext().detailsRepository());
+        HomeRegisterProvider hhscp = new HomeRegisterProvider(getActivity(), visibleColumns, registerActionHandler, ConfigurableViewsLibrary.getInstance().getContext().detailsRepository());
         clientAdapter = new SmartRegisterPaginatedCursorAdapter(getActivity(), null, hhscp, context().commonrepository(tableName));
         clientsView.setAdapter(clientAdapter);
 
@@ -253,7 +253,8 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
                 tableName + "." + DBConstants.KEY.SCHOOL,
                 tableName + "." + DBConstants.KEY.DOSE_ONE_DATE,
                 tableName + "." + DBConstants.KEY.DOSE_TWO_DATE,
-                tableName + "." + DBConstants.KEY.GENDER};
+                tableName + "." + DBConstants.KEY.GENDER,
+                tableName + "." + DBConstants.KEY.IS_DOSE_TWO_GIVEN};
         String[] allColumns = ArrayUtils.addAll(columns, getAdditionalColumns(tableName));
         queryBUilder.SelectInitiateMainTable(tableName, allColumns);
         mainSelect = queryBUilder.mainCondition(mainCondition);
@@ -380,12 +381,12 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
 
 
     protected void updateLocationText() {
-        if (clinicSelection != null) {
-            clinicSelection.setText(JsonFormUtils.getOpenMrsReadableName(
-                    clinicSelection.getSelectedItem()));
+        if (facilitySelection != null) {
+            facilitySelection.setText(JsonFormUtils.getOpenMrsReadableName(
+                    facilitySelection.getSelectedItem()));
             try {
 
-                String locationId = JsonFormUtils.getOpenMrsLocationId(context(), clinicSelection.getSelectedItem());
+                String locationId = JsonFormUtils.getOpenMrsLocationId(context(), facilitySelection.getSelectedItem());
                 context().allSharedPreferences().savePreference(Constants.CURRENT_LOCATION_ID, locationId);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -393,8 +394,8 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
         }
     }
 
-    public LocationPickerView getClinicSelection() {
-        return clinicSelection;
+    public LocationPickerView getFacilitySelection() {
+        return facilitySelection;
     }
 }
 

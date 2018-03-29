@@ -32,7 +32,7 @@ public class HomeRegisterFragment extends BaseRegisterFragment {
     }
 
     public LocationPickerView getLocationPickerView() {
-        return getClinicSelection();
+        return getFacilitySelection();
     }
 
 

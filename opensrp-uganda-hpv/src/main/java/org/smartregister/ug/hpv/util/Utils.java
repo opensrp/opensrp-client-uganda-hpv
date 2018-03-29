@@ -7,6 +7,7 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.widget.Toast;
 
@@ -16,6 +17,7 @@ import org.joda.time.DateTime;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.ug.hpv.application.HpvApplication;
 import org.smartregister.ug.hpv.event.BaseEvent;
+import org.smartregister.util.DateUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -30,6 +32,7 @@ import java.util.Map;
 
 public class Utils {
 
+    private static final String TAG = Utils.class.getCanonicalName();
     private static final SimpleDateFormat DB_DF = new SimpleDateFormat("yyyy-MM-dd");
 
     public static void showToast(Context context, String message) {
@@ -118,6 +121,23 @@ public class Utils {
         }
     }
 
+    public static String formatDate(String date) {
+        return StringUtils.isNotEmpty(date) ? new DateTime(date).toString("dd/MM/yy") : date;
+    }
+
+    public static String getDuration(String date) {
+        DateTime duration;
+        if (StringUtils.isNotBlank(date)) {
+            try {
+                duration = new DateTime(date);
+                return DateUtil.getDuration(duration);
+            } catch (Exception e) {
+                Log.e(TAG, e.toString(), e);
+            }
+        }
+        return "";
+    }
+
 
     public static String convertDateFormat(Date date, SimpleDateFormat formatter) {
 
@@ -141,4 +161,5 @@ public class Utils {
         }
         map.putAll(extend);
     }
+
 }

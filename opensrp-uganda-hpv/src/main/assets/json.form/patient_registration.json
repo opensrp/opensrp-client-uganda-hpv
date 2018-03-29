@@ -70,7 +70,7 @@
         "type": "barcode",
         "barcode_type": "qrcode",
         "hint": "OPENSRP ID *",
-        "scanButtonText": "QR",
+        "scanButtonText": "Scan QR Code",
         "value": "0",
         "v_numeric": {
           "value": "true",

@@ -804,7 +804,7 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
      * @param openSrpContext              Current OpenSRP context
      * @param jsonFormActivityRequestCode The request code to be used to launch {@link HpvJsonFormActivity}
      * @param formName                    The name of the form to launch
-     * @param entityId                    The unique entity id for the form (e.g child's ZEIR id)
+     * @param entityId                    The unique entity id for the form (e.g patients's OPENSRP id)
      * @param metaData                    The form's meta data
      * @param currentLocationId           OpenMRS id for the current device's location
      * @throws Exception
@@ -835,7 +835,7 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
 
                 JsonFormUtils.addAdolescentRegLocHierarchyQuestions(form, openSrpContext);
 
-                // Inject zeir id into the form
+                // Inject opensrp id into the form
                 JSONObject stepOne = form.getJSONObject(JsonFormUtils.STEP1);
                 JSONArray jsonArray = stepOne.getJSONArray(JsonFormUtils.FIELDS);
                 for (int i = 0; i < jsonArray.length(); i++) {

@@ -2,14 +2,15 @@ package org.smartregister.ug.hpv.provider;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.joda.time.DateTime;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
@@ -19,8 +20,9 @@ import org.smartregister.configurableviews.model.ViewConfiguration;
 import org.smartregister.cursoradapter.SmartRegisterCLientsProviderForCursorAdapter;
 import org.smartregister.repository.DetailsRepository;
 import org.smartregister.ug.hpv.R;
+import org.smartregister.ug.hpv.domain.DoseStatus;
 import org.smartregister.ug.hpv.util.DBConstants;
-import org.smartregister.util.DateUtil;
+import org.smartregister.ug.hpv.util.Utils;
 import org.smartregister.view.contract.SmartRegisterClient;
 import org.smartregister.view.contract.SmartRegisterClients;
 import org.smartregister.view.dialog.FilterOption;
@@ -42,20 +44,23 @@ import static org.smartregister.util.Utils.getName;
  * Created by ndegwamartin on 14/03/2018.
  */
 
-public class PatientRegisterProvider implements SmartRegisterCLientsProviderForCursorAdapter {
+public class HomeRegisterProvider implements SmartRegisterCLientsProviderForCursorAdapter {
     private final LayoutInflater inflater;
     private Set<org.smartregister.configurableviews.model.View> visibleColumns;
     private View.OnClickListener onClickListener;
+    private Context context;
+    private static final int DOSE_ONE_WINDOW_DAYS = 10;
 
 
-    private static final String TAG = PatientRegisterProvider.class.getCanonicalName();
+    private static final String TAG = HomeRegisterProvider.class.getCanonicalName();
 
 
-    public PatientRegisterProvider(Context context, Set visibleColumns, View.OnClickListener onClickListener, DetailsRepository detailsRepository) {
+    public HomeRegisterProvider(Context context, Set visibleColumns, View.OnClickListener onClickListener, DetailsRepository detailsRepository) {
 
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.visibleColumns = visibleColumns;
         this.onClickListener = onClickListener;
+        this.context = context;
     }
 
     @Override
@@ -99,7 +104,7 @@ public class PatientRegisterProvider implements SmartRegisterCLientsProviderForC
         fillValue((TextView) view.findViewById(R.id.patient_name), WordUtils.capitalize(patientName));
         fillValue((TextView) view.findViewById(R.id.caretaker_name), WordUtils.capitalize(org.smartregister.util.Utils.getValue(pc.getColumnmaps(), DBConstants.KEY.CARETAKER_NAME, false)));
 
-        String dobString = getDuration(org.smartregister.util.Utils.getValue(pc.getColumnmaps(), DBConstants.KEY.DOB, false));
+        String dobString = Utils.getDuration(org.smartregister.util.Utils.getValue(pc.getColumnmaps(), DBConstants.KEY.DOB, false));
         fillValue((TextView) view.findViewById(R.id.age), dobString.contains("y") ? dobString.substring(0, dobString.indexOf("y")) : dobString);
 
         View patient = view.findViewById(R.id.patient_column);
@@ -116,27 +121,79 @@ public class PatientRegisterProvider implements SmartRegisterCLientsProviderForC
     private void populateDoseColumn(CommonPersonObjectClient pc, SmartRegisterClient client, View view) {
 
         Button patient = (Button) view.findViewById(R.id.dose_button);
-        String doseDate = org.smartregister.util.Utils.getValue(pc.getColumnmaps(), DBConstants.KEY.DOSE_ONE_DATE, false) != null ? formatDate(org.smartregister.util.Utils.getValue(pc.getColumnmaps(), DBConstants.KEY.DOSE_ONE_DATE, false)) : "2030-6-7";
-        patient.setText("D1 Due \n" + doseDate);
+
+        DoseStatus doseStatus = getCurrentDoseStatus(pc);
+
+        doseStatus.setDoseOneDate("02-03-2018");
+        doseStatus.setDoseTwoDate("04-04-2018");
+        doseStatus.setDoseageComplete(false);
+
+
+        patient.setText(getDoseButtonText(doseStatus));
+        patient.setBackground(getDoseButtonBackground(doseStatus));
+        patient.setTextColor(doseStatus.isDoseageComplete() ? context.getResources().getColor(R.color.client_list_grey) : patient.getCurrentTextColor());
         attachOnclickListener(patient, client);
     }
 
+    private DoseStatus getCurrentDoseStatus(CommonPersonObjectClient pc) {
 
-    public String formatDate(String date) {
-        return StringUtils.isNotEmpty(date) ? new DateTime(date).toString("dd/MM/yy") : date;
+        DoseStatus doseStatus = new DoseStatus();
+
+        doseStatus.setDoseOneDate(org.smartregister.util.Utils.getValue(pc.getColumnmaps(), DBConstants.KEY.DOSE_ONE_DATE, false) != null ? Utils.formatDate(org.smartregister.util.Utils.getValue(pc.getColumnmaps(), DBConstants.KEY.DOSE_ONE_DATE, false)) : null);
+
+        doseStatus.setDoseTwoDate(org.smartregister.util.Utils.getValue(pc.getColumnmaps(), DBConstants.KEY.DOSE_TWO_DATE, false) != null ? Utils.formatDate(org.smartregister.util.Utils.getValue(pc.getColumnmaps(), DBConstants.KEY.DOSE_TWO_DATE, false)) : null);
+
+        doseStatus.setDoseageComplete(org.smartregister.util.Utils.getValue(pc.getColumnmaps(), DBConstants.KEY.IS_DOSE_TWO_GIVEN, false) != null ? Boolean.valueOf(Utils.formatDate(org.smartregister.util.Utils.getValue(pc.getColumnmaps(), DBConstants.KEY.IS_DOSE_TWO_GIVEN, false))) : false);
+
+        return doseStatus;
     }
 
-    public String getDuration(String date) {
-        DateTime duration;
-        if (StringUtils.isNotBlank(date)) {
-            try {
-                duration = new DateTime(date);
-                return DateUtil.getDuration(duration);
-            } catch (Exception e) {
-                Log.e(TAG, e.toString(), e);
+    private String getDoseButtonText(DoseStatus doseStatus) {
+
+        String doseText;
+
+        if (doseStatus.isDoseageComplete()) {
+            doseText = context.getResources().getString(R.string.complete);
+        } else {
+
+            if (doseStatus.getDoseTwoDate() != null && !doseStatus.getDoseTwoDate().isEmpty()) {
+                doseText = "D2 Due \n" + doseStatus.getDoseTwoDate() + " \n D1: " + doseStatus.getDoseOneDate();
+
+            } else {
+                doseText = "D1 Due \n" + doseStatus.getDoseOneDate();
+
             }
         }
-        return "";
+
+        return doseText;
+    }
+
+    private Drawable getDoseButtonBackground(DoseStatus doseStatus) {
+
+        int backgroundResource;
+
+        if (doseStatus.isDoseageComplete()) {
+            backgroundResource = R.drawable.due_vaccine_na_bg;
+        } else {
+
+            if (doseStatus.getDoseTwoDate() != null) {
+
+                backgroundResource = isDoseExpired(doseStatus.getDoseTwoDate()) ? R.drawable.due_vaccine_blue_bg : R.drawable.due_vaccine_red_bg;
+
+            } else {
+                backgroundResource = isDoseExpired(doseStatus.getDoseOneDate()) ? R.drawable.due_vaccine_blue_bg : R.drawable.due_vaccine_red_bg;
+
+            }
+        }
+
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? context.getDrawable(backgroundResource) : ContextCompat.getDrawable(context, backgroundResource);
+    }
+
+    private boolean isDoseExpired(String date) {
+
+        DateTime doseDate = new DateTime(org.smartregister.util.Utils.toDate(date, true));
+        DateTime expiryDate = doseDate.plusDays(DOSE_ONE_WINDOW_DAYS - 1);
+        return expiryDate.isAfterNow();
     }
 
     private void adjustLayoutParams(View view, TextView details) {

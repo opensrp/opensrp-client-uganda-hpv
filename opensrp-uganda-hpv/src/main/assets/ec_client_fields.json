@@ -121,6 +121,13 @@
           "json_mapping": {
             "field": "attributes.dateRemoved"
           }
+        },
+        {
+          "column_name": "is_dose_two_given",
+          "type": "Client",
+          "json_mapping": {
+            "field": "attributes.isDoseTwoGiven"
+          }
         }
       ]
     }

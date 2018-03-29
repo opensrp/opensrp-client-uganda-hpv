@@ -66,15 +66,16 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
     public static String TOOLBAR_TITLE = "org.smartregister.ug.hpv.activity.toolbarTitle";
 
     private ProgressDialog progressDialog;
+
     private final int MINIUM_LANG_COUNT = 2;
 
 
     @Bind(R.id.view_pager)
     protected OpenSRPViewPager mPager;
     private FragmentPagerAdapter mPagerAdapter;
+    
     private static final int REQUEST_CODE_GET_JSON = 3432;
     private int currentPage;
-    public static final int ADVANCED_SEARCH_POSITION = 1;
     public static final String EXTRA_CHILD_DETAILS = "child_details";
     private CommonPersonObjectClient childDetails;
 

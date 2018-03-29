@@ -64,7 +64,6 @@
             android:id="@+id/imageView2"
             android:layout_width="@dimen/smart_register_nav_bar_separator"
             android:layout_height="fill_parent"
-            android:layout_toLeftOf="@+id/clinic_selection"
             android:layout_weight="1"
             android:scaleType="fitXY"
             android:src="@drawable/separator" />
@@ -181,7 +180,7 @@
         android:layout_marginRight="8dp"/>
 
     <org.smartregister.ug.hpv.view.LocationPickerView
-        android:id="@+id/clinic_selection"
+        android:id="@+id/facility_selection"
         style="@style/CustomFontTextViewStyle.NavBar.Bold"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
@@ -201,7 +200,7 @@
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
         android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@id/clinic_selection"
+        android:layout_toLeftOf="@id/facility_selection"
         android:background="@drawable/transparent_gray_background"
         android:gravity="center"
         android:paddingLeft="15dp"
