@@ -164,11 +164,10 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void login(final View view) {
-        // getOpenSRPContext().allSharedPreferences().saveForceRemoteLogin(false); // TODO: remove this after testing
         login(view, !getOpenSRPContext().allSharedPreferences().fetchForceRemoteLogin());
     }
 
-    public void login(final View view, boolean localLogin) {
+    private void login(final View view, boolean localLogin) {
         android.util.Log.i(getClass().getName(), "Hiding Keyboard " + DateTime.now().toString());
         hideKeyboard();
         view.setClickable(false);
@@ -190,19 +189,16 @@ public class LoginActivity extends AppCompatActivity {
 
     private void localLogin(View view, String userName, String password) {
         view.setClickable(true);
-        localLoginWith(userName, password);
-        // TODO: uncomment this
-//        if (getOpenSRPContext().userService().isUserInValidGroup(userName, password)
-//                && (!UgandaHpvConstants.TIME_CHECK || TimeStatus.OK.equals(getOpenSRPContext().userService().validateStoredServerTimeZone()))) {
-//            localLoginWith(userName, password);
-//        } else {
-//            login(findViewById(R.id.login_login_btn), false);
-//        }
+        if (getOpenSRPContext().userService().isUserInValidGroup(userName, password)
+                && (!UgandaHpvConstants.TIME_CHECK || TimeStatus.OK.equals(getOpenSRPContext().userService().validateStoredServerTimeZone()))) {
+            localLoginWith(userName, password);
+        } else {
+            login(findViewById(R.id.login_login_btn), false);
+        }
     }
 
     private void localLoginWith(String userName, String password) {
-        // TODO: uncomment this
-        // getOpenSRPContext().userService().localLogin(userName, password);
+        getOpenSRPContext().userService().localLogin(userName, password);
         goToHome(false);
         new Thread(new Runnable() {
             @Override
@@ -215,7 +211,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void remoteLogin(final View view, final String userName, final String password) {
-       if (!getOpenSRPContext().allSharedPreferences().fetchBaseURL("").isEmpty()) {
+        if (!getOpenSRPContext().allSharedPreferences().fetchBaseURL("").isEmpty()) {
             tryRemoteLogin(userName, password, new Listener<LoginResponse>(){
                 public void onEvent(LoginResponse loginResponse) {
                     view.setClickable(true);
@@ -260,10 +256,10 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 }
             });
-       } else {
-           view.setClickable(true);
-           showErrorDialog("OpenSRP Base URL is missing. Please add it in Setting and try again");
-       }
+        } else {
+            view.setClickable(true);
+            showErrorDialog("OpenSRP Base URL is missing. Please add it in Setting and try again");
+        }
     }
 
     private void tryRemoteLogin(final String userName, final String password, final Listener<LoginResponse> afterLogincheck) {
@@ -282,7 +278,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void goToHome(boolean remote) {
         if (remote) {
-          //  Utils.startAsyncTask(new SaveTeamLocationsTask(), null); // TODO: remove this
+            //  Utils.startAsyncTask(new SaveTeamLocationsTask(), null); // TODO: remove this
         }
         HpvApplication.setCrashlyticsUser(getOpenSRPContext());
         Intent intent = new Intent(this, HomeActivity.class);
@@ -372,6 +368,7 @@ public class LoginActivity extends AppCompatActivity {
             return UgandaHpvConstants.ENGLISH_LANGUAGE;
         }
     }
+
     public static Context getOpenSRPContext() {
         return HpvApplication.getInstance().getContext();
     }
