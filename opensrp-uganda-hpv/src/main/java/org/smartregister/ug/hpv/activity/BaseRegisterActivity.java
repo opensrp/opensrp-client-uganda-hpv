@@ -63,7 +63,7 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
 
     public static final String TAG = BaseRegisterActivity.class.getCanonicalName();
 
-    public static String TOOLBAR_TITLE = "org.smartregister.ug.hpv.activity.toolbarTitle";
+    public static String TOOLBAR_TITLE = BaseRegisterActivity.class.getPackage() + ".toolbarTitle";
 
     private ProgressDialog progressDialog;
 
@@ -73,7 +73,7 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
     @Bind(R.id.view_pager)
     protected OpenSRPViewPager mPager;
     private FragmentPagerAdapter mPagerAdapter;
-    
+
     private static final int REQUEST_CODE_GET_JSON = 3432;
     private int currentPage;
     public static final String EXTRA_CHILD_DETAILS = "child_details";
@@ -332,7 +332,6 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
                 if (form.getString(JsonFormUtils.ENCOUNTER_TYPE).equals(Constants.EventType.Remove)) {
 
                 } else if (form.getString(JsonFormUtils.ENCOUNTER_TYPE).equals(Constants.EventType.REGISTRATION)) {
-                    //JsonFormUtils.editsave(this, HpvApplication.getInstance().getContext(), jsonString, allSharedPreferences.fetchRegisteredANM(), "photo", CHILD);
 
                     JsonFormUtils.saveForm(this, HpvApplication.getInstance().getContext(), jsonString, allSharedPreferences.fetchRegisteredANM());
                 }

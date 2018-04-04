@@ -109,6 +109,13 @@
           }
         },
         {
+          "column_name": "date_dose_one_given",
+          "type": "Client",
+          "json_mapping": {
+            "field": "attributes.date_dose_one_given"
+          }
+        },
+        {
           "column_name": "dose_two_date",
           "type": "Client",
           "json_mapping": {
@@ -123,10 +130,10 @@
           }
         },
         {
-          "column_name": "is_dose_two_given",
+          "column_name": "date_dose_two_given",
           "type": "Client",
           "json_mapping": {
-            "field": "attributes.isDoseTwoGiven"
+            "field": "attributes.date_dose_two_given"
           }
         }
       ]

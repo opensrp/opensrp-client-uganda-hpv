@@ -13,7 +13,6 @@ public class DBConstants {
         public static final String LAST_NAME = "last_name";
         public static final String DOB = "dob";
         public static final String OPENSRP_ID = "opensrp_id";
-        public static final String PROGRAM_ID = "program_id";
         public static final String GENDER = "gender";
         public static final String BASE_ENTITY_ID = "base_entity_id";
         public static final String LAST_INTERACTED_WITH = "last_interacted_with";
@@ -33,7 +32,8 @@ public class DBConstants {
         public static final String SCHOOL = "school";
         public static final String DOSE_ONE_DATE = "dose_one_date";
         public static final String DOSE_TWO_DATE = "dose_two_date";
-        public static final String IS_DOSE_TWO_GIVEN = "is_dose_two_given";
+        public static final String DATE_DOSE_ONE_GIVEN = "date_dose_one_given";
+        public static final String DATE_DOSE_TWO_GIVEN = "date_dose_two_given";
 
 
     }

@@ -170,10 +170,9 @@ public class HpvApplication extends DrishtiApplication {
     }
 
     private static String[] getFtsSortFields() {
-        return new String[]{DBConstants.KEY.OPENSRP_ID, DBConstants.KEY.PROGRAM_ID, DBConstants.KEY.FIRST_NAME, DBConstants.KEY.LAST_NAME
+        return new String[]{DBConstants.KEY.OPENSRP_ID, DBConstants.KEY.FIRST_NAME, DBConstants.KEY.LAST_NAME
                 , DBConstants.KEY.LAST_INTERACTED_WITH, DBConstants.KEY.DATE_REMOVED};
     }
-
 
     public ConfigurableViewsRepository getConfigurableViewsRepository() {
         if (configurableViewsRepository == null)
