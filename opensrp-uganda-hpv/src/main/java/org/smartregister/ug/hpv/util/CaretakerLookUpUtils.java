@@ -38,7 +38,7 @@ public class CaretakerLookUpUtils {
     public static final String dob = "dob";
     public static final String baseEntityId = "base_entity_id";
 
-    public static void motherLookUp(final Context context, final EntityLookUp entityLookUp, final Listener<HashMap<CommonPersonObject, List<CommonPersonObject>>> listener, final ProgressBar progressBar) {
+    public static void caretakerLookUp(final Context context, final EntityLookUp entityLookUp, final Listener<HashMap<CommonPersonObject, List<CommonPersonObject>>> listener, final ProgressBar progressBar) {
 
         org.smartregister.util.Utils.startAsyncTask(new AsyncTask<Void, Void, HashMap<CommonPersonObject, List<CommonPersonObject>>>() {
             @Override

@@ -132,8 +132,12 @@ public class HpvApplication extends DrishtiApplication {
     }
 
     protected void cleanUpSyncState() {
-        DrishtiSyncScheduler.stop(getApplicationContext());
-        context.allSharedPreferences().saveIsSyncInProgress(false);
+        try {
+            DrishtiSyncScheduler.stop(getApplicationContext());
+            context.allSharedPreferences().saveIsSyncInProgress(false);
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        }
     }
 
     @Override

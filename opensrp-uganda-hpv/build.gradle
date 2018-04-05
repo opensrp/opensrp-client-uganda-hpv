@@ -108,7 +108,9 @@ android {
     }
 
     testOptions {
-        unitTests.returnDefaultValues = true
+        unitTests {
+            returnDefaultValues = true
+        }
     }
     apt {
         arguments {
@@ -176,7 +178,7 @@ android {
         testCompile 'junit:junit:4.12'
         testCompile 'org.apache.maven:maven-ant-tasks:2.1.3'
         testCompile('com.squareup:fest-android:1.0.8') { exclude module: 'support-v4' }
-        testCompile 'org.robolectric:robolectric:3.5.1'
+        testCompile 'org.robolectric:robolectric:3.8'
         testCompile 'org.robolectric:shadows-multidex:3.5.1'
         // PowerMock
         def powerMockVersion = '1.7.3'

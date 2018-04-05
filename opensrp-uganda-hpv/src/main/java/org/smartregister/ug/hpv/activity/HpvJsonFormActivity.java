@@ -2,7 +2,6 @@ package org.smartregister.ug.hpv.activity;
 
 import android.os.Bundle;
 
-import com.rengwuxian.materialedittext.MaterialEditText;
 import com.vijay.jsonwizard.activities.JsonFormActivity;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 
@@ -15,10 +14,6 @@ import org.smartregister.ug.hpv.fragment.HpvJsonFormFragment;
  */
 public class HpvJsonFormActivity extends JsonFormActivity {
 
-    private int generatedId = -1;
-    private MaterialEditText balancetextview;
-    private HpvJsonFormFragment hpvJsonFormFragment;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,7 +21,7 @@ public class HpvJsonFormActivity extends JsonFormActivity {
 
     @Override
     public void initializeFormFragment() {
-        hpvJsonFormFragment = HpvJsonFormFragment.getFormFragment(JsonFormConstants.FIRST_STEP_NAME);
+        HpvJsonFormFragment hpvJsonFormFragment = HpvJsonFormFragment.getFormFragment(JsonFormConstants.FIRST_STEP_NAME);
         getSupportFragmentManager().beginTransaction()
                 .add(com.vijay.jsonwizard.R.id.container, hpvJsonFormFragment).commit();
     }

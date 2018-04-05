@@ -80,7 +80,7 @@ public class LookUpTextWatcher implements TextWatcher {
         }
 
         if (mEntityId.equalsIgnoreCase("mother")) {
-            CaretakerLookUpUtils.motherLookUp(context, lookUpMap.get(mEntityId), listener, null);
+            CaretakerLookUpUtils.caretakerLookUp(context, lookUpMap.get(mEntityId), listener, null);
         }
 
     }

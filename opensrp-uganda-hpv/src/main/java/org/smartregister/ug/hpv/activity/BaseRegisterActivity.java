@@ -10,7 +10,6 @@ import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Menu;
@@ -75,13 +74,10 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
     private FragmentPagerAdapter mPagerAdapter;
 
     private static final int REQUEST_CODE_GET_JSON = 3432;
-    private int currentPage;
-    public static final String EXTRA_CHILD_DETAILS = "child_details";
-    private CommonPersonObjectClient childDetails;
+    public static final String EXTRA_CLIENT_DETAILS = "client_details";
+    private CommonPersonObjectClient clientDetails;
 
-    private String location_name = "";
-
-    private android.support.v4.app.Fragment mBaseFragment = null;
+    private Fragment mBaseFragment = null;
     ////////////////////////////////////////////////
     public DetailsRepository detailsRepository;
     private Map<String, String> details;
@@ -90,42 +86,35 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_base_register);
-        ButterKnife.bind(this);
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_base_register);
+            ButterKnife.bind(this);
 
-        Bundle extras = this.getIntent().getExtras();
-        if (extras != null) {
-            Serializable serializable = extras.getSerializable(EXTRA_CHILD_DETAILS);
-            if (serializable != null && serializable instanceof CommonPersonObjectClient) {
-                childDetails = (CommonPersonObjectClient) serializable;
+            Bundle extras = this.getIntent().getExtras();
+            if (extras != null) {
+                Serializable serializable = extras.getSerializable(EXTRA_CLIENT_DETAILS);
+                if (serializable != null && serializable instanceof CommonPersonObjectClient) {
+                    clientDetails = (CommonPersonObjectClient) serializable;
+                }
             }
-        }
 
 
-        location_name = extras.getString("location_name");
-        detailsRepository = detailsRepository == null ? HpvApplication.getInstance().getContext().detailsRepository() : detailsRepository;
-        if (childDetails != null) {
-            details = detailsRepository.getAllDetailsForClient(childDetails.entityId());
-            Utils.putAll(details, childDetails.getColumnmaps());
-        }
-
-
-        Fragment[] otherFragments = {};
-
-        mBaseFragment = getRegisterFragment();
-        mBaseFragment.setArguments(this.getIntent().getExtras());
-
-        // Instantiate a ViewPager and a PagerAdapter.
-        mPagerAdapter = new HPVRegisterActivityPagerAdapter(getSupportFragmentManager(), mBaseFragment, otherFragments);
-        mPager.setOffscreenPageLimit(otherFragments.length);
-        mPager.setAdapter(mPagerAdapter);
-        mPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-            @Override
-            public void onPageSelected(int position) {
-                currentPage = position;
+            detailsRepository = detailsRepository == null ? HpvApplication.getInstance().getContext().detailsRepository() : detailsRepository;
+            if (clientDetails != null) {
+                details = detailsRepository.getAllDetailsForClient(clientDetails.entityId());
+                Utils.putAll(details, clientDetails.getColumnmaps());
             }
-        });
+
+
+            Fragment[] otherFragments = {};
+
+            mBaseFragment = getRegisterFragment();
+            mBaseFragment.setArguments(this.getIntent().getExtras());
+
+            // Instantiate a ViewPager and a PagerAdapter.
+            mPagerAdapter = new HPVRegisterActivityPagerAdapter(getSupportFragmentManager(), mBaseFragment, otherFragments);
+            mPager.setOffscreenPageLimit(otherFragments.length);
+            mPager.setAdapter(mPagerAdapter);
 
     }
 
@@ -282,7 +271,7 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
     }
 
 
-    public android.support.v4.app.Fragment findFragmentByPosition(int position) {
+    public Fragment findFragmentByPosition(int position) {
         FragmentPagerAdapter fragmentPagerAdapter = mPagerAdapter;
         return getSupportFragmentManager().findFragmentByTag("android:switcher:" + mPager.getId() + ":" + fragmentPagerAdapter.getItemId(position));
     }
@@ -331,6 +320,8 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
                 JSONObject form = new JSONObject(jsonString);
                 if (form.getString(JsonFormUtils.ENCOUNTER_TYPE).equals(Constants.EventType.Remove)) {
 
+                    Utils.showToast(this, "Removing Patient...");
+
                 } else if (form.getString(JsonFormUtils.ENCOUNTER_TYPE).equals(Constants.EventType.REGISTRATION)) {
 
                     JsonFormUtils.saveForm(this, HpvApplication.getInstance().getContext(), jsonString, allSharedPreferences.fetchRegisteredANM());
@@ -344,7 +335,7 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
             AllSharedPreferences allSharedPreferences = new AllSharedPreferences(preferences);
 
-            JsonFormUtils.saveImage(this, allSharedPreferences.fetchRegisteredANM(), childDetails.entityId(), imageLocation);
+            JsonFormUtils.saveImage(this, allSharedPreferences.fetchRegisteredANM(), clientDetails.entityId(), imageLocation);
             //updateProfilePicture(gender);
         }
     }

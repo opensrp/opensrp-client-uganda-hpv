@@ -17,7 +17,6 @@ import com.vijay.jsonwizard.widgets.EditTextFactory;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.smartregister.ug.hpv.R;
-import org.smartregister.ug.hpv.util.Constants;
 import org.smartregister.ug.hpv.util.DBConstants;
 import org.smartregister.ug.hpv.watchers.LookUpTextWatcher;
 
@@ -30,12 +29,10 @@ import java.util.Map;
  * Created by ndegwamartin on 19/03/2018.
  */
 public class HpvEditTextFactory extends EditTextFactory {
-    private JSONObject jsonObject;
 
     @Override
     public void attachJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, MaterialEditText editText) throws Exception {
         super.attachJson(stepName, context, formFragment, jsonObject, editText);
-        this.jsonObject = jsonObject;
         // lookup hook
         if (jsonObject.has(DBConstants.KEY.LOOK_UP) && jsonObject.get(DBConstants.KEY.LOOK_UP).toString().equalsIgnoreCase(Boolean.TRUE.toString())) {
 

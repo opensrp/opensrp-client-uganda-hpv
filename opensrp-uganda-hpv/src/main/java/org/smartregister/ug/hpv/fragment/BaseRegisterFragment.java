@@ -274,9 +274,11 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
 
     protected abstract void populateClientListHeaderView(View view);
 
-    protected void populateClientListHeaderView(View view, View headerLayout, String viewConfigurationIdentifier) {
+    protected void populateClientListHeaderView(View view, View headerLayout_, String viewConfigurationIdentifier) {
         LinearLayout clientsHeaderLayout = (LinearLayout) view.findViewById(org.smartregister.R.id.clients_header_layout);
         clientsHeaderLayout.setVisibility(GONE);
+
+        View headerLayout = headerLayout_;
 
         ConfigurableViewsHelper helper = ConfigurableViewsLibrary.getInstance().getConfigurableViewsHelper();
         if (helper.isJsonViewsEnabled()) {
@@ -301,6 +303,7 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
     protected final TextWatcher textWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+            //Overriden Do something before Text Changed
         }
 
         @Override
@@ -310,7 +313,7 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
 
         @Override
         public void afterTextChanged(Editable editable) {
-
+            //Overriden Do something after Text Changed
         }
     };
 

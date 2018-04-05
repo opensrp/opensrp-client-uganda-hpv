@@ -6,8 +6,6 @@ import android.util.Log;
 import android.view.MenuItem;
 
 import org.smartregister.ug.hpv.fragment.HomeRegisterFragment;
-import org.smartregister.ug.hpv.util.JsonFormUtils;
-import org.smartregister.ug.hpv.view.LocationPickerView;
 
 import java.util.Arrays;
 import java.util.List;
@@ -22,12 +20,16 @@ public class HomeRegisterActivity extends BaseRegisterActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        try {
             super.onCreate(savedInstanceState);
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        }
 
     }
 
     @Override
-    protected Fragment getRegisterFragment() {
+    public Fragment getRegisterFragment() {
         return new HomeRegisterFragment();
     }
 
@@ -39,7 +41,7 @@ public class HomeRegisterActivity extends BaseRegisterActivity {
     }
 
     @Override
-    protected void onCreation() {
+    protected void onCreation() {//Do something on creation
 
     }
 
