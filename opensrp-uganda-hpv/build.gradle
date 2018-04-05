@@ -117,7 +117,7 @@ android {
     }
     dependencies {
 
-        compile('org.smartregister:opensrp-client-native-form:5.0.2-SNAPSHOT@aar') {
+        compile('org.smartregister:opensrp-client-native-form:1.0.4-SNAPSHOT@aar') {
             transitive = true
             exclude group: 'com.android.support', module: 'recyclerview-v7'
         }
@@ -159,10 +159,7 @@ android {
 
         compile fileTree(dir: 'libs', include: ['*.jar'])
         compile group: 'commons-validator', name: 'commons-validator', version: '1.4.0'
-        compile 'com.android.support:design:22.2.1'
         compile 'com.google.code.gson:gson:2.8.2'
-        compile 'com.android.support:appcompat-v7:22.2.1'
-        compile 'com.android.support:recyclerview-v7:22.2.1'
         compile 'org.greenrobot:eventbus:3.1.1'
         apt 'org.greenrobot:eventbus-annotation-processor:3.1.1'
 
@@ -187,8 +184,6 @@ android {
         testCompile "org.powermock:powermock-module-junit4-rule:$powerMockVersion"
         testCompile "org.powermock:powermock-api-mockito2:$powerMockVersion"
         testCompile "org.powermock:powermock-classloading-xstream:$powerMockVersion"
-
-        compile 'com.android.support.constraint:constraint-layout:1.0.2'
 
         androidTestCompile('com.android.support.test:runner:0.5') {
             exclude module: 'support-annotations'

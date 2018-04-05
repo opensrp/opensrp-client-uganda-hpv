@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.configurableviews.ConfigurableViewsLibrary;
@@ -31,11 +32,13 @@ import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.activity.BaseRegisterActivity;
 import org.smartregister.ug.hpv.activity.HomeRegisterActivity;
+import org.smartregister.ug.hpv.domain.DoseStatus;
 import org.smartregister.ug.hpv.provider.HomeRegisterProvider;
 import org.smartregister.ug.hpv.servicemode.HpvServiceModeOption;
 import org.smartregister.ug.hpv.util.Constants;
 import org.smartregister.ug.hpv.util.DBConstants;
 import org.smartregister.ug.hpv.util.JsonFormUtils;
+import org.smartregister.ug.hpv.util.Utils;
 import org.smartregister.ug.hpv.view.LocationPickerView;
 import org.smartregister.view.activity.SecuredNativeSmartRegisterActivity;
 import org.smartregister.view.dialog.DialogOption;
@@ -66,7 +69,6 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
     protected RegisterActionHandler registerActionHandler = new RegisterActionHandler();
 
     private String viewConfigurationIdentifier;
-    private ClientActionHandler clientActionHandler = new ClientActionHandler();
 
     private LocationPickerView facilitySelection;
 
@@ -191,7 +193,7 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
         setServiceModeViewDrawableRight(null);
 
         View qrCode = view.findViewById(R.id.scan_qr_code);
-        qrCode.setOnClickListener(clientActionHandler);
+        qrCode.setOnClickListener(registerActionHandler);
 
         TextView nameInitials = (TextView) view.findViewById(R.id.name_inits);
 
@@ -228,8 +230,8 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
 
         String tableName = DBConstants.PATIENT_TABLE_NAME;
 
-        HomeRegisterProvider hhscp = new HomeRegisterProvider(getActivity(), visibleColumns, registerActionHandler, ConfigurableViewsLibrary.getInstance().getContext().detailsRepository());
-        clientAdapter = new SmartRegisterPaginatedCursorAdapter(getActivity(), null, hhscp, context().commonrepository(tableName));
+        HomeRegisterProvider registerProvider = new HomeRegisterProvider(getActivity(), visibleColumns, registerActionHandler);
+        clientAdapter = new SmartRegisterPaginatedCursorAdapter(getActivity(), null, registerProvider, context().commonrepository(tableName));
         clientsView.setAdapter(clientAdapter);
 
         setTablename(tableName);
@@ -339,47 +341,35 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
         return viewConfigurationIdentifier;
     }
 
-    private void goToPatientDetailActivity(String viewConfigurationIdentifier) {
+    private void goToPatientDetailActivity(CommonPersonObjectClient patient) {
+        Utils.showToast(getActivity(), "Navigating to Profile view for " + patient.toString());
     }
 
     class RegisterActionHandler implements View.OnClickListener {
 
         @Override
         public void onClick(View view) {
-            BaseRegisterActivity registerActivity = (BaseRegisterActivity) getActivity();
             if (view.getTag() != null && view.getTag() instanceof CommonPersonObjectClient) {
                 patient = (CommonPersonObjectClient) view.getTag();
-            }
+                goToPatientDetailActivity(patient);
+            } else if (view.getTag() != null && view.getTag() instanceof DoseStatus) {
+                DoseStatus doseStatus = (DoseStatus) view.getTag();
+
+                if (StringUtils.isNotBlank(doseStatus.getDateDoseTwoGiven())) {
+                    Utils.showToast(getActivity(), "Dosage Complete");
+                } else if (doseStatus.isDoseTwoDue()) {
+                    Utils.showToast(getActivity(), "Dose 2 Due");
+                } else if (StringUtils.isNotBlank(doseStatus.getDateDoseOneGiven())) {
+                    Utils.showToast(getActivity(), "Dose 1 Given");
+                } else {
+                    Utils.showToast(getActivity(), "Dosage Button Clicked");
+                }
+
+            } else if (view.getId() == R.id.scan_qr_code)
+                ((HomeRegisterActivity) getActivity()).startQrCodeScanner();
+
         }
     }
-
-    private class ClientActionHandler implements View.OnClickListener {
-        @Override
-        public void onClick(View view) {
-            CommonPersonObjectClient client = null;
-            if (view.getTag() != null && view.getTag() instanceof CommonPersonObjectClient) {
-                client = (CommonPersonObjectClient) view.getTag();
-            }
-
-            switch (view.getId()) {
-                case R.id.child_profile_info_layout:
-
-                    // ChildImmunizationActivity.launchActivity(getActivity(), client, null);
-                    break;
-
-                case R.id.global_search:
-                    // ((ChildSmartRegisterActivity) getActivity()).startAdvancedSearch();
-                    break;
-
-                case R.id.scan_qr_code:
-                    ((HomeRegisterActivity) getActivity()).startQrCodeScanner();
-                    break;
-                default:
-                    break;
-            }
-        }
-    }
-
 
     protected void updateLocationText() {
         if (facilitySelection != null) {

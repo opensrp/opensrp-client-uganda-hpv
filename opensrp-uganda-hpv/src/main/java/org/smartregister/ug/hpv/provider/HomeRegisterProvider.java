@@ -19,7 +19,6 @@ import org.smartregister.configurableviews.ConfigurableViewsLibrary;
 import org.smartregister.configurableviews.helper.ConfigurableViewsHelper;
 import org.smartregister.configurableviews.model.ViewConfiguration;
 import org.smartregister.cursoradapter.SmartRegisterCLientsProviderForCursorAdapter;
-import org.smartregister.repository.DetailsRepository;
 import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.domain.DoseStatus;
 import org.smartregister.ug.hpv.util.DBConstants;
@@ -54,10 +53,7 @@ public class HomeRegisterProvider implements SmartRegisterCLientsProviderForCurs
     private static final int DOSE_TWO_WINDOW_MONTHS = 6;
 
 
-    private static final String TAG = HomeRegisterProvider.class.getCanonicalName();
-
-
-    public HomeRegisterProvider(Context context, Set visibleColumns, View.OnClickListener onClickListener, DetailsRepository detailsRepository) {
+    public HomeRegisterProvider(Context context, Set visibleColumns, View.OnClickListener onClickListener) {
 
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.visibleColumns = visibleColumns;
@@ -71,7 +67,7 @@ public class HomeRegisterProvider implements SmartRegisterCLientsProviderForCurs
         if (visibleColumns.isEmpty()) {
             populatePatientColumn(pc, client, convertView);
             populateIdentifierColumn(pc, convertView);
-            populateDoseColumn(pc, client, convertView);
+            populateDoseColumn(pc, convertView);
 
             return;
         }
@@ -84,7 +80,7 @@ public class HomeRegisterProvider implements SmartRegisterCLientsProviderForCurs
                     populateIdentifierColumn(pc, convertView);
                     break;
                 case DOSE:
-                    populateDoseColumn(pc, client, convertView);
+                    populateDoseColumn(pc, convertView);
                     break;
                 default:
             }
@@ -110,7 +106,7 @@ public class HomeRegisterProvider implements SmartRegisterCLientsProviderForCurs
         fillValue((TextView) view.findViewById(R.id.age), dobString.contains("y") ? dobString.substring(0, dobString.indexOf("y")) : dobString);
 
         View patient = view.findViewById(R.id.patient_column);
-        attachOnclickListener(patient, client);
+        attachPatientOnclickListener(patient, client);
     }
 
 
@@ -120,7 +116,7 @@ public class HomeRegisterProvider implements SmartRegisterCLientsProviderForCurs
     }
 
 
-    private void populateDoseColumn(CommonPersonObjectClient pc, SmartRegisterClient client, View view) {
+    private void populateDoseColumn(CommonPersonObjectClient pc, View view) {
 
         Button patient = (Button) view.findViewById(R.id.dose_button);
 
@@ -129,7 +125,7 @@ public class HomeRegisterProvider implements SmartRegisterCLientsProviderForCurs
         patient.setText(getDoseButtonText(doseStatus));
         patient.setBackground(getDoseButtonBackground(doseStatus));
         patient.setTextColor((StringUtils.isNotBlank(doseStatus.getDateDoseTwoGiven()) || doseStatus.isDoseTwoDue()) ? context.getResources().getColor(R.color.lighter_grey_text) : patient.getCurrentTextColor());
-        attachOnclickListener(patient, client);
+        attachDosageOnclickListener(patient, doseStatus);
     }
 
     private DoseStatus getCurrentDoseStatus(CommonPersonObjectClient pc) {
@@ -144,7 +140,7 @@ public class HomeRegisterProvider implements SmartRegisterCLientsProviderForCurs
 
         doseStatus.setDateDoseOneGiven(org.smartregister.util.Utils.getValue(pc.getColumnmaps(), DBConstants.KEY.DATE_DOSE_TWO_GIVEN, false));
 
-        doseStatus.setDoseTwoDue(StringUtils.isBlank(doseStatus.getDateDoseTwoGiven()) && isDoseTwoDue(doseStatus.getDoseTwoDate()));
+        doseStatus.setDoseTwoDue(StringUtils.isBlank(doseStatus.getDateDoseOneGiven()) && isDoseTwoDue(doseStatus.getDoseTwoDate()));
 
         return doseStatus;
     }
@@ -186,8 +182,8 @@ public class HomeRegisterProvider implements SmartRegisterCLientsProviderForCurs
 
         if (StringUtils.isNotBlank(doseStatus.getDateDoseTwoGiven()) || doseStatus.isDoseTwoDue()) {
             backgroundResource = R.color.transparent;
-        } else if ((StringUtils.isNotBlank(doseStatus.getDateDoseTwoGiven()) || doseStatus.isDoseTwoDue())) {
-            backgroundResource = R.drawable.due_vaccine_na_bg;
+        } else if (doseStatus.isDoseTwoDue()) {
+            backgroundResource = R.drawable.due_vaccine_grey_bg;
         } else {
 
             backgroundResource = isDoseExpired(doseStatus) ? R.drawable.due_vaccine_red_bg : R.drawable.due_vaccine_blue_bg;
@@ -215,11 +211,15 @@ public class HomeRegisterProvider implements SmartRegisterCLientsProviderForCurs
         details.setLayoutParams(params);
     }
 
-    private void attachOnclickListener(View view, SmartRegisterClient client) {
+    private void attachPatientOnclickListener(View view, SmartRegisterClient client) {
         view.setOnClickListener(onClickListener);
         view.setTag(client);
     }
 
+    private void attachDosageOnclickListener(View view, DoseStatus doseStatus) {
+        view.setOnClickListener(onClickListener);
+        view.setTag(doseStatus);
+    }
 
     @Override
     public SmartRegisterClients updateClients(FilterOption villageFilter, ServiceModeOption serviceModeOption, FilterOption searchFilter, SortOption sortOption) {
