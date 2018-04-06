@@ -150,7 +150,7 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
     }
 
     public void logOutUser() {
-        Utils.showToast(this, "Logging out user");
+        HpvApplication.getInstance().logoutCurrentUser();
     }
 
     public void showLanguageDialog() {

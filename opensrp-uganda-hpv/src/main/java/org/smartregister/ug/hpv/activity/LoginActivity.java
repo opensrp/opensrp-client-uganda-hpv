@@ -199,8 +199,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void localLoginWith(String userName, String password) {
-        // TODO: uncomment this
-        // getOpenSRPContext().userService().localLogin(userName, password);
+
+        getOpenSRPContext().userService().localLogin(userName, password);
         goToHome(false);
         new Thread(new Runnable() {
             @Override

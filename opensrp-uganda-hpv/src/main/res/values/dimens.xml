@@ -124,4 +124,5 @@
     <dimen name="login_edit_text_textSize">16sp</dimen>
     <dimen name="login_show_password_dimen">10dp</dimen>
     <dimen name="login_logo_top_padding">35dp</dimen>
+    <dimen name="searchbar_bg_layout_height">80dp</dimen>
 </resources>
