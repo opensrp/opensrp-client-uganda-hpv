@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -34,6 +35,7 @@ import org.smartregister.ug.hpv.adapter.HPVRegisterActivityPagerAdapter;
 import org.smartregister.ug.hpv.application.HpvApplication;
 import org.smartregister.ug.hpv.barcode.Barcode;
 import org.smartregister.ug.hpv.barcode.BarcodeIntentIntegrator;
+import org.smartregister.ug.hpv.barcode.BarcodeIntentResult;
 import org.smartregister.ug.hpv.event.ShowProgressDialogEvent;
 import org.smartregister.ug.hpv.event.SyncEvent;
 import org.smartregister.ug.hpv.fragment.BaseRegisterFragment;
@@ -86,35 +88,35 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_base_register);
-            ButterKnife.bind(this);
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_base_register);
+        ButterKnife.bind(this);
 
-            Bundle extras = this.getIntent().getExtras();
-            if (extras != null) {
-                Serializable serializable = extras.getSerializable(EXTRA_CLIENT_DETAILS);
-                if (serializable != null && serializable instanceof CommonPersonObjectClient) {
-                    clientDetails = (CommonPersonObjectClient) serializable;
-                }
+        Bundle extras = this.getIntent().getExtras();
+        if (extras != null) {
+            Serializable serializable = extras.getSerializable(EXTRA_CLIENT_DETAILS);
+            if (serializable != null && serializable instanceof CommonPersonObjectClient) {
+                clientDetails = (CommonPersonObjectClient) serializable;
             }
+        }
 
 
-            detailsRepository = detailsRepository == null ? HpvApplication.getInstance().getContext().detailsRepository() : detailsRepository;
-            if (clientDetails != null) {
-                details = detailsRepository.getAllDetailsForClient(clientDetails.entityId());
-                Utils.putAll(details, clientDetails.getColumnmaps());
-            }
+        detailsRepository = detailsRepository == null ? HpvApplication.getInstance().getContext().detailsRepository() : detailsRepository;
+        if (clientDetails != null) {
+            details = detailsRepository.getAllDetailsForClient(clientDetails.entityId());
+            Utils.putAll(details, clientDetails.getColumnmaps());
+        }
 
 
-            Fragment[] otherFragments = {};
+        Fragment[] otherFragments = {};
 
-            mBaseFragment = getRegisterFragment();
-            mBaseFragment.setArguments(this.getIntent().getExtras());
+        mBaseFragment = getRegisterFragment();
+        mBaseFragment.setArguments(this.getIntent().getExtras());
 
-            // Instantiate a ViewPager and a PagerAdapter.
-            mPagerAdapter = new HPVRegisterActivityPagerAdapter(getSupportFragmentManager(), mBaseFragment, otherFragments);
-            mPager.setOffscreenPageLimit(otherFragments.length);
-            mPager.setAdapter(mPagerAdapter);
+        // Instantiate a ViewPager and a PagerAdapter.
+        mPagerAdapter = new HPVRegisterActivityPagerAdapter(getSupportFragmentManager(), mBaseFragment, otherFragments);
+        mPager.setOffscreenPageLimit(otherFragments.length);
+        mPager.setAdapter(mPagerAdapter);
 
     }
 
@@ -337,6 +339,12 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
 
             JsonFormUtils.saveImage(this, allSharedPreferences.fetchRegisteredANM(), clientDetails.entityId(), imageLocation);
             //updateProfilePicture(gender);
+        } else if (requestCode == BarcodeIntentIntegrator.REQUEST_CODE && resultCode == RESULT_OK) {
+            BarcodeIntentResult res = BarcodeIntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+            if (StringUtils.isNotBlank(res.getContents())) {
+                Log.d("Scanned QR Code", res.getContents());
+                ((HomeRegisterFragment) mBaseFragment).onQRCodeSucessfullyScanned(res.getContents());
+            } else Log.i("", "NO RESULT FOR QR CODE");
         }
     }
 

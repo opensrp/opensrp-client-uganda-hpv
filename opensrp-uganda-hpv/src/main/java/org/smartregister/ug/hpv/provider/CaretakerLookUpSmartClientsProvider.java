@@ -9,7 +9,6 @@ import org.joda.time.DateTime;
 import org.smartregister.commonregistry.CommonPersonObject;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.ug.hpv.R;
-import org.smartregister.ug.hpv.util.Constants;
 import org.smartregister.ug.hpv.util.DBConstants;
 
 import java.text.DateFormat;
@@ -79,7 +78,7 @@ public class CaretakerLookUpSmartClientsProvider {
 
 
     public View inflatelayoutForCursorAdapter() {
-        return inflater().inflate(R.layout.mother_child_lookup_client, null);
+        return inflater().inflate(R.layout.lookup_client, null);
     }
 
     private LayoutInflater inflater() {

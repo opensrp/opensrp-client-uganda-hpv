@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -71,6 +72,8 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
     private String viewConfigurationIdentifier;
 
     private LocationPickerView facilitySelection;
+
+    private static final String TAG = BaseRegisterFragment.class.getCanonicalName();
 
     @Override
     protected SecuredNativeSmartRegisterActivity.DefaultOptionsProvider getDefaultOptionsProvider() {
@@ -140,7 +143,6 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
         AppCompatActivity activity = ((AppCompatActivity) getActivity());
 
         activity.setSupportActionBar(toolbar);
-        activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         activity.getSupportActionBar().setTitle(activity.getIntent().getStringExtra(TOOLBAR_TITLE));
         activity.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
@@ -180,6 +182,14 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
         filterandSortExecute();
     }
 
+    public void onQRCodeSucessfullyScanned(String qrCode) {
+        Log.i(TAG, "QR code: " + qrCode);
+        if (StringUtils.isNotBlank(qrCode)) {
+
+            filter(qrCode.replace("-", ""), "", getMainCondition());
+        }
+    }
+
     @Override
     public void setupViews(View view) {
         super.setupViews(view);
@@ -195,7 +205,7 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
         View qrCode = view.findViewById(R.id.scan_qr_code);
         qrCode.setOnClickListener(registerActionHandler);
 
-        TextView nameInitials = (TextView) view.findViewById(R.id.name_inits);
+        TextView nameInitials = (TextView) view.findViewById(R.id.name_initials);
 
         AllSharedPreferences allSharedPreferences = context().allSharedPreferences();
         String preferredName = allSharedPreferences.getANMPreferredName(allSharedPreferences.fetchRegisteredANM());

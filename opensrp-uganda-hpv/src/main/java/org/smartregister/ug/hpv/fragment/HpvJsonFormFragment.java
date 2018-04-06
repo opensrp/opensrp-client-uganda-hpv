@@ -104,7 +104,7 @@ public class HpvJsonFormFragment extends JsonFormFragment {
 
     private void updateResults(final HashMap<CommonPersonObject, List<CommonPersonObject>> map) {
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.mother_lookup_results, null);
+        View view = inflater.inflate(R.layout.lookup_results, null);
 
         ListView listView = (ListView) view.findViewById(R.id.list_view);
 

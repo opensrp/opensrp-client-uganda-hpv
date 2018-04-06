@@ -1,10 +1,14 @@
 package org.smartregister.ug.hpv.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.MenuItem;
 
+import org.apache.commons.lang3.StringUtils;
+import org.smartregister.ug.hpv.barcode.BarcodeIntentIntegrator;
+import org.smartregister.ug.hpv.barcode.BarcodeIntentResult;
 import org.smartregister.ug.hpv.fragment.HomeRegisterFragment;
 
 import java.util.Arrays;
