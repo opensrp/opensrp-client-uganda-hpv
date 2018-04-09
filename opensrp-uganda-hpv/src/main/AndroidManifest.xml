@@ -56,6 +56,13 @@
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
+        <activity
+            android:name=".activity.PatientDetailActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
@@ -68,6 +75,7 @@
 
         <service android:name=".service.SyncService" />
         <service android:name=".service.PullUniqueIdsIntentService" />
+
         <receiver android:name=".receiver.HpvSyncBroadcastReceiver" />
 
     </application>

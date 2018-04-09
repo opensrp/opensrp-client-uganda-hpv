@@ -32,5 +32,12 @@
     <string name="login_text">Log In</string>
 
     <string name="complete">Complete</string>
+    <string name="hpv_vaccine_due">HPV Vaccine Due</string>
+    <string name="remove_from_register">REMOVE FROM REGISTER</string>
+    <string name="contact">Contact</string>
+    <string name="contacts">Contacts</string>
+    <string name="add_contact">ADD CONTACT</string>
+    <string name="caretaker">Caretaker</string>
+    <string name="vht">VHT</string>
 
 </resources>

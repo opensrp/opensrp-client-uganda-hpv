@@ -47,4 +47,6 @@
     <color name="primary_background">#ddf0fa</color>
     <color name="primary_dark">#276C91</color>
     <color name="accent">#358CB7</color>
+
+   <color name="top_bar_gray"> #eeeeee</color>
 </resources>

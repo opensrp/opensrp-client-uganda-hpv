@@ -1,5 +1,6 @@
 package org.smartregister.ug.hpv.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -33,6 +34,7 @@ import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.activity.BaseRegisterActivity;
 import org.smartregister.ug.hpv.activity.HomeRegisterActivity;
+import org.smartregister.ug.hpv.activity.PatientDetailActivity;
 import org.smartregister.ug.hpv.domain.DoseStatus;
 import org.smartregister.ug.hpv.provider.HomeRegisterProvider;
 import org.smartregister.ug.hpv.servicemode.HpvServiceModeOption;
@@ -338,7 +340,7 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
 
     @Override
     protected void startRegistration() {
-        ((HomeRegisterActivity) getActivity()).startFormActivity("patient_registration", null, null);
+        ((HomeRegisterActivity) getActivity()).startFormActivity(Constants.JSON_FORM.PATIENT_REGISTRATION, null, null);
     }
 
     @Override
@@ -355,7 +357,18 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
     }
 
     private void goToPatientDetailActivity(CommonPersonObjectClient patient) {
-        Utils.showToast(getActivity(), "Navigating to Profile view for " + patient.toString());
+        Map<String, String> patientDetails = patient.getDetails();
+        Intent intent = null;
+        String registerToken = "";
+        intent = new Intent(getActivity(), PatientDetailActivity.class);
+        registerToken = Constants.VIEW_CONFIGS.HOME_REGISTER;
+
+        String registerTitle = Utils.readPrefString(getActivity(), TOOLBAR_TITLE + registerToken, "");
+        intent.putExtra(Constants.INTENT_KEY.REGISTER_TITLE, registerTitle);
+        intent.putExtra(Constants.INTENT_KEY.PATIENT_DETAIL_MAP, (HashMap) patientDetails);
+        intent.putExtra(Constants.INTENT_KEY.CLIENT_OBJECT, patient);
+        intent.putExtra(Constants.INTENT_KEY.OPENSRP_ID, patientDetails.get(Constants.INTENT_KEY.OPENSRP_ID));
+        startActivity(intent);
     }
 
     class RegisterActionHandler implements View.OnClickListener {

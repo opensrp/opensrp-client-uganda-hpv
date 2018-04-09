@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:background="@color/actionbar"
     android:focusableInTouchMode="true"
-    tools:showIn="@layout/register_toolbar">
+    tools:showIn="@layout/toolbar_register">
 
     <RelativeLayout
         android:id="@+id/top_left_layout"

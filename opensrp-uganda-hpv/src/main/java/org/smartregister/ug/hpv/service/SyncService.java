@@ -149,8 +149,8 @@ public class SyncService extends Service {
                     Log.e(getClass().getName(), "Events sync failed.");
                     return;
                 }
-                db.markEventsAsSynced(pendingEvents);*/
-                Log.i(getClass().getName(), "Events synced successfully.");
+                db.markEventsAsSynced(pendingEvents);
+                Log.i(getClass().getName(), "Events synced successfully.");*/
             } catch (Exception e) {
                 Log.e(getClass().getName(), e.getMessage());
             }

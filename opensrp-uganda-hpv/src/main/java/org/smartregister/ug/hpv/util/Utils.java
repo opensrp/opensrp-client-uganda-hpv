@@ -6,6 +6,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -162,6 +163,18 @@ public class Utils {
         map.putAll(extend);
     }
 
+    public static String getFormattedAgeString(String dobString) {
+        String formattedAge = "";
+        if (!TextUtils.isEmpty(dobString)) {
+            DateTime dateTime = new DateTime(dobString);
+            Date dob = dateTime.toDate();
+            long timeDiff = Calendar.getInstance().getTimeInMillis() - dob.getTime();
 
+            if (timeDiff >= 0) {
+                formattedAge = DateUtil.getDuration(timeDiff);
+            }
+        }
+        return formattedAge.contains("y") ? formattedAge.substring(0, formattedAge.indexOf('y')) : formattedAge;
+    }
 
 }
