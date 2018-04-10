@@ -319,7 +319,7 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
                 AllSharedPreferences allSharedPreferences = new AllSharedPreferences(preferences);
 
                 JSONObject form = new JSONObject(jsonString);
-                if (form.getString(JsonFormUtils.ENCOUNTER_TYPE).equals(Constants.EventType.Remove)) {
+                if (form.getString(JsonFormUtils.ENCOUNTER_TYPE).equals(Constants.EventType.REMOVE)) {
 
                     Utils.showToast(this, "Removing Patient...");
 

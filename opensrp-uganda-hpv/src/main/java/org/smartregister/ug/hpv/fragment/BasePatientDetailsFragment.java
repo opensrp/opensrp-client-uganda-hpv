@@ -21,6 +21,7 @@ import org.smartregister.ug.hpv.helper.view.RenderContactCardHelper;
 import org.smartregister.ug.hpv.helper.view.RenderPatientDemographicCardHelper;
 import org.smartregister.ug.hpv.helper.view.RenderPatientFollowupCardHelper;
 import org.smartregister.ug.hpv.util.Constants;
+import org.smartregister.ug.hpv.util.DBConstants;
 import org.smartregister.ug.hpv.util.JsonFormUtils;
 import org.smartregister.ug.hpv.util.Utils;
 import org.smartregister.ug.hpv.view.LocationPickerView;
@@ -140,7 +141,7 @@ public abstract class BasePatientDetailsFragment extends SecuredFragment impleme
     public void onClick(View view) {
         try {
 
-            startFormActivity(Constants.JSON_FORM.PATIENT_REMOVAL, null, null);
+            startFormActivity(Constants.JSON_FORM.PATIENT_REMOVAL, patientDetails.get(DBConstants.KEY.BASE_ENTITY_ID), null);
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }

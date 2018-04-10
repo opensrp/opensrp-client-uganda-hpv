@@ -41,7 +41,7 @@ public class Constants {
 
         public static final String REGISTRATION = "Registration";
         public static final String UPDATE_REGISTRATION = "Update Registration";
-        public static final String Remove = "Remove";
+        public static final String REMOVE = "Remove";
     }
 
     public static final class KEY {

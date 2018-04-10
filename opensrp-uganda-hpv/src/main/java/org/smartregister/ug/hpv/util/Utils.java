@@ -12,6 +12,9 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.widget.Toast;
 
+import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
+
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.joda.time.DateTime;
@@ -177,4 +180,10 @@ public class Utils {
         return formattedAge.contains("y") ? formattedAge.substring(0, formattedAge.indexOf('y')) : formattedAge;
     }
 
+    public static String getFormattedPhoneNumber(String phoneNumber_) {
+        String phoneNumber = phoneNumber_.substring(1);
+        String[] tokens = Iterables.toArray(Splitter.fixedLength(3).split(phoneNumber), String.class);
+        return "256-" + StringUtils.join(tokens, "-");
+
+    }
 }

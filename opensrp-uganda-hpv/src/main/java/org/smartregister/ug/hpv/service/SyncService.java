@@ -247,7 +247,7 @@ public class SyncService extends Service {
         observable.subscribe(new Consumer<FetchStatus>() {
             @Override
             public void accept(FetchStatus fetchStatus) throws Exception {
-                // Remove observable from list
+                // REMOVE observable from list
                 observables.remove(observable);
                 Log.i(getClass().getName(), "Deleted: one observable, new count:" + observables.size());
 
@@ -285,7 +285,7 @@ public class SyncService extends Service {
         } catch (Exception e) {
             Log.e(getClass().getName(), e.getMessage(), e);
             if (count >= 2) {
-                //TODO Remove
+                //TODO REMOVE
                 stopSelf();
                 return null;
             } else {

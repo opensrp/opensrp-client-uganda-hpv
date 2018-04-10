@@ -261,6 +261,9 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
                 tableName + "." + DBConstants.KEY.FIRST_NAME,
                 tableName + "." + DBConstants.KEY.LAST_NAME,
                 tableName + "." + DBConstants.KEY.CARETAKER_NAME,
+                tableName + "." + DBConstants.KEY.CARETAKER_PHONE,
+                tableName + "." + DBConstants.KEY.VHT_NAME,
+                tableName + "." + DBConstants.KEY.VHT_PHONE,
                 tableName + "." + DBConstants.KEY.DOB,
                 tableName + "." + DBConstants.KEY.OPENSRP_ID,
                 tableName + "." + DBConstants.KEY.CLASS,
@@ -268,8 +271,9 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
                 tableName + "." + DBConstants.KEY.DOSE_ONE_DATE,
                 tableName + "." + DBConstants.KEY.DATE_DOSE_ONE_GIVEN,
                 tableName + "." + DBConstants.KEY.DOSE_TWO_DATE,
+                tableName + "." + DBConstants.KEY.DATE_DOSE_TWO_GIVEN,
                 tableName + "." + DBConstants.KEY.GENDER,
-                tableName + "." + DBConstants.KEY.DATE_DOSE_TWO_GIVEN};
+                tableName + "." + DBConstants.KEY.DATE_REMOVED};
         String[] allColumns = ArrayUtils.addAll(columns, getAdditionalColumns(tableName));
         queryBUilder.SelectInitiateMainTable(tableName, allColumns);
         mainSelect = queryBUilder.mainCondition(mainCondition);

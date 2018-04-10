@@ -1,6 +1,8 @@
 package org.smartregister.ug.hpv.helper.view;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Handler;
 import android.view.View;
 import android.widget.TextView;
@@ -9,6 +11,7 @@ import org.apache.commons.lang3.text.WordUtils;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.util.DBConstants;
+import org.smartregister.ug.hpv.util.Utils;
 
 import java.util.Map;
 
@@ -17,9 +20,7 @@ import java.util.Map;
  * Created by ndegwamartin on 09/04/2018.
  */
 
-public class RenderContactCardHelper extends BaseRenderHelper {
-
-    private static String TAG = RenderContactCardHelper.class.getCanonicalName();
+public class RenderContactCardHelper extends BaseRenderHelper implements View.OnClickListener {
 
     public RenderContactCardHelper(Context context, CommonPersonObjectClient client) {
         super(context, client);
@@ -27,6 +28,7 @@ public class RenderContactCardHelper extends BaseRenderHelper {
 
     @Override
     public void renderView(final View view, final Map<String, String> metadata) {
+        final RenderContactCardHelper helperContext = this;
         new Handler().post(new Runnable() {
 
             @Override
@@ -38,7 +40,9 @@ public class RenderContactCardHelper extends BaseRenderHelper {
 
                 TextView caretakerContactTextView = (TextView) view.findViewById(R.id.caretakerContactTextView);
                 String caretakerContact = patientDetails.get(DBConstants.KEY.CARETAKER_PHONE);
-                caretakerContactTextView.setText(caretakerContact);
+                caretakerContactTextView.setTag(R.id.CONTACT, caretakerContact);
+                caretakerContactTextView.setText(Utils.getFormattedPhoneNumber(caretakerContact));
+                caretakerContactTextView.setOnClickListener(helperContext);
 
                 TextView vhtNameTextView = (TextView) view.findViewById(R.id.vhtNameTextView);
                 String vhtName = patientDetails.get(DBConstants.KEY.VHT_NAME);
@@ -46,11 +50,23 @@ public class RenderContactCardHelper extends BaseRenderHelper {
 
                 TextView vhtContactTextView = (TextView) view.findViewById(R.id.vhtContactTextView);
                 String vhtContact = patientDetails.get(DBConstants.KEY.VHT_PHONE);
-                vhtContactTextView.setText(vhtContact);
+                vhtContactTextView.setTag(R.id.CONTACT, caretakerContact);
+                vhtContactTextView.setText(Utils.getFormattedPhoneNumber(vhtContact));
+                vhtContactTextView.setOnClickListener(helperContext);
             }
 
         });
 
     }
 
+    @Override
+    public void onClick(View view) {
+        launchPhoneDialer(view.getTag(R.id.CONTACT).toString());
+
+    }
+
+    private void launchPhoneDialer(String phoneNumber) {
+        Intent intent = new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", phoneNumber, null));
+        context.startActivity(intent);
+    }
 }
