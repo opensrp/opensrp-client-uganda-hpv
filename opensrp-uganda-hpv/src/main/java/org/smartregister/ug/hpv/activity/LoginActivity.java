@@ -162,11 +162,10 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void login(final View view) {
-        // getOpenSRPContext().allSharedPreferences().saveForceRemoteLogin(false); // TODO: remove this after testing
         login(view, !getOpenSRPContext().allSharedPreferences().fetchForceRemoteLogin());
     }
 
-    public void login(final View view, boolean localLogin) {
+    private void login(final View view, boolean localLogin) {
         android.util.Log.i(getClass().getName(), "Hiding Keyboard " + DateTime.now().toString());
         hideKeyboard();
         view.setClickable(false);
@@ -188,14 +187,12 @@ public class LoginActivity extends AppCompatActivity {
 
     private void localLogin(View view, String userName, String password) {
         view.setClickable(true);
-        localLoginWith(userName, password);
-        // TODO: uncomment this
-//        if (getOpenSRPContext().userService().isUserInValidGroup(userName, password)
-//                && (!UgandaHpvConstants.TIME_CHECK || TimeStatus.OK.equals(getOpenSRPContext().userService().validateStoredServerTimeZone()))) {
-//            localLoginWith(userName, password);
-//        } else {
-//            login(findViewById(R.id.login_login_btn), false);
-//        }
+        if (getOpenSRPContext().userService().isUserInValidGroup(userName, password)
+                && (!UgandaHpvConstants.TIME_CHECK || TimeStatus.OK.equals(getOpenSRPContext().userService().validateStoredServerTimeZone()))) {
+            localLoginWith(userName, password);
+        } else {
+            login(findViewById(R.id.login_login_btn), false);
+        }
     }
 
     private void localLoginWith(String userName, String password) {
@@ -215,6 +212,7 @@ public class LoginActivity extends AppCompatActivity {
     private void remoteLogin(final View view, final String userName, final String password) {
         if (!getOpenSRPContext().allSharedPreferences().fetchBaseURL("").isEmpty()) {
             tryRemoteLogin(userName, password, new Listener<LoginResponse>() {
+              
                 public void onEvent(LoginResponse loginResponse) {
                     view.setClickable(true);
                     if (loginResponse == LoginResponse.SUCCESS) {
