@@ -10,8 +10,10 @@ import android.widget.TextView;
 import org.apache.commons.lang3.text.WordUtils;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.ug.hpv.R;
+import org.smartregister.ug.hpv.activity.BasePatientDetailActivity;
 import org.smartregister.ug.hpv.util.Constants;
 import org.smartregister.ug.hpv.util.DBConstants;
+import org.smartregister.ug.hpv.util.JsonFormUtils;
 import org.smartregister.ug.hpv.util.Utils;
 
 import java.util.Map;
@@ -58,7 +60,7 @@ public class RenderContactCardHelper extends BaseRenderHelper implements View.On
 
                 TextView addContactView = (TextView) view.findViewById(R.id.add_contact);
                 addContactView.setTag(R.id.CLIENT_ID, patientDetails.get(Constants.KEY._ID));
-                addContactView.setTag("ADD_CONTACT");
+                addContactView.setTag(Constants.ADD_CONTACT);
                 addContactView.setOnClickListener(helperContext);
             }
 
@@ -70,8 +72,11 @@ public class RenderContactCardHelper extends BaseRenderHelper implements View.On
     public void onClick(View view) {
         if (view.getTag(R.id.CONTACT) != null) {
             launchPhoneDialer(view.getTag(R.id.CONTACT).toString());
-        } else if (view.getTag() != null && view.getTag().equals("ADD_CONTACT")) {
-            Utils.showToast(context, "Launch edit registration details..");
+        } else if (view.getTag() != null && view.getTag().equals(Constants.ADD_CONTACT)) {
+
+            String formMetadata = JsonFormUtils.getmetaDataForEditForm(context,commonPersonObjectClient);
+            ((BasePatientDetailActivity)context).startFormActivity(Constants.JSON_FORM.PATIENT_REGISTRATION,view.getTag(R.id.CLIENT_ID
+            ).toString(),formMetadata);
         }
 
     }

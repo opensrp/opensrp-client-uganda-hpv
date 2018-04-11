@@ -12,6 +12,7 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.widget.Toast;
 
+import com.fasterxml.jackson.databind.deser.Deserializers;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 
@@ -44,7 +45,7 @@ public class Utils {
 
     }
 
-
+private static BaseEvent myEvent;
     public static void saveLanguage(String language) {
         AllSharedPreferences allSharedPreferences = new AllSharedPreferences(PreferenceManager.getDefaultSharedPreferences(HpvApplication.getInstance().getApplicationContext()));
         allSharedPreferences.saveLanguagePreference(language);
@@ -72,7 +73,7 @@ public class Utils {
         }
     }
 
-    public static void postEvent(BaseEvent event) {
+    public static void postEvent(BaseEvent event) {myEvent = event;
         EventBus.getDefault().post(event);
     }
 

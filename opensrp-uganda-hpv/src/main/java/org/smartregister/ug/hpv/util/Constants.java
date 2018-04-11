@@ -20,6 +20,7 @@ public class Constants {
     public static final String PATIENT_TABLE_NAME = "ec_patient";
     public static final String CONTACT_TABLE_NAME = "ec_contact";
     public static final String CURRENT_LOCATION_ID = "CURRENT_LOCATION_ID";
+    public static final String ADD_CONTACT = "add_contact";
 
     public static final class REGISTER_COLUMNS {
         public static final String ID = "id";

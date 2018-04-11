@@ -10,6 +10,7 @@ public class DBConstants {
 
     public static final class KEY {
         public static final String FIRST_NAME = "first_name";
+        public static final String FAMILY_NAME = "family_name";
         public static final String LAST_NAME = "last_name";
         public static final String DOB = "dob";
         public static final String OPENSRP_ID = "opensrp_id";
@@ -25,11 +26,11 @@ public class DBConstants {
         public static final String DATE_REMOVED = "date_removed";
         public static final String MOTHER = "_index";
         public static final String ENTITY_ID = "entity_id";
-        public static final String VALUE = "value";
         public static final String LOOK_UP = "look_up";
         public static final String NUMBER_PICKER = "number_picker";
         public static final String CLASS = "class";
         public static final String SCHOOL = "school";
+        public static final String SCHOOL_NAME = "school_name";
         public static final String DOSE_ONE_DATE = "dose_one_date";
         public static final String DOSE_TWO_DATE = "dose_two_date";
         public static final String DATE_DOSE_ONE_GIVEN = "date_dose_one_given";

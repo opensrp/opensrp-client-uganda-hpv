@@ -72,10 +72,10 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper {
                         doseOneGivenTextView.setText("Dose 1 given " + Utils.formatDate(dateDoseOneGiven));
                     }
 
-                    String location = patientDetails.get(DBConstants.KEY.SCHOOL);
-                    if (StringUtils.isNotBlank(location)) {
+                    String school = patientDetails.get(DBConstants.KEY.SCHOOL_NAME);
+                    if (StringUtils.isNotBlank(school)) {
                         TextView locationTextView = (TextView) view.findViewById(R.id.locationVaccineGivenTextView);
-                        locationTextView.setText(StringUtils.capitalize(location));
+                        locationTextView.setText(StringUtils.capitalize(school));
                     }
 
 

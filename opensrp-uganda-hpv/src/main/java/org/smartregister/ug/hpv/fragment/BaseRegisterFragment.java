@@ -268,6 +268,7 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
                 tableName + "." + DBConstants.KEY.OPENSRP_ID,
                 tableName + "." + DBConstants.KEY.CLASS,
                 tableName + "." + DBConstants.KEY.SCHOOL,
+                tableName + "." + DBConstants.KEY.SCHOOL_NAME,
                 tableName + "." + DBConstants.KEY.DOSE_ONE_DATE,
                 tableName + "." + DBConstants.KEY.DATE_DOSE_ONE_GIVEN,
                 tableName + "." + DBConstants.KEY.DOSE_TWO_DATE,

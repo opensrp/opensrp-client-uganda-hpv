@@ -28,6 +28,7 @@ import org.smartregister.clientandeventmodel.Event;
 import org.smartregister.clientandeventmodel.FormEntityConstants;
 import org.smartregister.clientandeventmodel.Obs;
 import org.smartregister.commonregistry.AllCommonsRepository;
+import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.ProfileImage;
 import org.smartregister.repository.AllSharedPreferences;
@@ -43,6 +44,7 @@ import org.smartregister.ug.hpv.event.PatientRemovedEvent;
 import org.smartregister.ug.hpv.helper.ECSyncHelper;
 import org.smartregister.ug.hpv.repository.UniqueIdRepository;
 import org.smartregister.ug.hpv.sync.HPVClientProcessorForJava;
+import org.smartregister.ug.hpv.view.LocationPickerView;
 import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.util.FormUtils;
 import org.smartregister.view.activity.DrishtiApplication;
@@ -67,6 +69,8 @@ import java.util.regex.Pattern;
 
 import id.zelory.compressor.Compressor;
 
+import static org.smartregister.util.Utils.getValue;
+
 /**
  * Created by ndegwamartin on 19/03/2018.
  */
@@ -76,10 +80,11 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
     private static final String ENCOUNTER = "encounter";
     public static final String ENCOUNTER_TYPE = "encounter_type";
     public static final String CURRENT_OPENSRP_ID = "current_opensrp_id";
+    public static final String READ_ONLY = "read_only";
     private static final String METADATA = "metadata";
     public static final String encounterType = "Update Birth Registration";
     private static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
+    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
     private static final String LOCATION_HIERARCHY = "locationsHierarchy";
     private static final String MAP = "map";
 
@@ -1138,6 +1143,8 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
                 String encounterType = getString(jsonForm, ENCOUNTER_TYPE);
                 JSONObject metadata = getJSONObject(jsonForm, METADATA);
 
+
+                String lastLocationName = null;
                 // Replace values for location questions with their corresponding location IDs
                 for (int i = 0; i < fields.length(); i++) {
                     String key = fields.getJSONObject(i).getString(Constants.KEY.KEY);
@@ -1146,17 +1153,20 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
                             String rawValue = fields.getJSONObject(i).getString(Constants.KEY.VALUE);
                             JSONArray valueArray = new JSONArray(rawValue);
                             if (valueArray.length() > 0) {
-                                String lastLocationName = valueArray.getString(valueArray.length() - 1);
+                                lastLocationName = valueArray.getString(valueArray.length() - 1);
                                 String lastLocationId = getOpenMrsLocationId(openSrpContext, lastLocationName);
                                 fields.getJSONObject(i).put(Constants.KEY.VALUE, lastLocationId);
                             }
                         } catch (Exception e) {
                             Log.e(TAG, Log.getStackTraceString(e));
                         }
+                    } else if (DBConstants.KEY.SCHOOL_NAME.equalsIgnoreCase(key)) {
+
+                        fields.getJSONObject(i).put(Constants.KEY.VALUE, lastLocationName);
                     } else if (DBConstants.KEY.DOSE_ONE_DATE.equalsIgnoreCase(key)) {
                         try {
 
-                            fields.getJSONObject(i).put(DBConstants.KEY.VALUE, Utils.getTodaysDate());
+                            fields.getJSONObject(i).put(Constants.KEY.VALUE, Utils.getTodaysDate());
 
                         } catch (Exception e) {
                             Log.e(TAG, Log.getStackTraceString(e));
@@ -1201,5 +1211,105 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
             }
             return null;
         }
+    }
+
+    public static String getmetaDataForEditForm(Context context, CommonPersonObjectClient childDetails) {
+        try {
+            JSONObject form = FormUtils.getInstance(context).getFormJson(Constants.JSON_FORM.PATIENT_REGISTRATION);
+            LocationPickerView lpv = new LocationPickerView(context);
+            lpv.init(HpvApplication.getInstance().getContext());
+            JsonFormUtils.addAdolescentRegLocHierarchyQuestions(form, HpvApplication.getInstance().getContext());
+            Log.d(TAG, "Form is " + form.toString());
+            if (form != null) {
+                form.put(JsonFormUtils.ENTITY_ID, childDetails.entityId());
+                form.put(JsonFormUtils.CURRENT_OPENSRP_ID, getValue(childDetails.getColumnmaps(), DBConstants.KEY.OPENSRP_ID, true).replace("-", ""));
+
+
+                Intent intent = new Intent(context, HpvJsonFormActivity.class);
+                //inject zeir id into the form
+                JSONObject stepOne = form.getJSONObject(JsonFormUtils.STEP1);
+                JSONArray jsonArray = stepOne.getJSONArray(JsonFormUtils.FIELDS);
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    if (jsonObject.getString(JsonFormUtils.KEY).equalsIgnoreCase(DBConstants.KEY.FIRST_NAME)) {
+                        jsonObject.put(JsonFormUtils.VALUE, getValue(childDetails.getColumnmaps(), DBConstants.KEY.FIRST_NAME, true));
+                    }
+                    if (jsonObject.getString(JsonFormUtils.KEY).equalsIgnoreCase(DBConstants.KEY.FAMILY_NAME)) {
+                        jsonObject.put(JsonFormUtils.VALUE, getValue(childDetails.getColumnmaps(), "last_name", true));
+                    }
+                    if (jsonObject.getString(JsonFormUtils.KEY).equalsIgnoreCase("Sex")) {
+                        jsonObject.put(JsonFormUtils.READ_ONLY, true);
+                        jsonObject.put(JsonFormUtils.VALUE, getValue(childDetails.getColumnmaps(), DBConstants.KEY.GENDER, true));
+                    }
+                    if (jsonObject.getString(JsonFormUtils.KEY).equalsIgnoreCase(DBConstants.KEY.OPENSRP_ID)) {
+                        jsonObject.put(JsonFormUtils.READ_ONLY, false);
+                        jsonObject.put(JsonFormUtils.VALUE, getValue(childDetails.getColumnmaps(), DBConstants.KEY.OPENSRP_ID, true).replace("-", ""));
+                    }
+
+                    if (jsonObject.getString(JsonFormUtils.KEY).equalsIgnoreCase(DBConstants.KEY.CARETAKER_NAME)) {
+                        jsonObject.put(JsonFormUtils.READ_ONLY, false);
+                        jsonObject.put(JsonFormUtils.VALUE, getValue(childDetails.getColumnmaps(), DBConstants.KEY.CARETAKER_NAME, true));
+                    }
+                    if (jsonObject.getString(JsonFormUtils.KEY).equalsIgnoreCase(DBConstants.KEY.CARETAKER_PHONE)) {
+                        jsonObject.put(JsonFormUtils.READ_ONLY, false);
+                        jsonObject.put(JsonFormUtils.VALUE, getValue(childDetails.getColumnmaps(), DBConstants.KEY.CARETAKER_PHONE, true));
+                    }
+                    if (jsonObject.getString(JsonFormUtils.KEY).equalsIgnoreCase(DBConstants.KEY.VHT_NAME)) {
+                        jsonObject.put(JsonFormUtils.READ_ONLY, false);
+                        jsonObject.put(JsonFormUtils.VALUE, getValue(childDetails.getColumnmaps(), DBConstants.KEY.VHT_NAME, true));
+                    }
+                    if (jsonObject.getString(JsonFormUtils.KEY).equalsIgnoreCase(DBConstants.KEY.VHT_PHONE)) {
+                        jsonObject.put(JsonFormUtils.READ_ONLY, false);
+                        jsonObject.put(JsonFormUtils.VALUE, getValue(childDetails.getColumnmaps(), DBConstants.KEY.VHT_PHONE, true));
+                    }
+
+                    if (jsonObject.getString(JsonFormUtils.KEY).equalsIgnoreCase(DBConstants.KEY.CLASS)) {
+                        jsonObject.put(JsonFormUtils.READ_ONLY, false);
+                        jsonObject.put(JsonFormUtils.VALUE, getValue(childDetails.getColumnmaps(), DBConstants.KEY.CLASS, true));
+                    }
+
+
+                    if (jsonObject.getString(JsonFormUtils.KEY).equalsIgnoreCase(DBConstants.KEY.DOB)) {
+                        jsonObject.put(JsonFormUtils.READ_ONLY, true);
+
+                        String dobString = getValue(childDetails.getColumnmaps(), DBConstants.KEY.DOB, true);
+                        Date dob = Utils.dobStringToDate(dobString);
+                        if (dob != null) {
+                            jsonObject.put(JsonFormUtils.VALUE, DATE_FORMAT.format(dob));
+                        }
+                    }
+                  /*
+                    if (jsonObject.getString(JsonFormUtils.KEY).equalsIgnoreCase("Birth_Facility_Name")) {
+                        jsonObject.put(JsonFormUtils.READ_ONLY, true);
+                        List<String> birthFacilityHierarchy = null;
+                        String birthFacilityName = getValue(detailsMap, "Birth_Facility_Name", false);
+
+                        if (birthFacilityName != null) {
+                            if (birthFacilityName.equalsIgnoreCase("other")) {
+                                birthFacilityHierarchy = new ArrayList<>();
+                                birthFacilityHierarchy.add(birthFacilityName);
+                            } else {
+                                birthFacilityHierarchy = LocationHelper.getInstance().getOpenMrsLocationHierarchy(birthFacilityName);
+                            }
+                        }
+
+                        String birthFacilityHierarchyString = AssetHandler.javaToJsonString(birthFacilityHierarchy, new TypeToken<List<String>>() {
+                        }.getType());
+                        if (StringUtils.isNotBlank(birthFacilityHierarchyString)) {
+                            jsonObject.put(JsonFormUtils.VALUE, birthFacilityHierarchyString);
+                        }
+                    }*/
+
+
+                }
+//            intent.putExtra("json", form.toString());
+//            startActivityForResult(intent, REQUEST_CODE_GET_JSON);
+                return form.toString();
+            }
+        } catch (Exception e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        }
+
+        return "";
     }
 }
