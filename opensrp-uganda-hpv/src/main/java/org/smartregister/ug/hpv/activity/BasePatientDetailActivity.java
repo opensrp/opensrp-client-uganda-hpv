@@ -8,7 +8,7 @@ import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 
-import org.opensrp.api.constants.Gender;
+import org.greenrobot.eventbus.EventBus;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.adapter.HPVRegisterActivityPagerAdapter;
@@ -32,7 +32,7 @@ import butterknife.ButterKnife;
 public abstract class BasePatientDetailActivity extends BaseActivity {
     private static final String TAG = BasePatientDetailActivity.class.getCanonicalName();
     protected Map<String, String> patientDetails;
-    private File currentfile;
+    protected File currentfile;
     private static final int REQUEST_TAKE_PHOTO = 1;
 
     @Bind(R.id.view_pager)
@@ -76,22 +76,7 @@ public abstract class BasePatientDetailActivity extends BaseActivity {
         super.onBackPressed(); // allow back key only if we are
     }
 
-
-    private void updateProfilePicture(Gender gender) {
-        if (isDataOk()) {
-/*
-            if (commonPersonObjectClient.entityId() != null) { //image already in local storage most likey ):
-                //set profile image by passing the client id.If the image doesn't exist in the image repository then download and save locally
-                profileImageIV.setTag(org.smartregister.R.id.entity_id, commonPersonObjectClient.entityId());
-                DrishtiApplication.getCachedImageLoaderInstance().getImageByClientId(commonPersonObjectClient.entityId(), OpenSRPImageLoader.getStaticImageListener(profileImageIV, ImageUtils.profileImageResourceByGender(gender), ImageUtils.profileImageResourceByGender(gender)));
-
-            }
-*/
-        }
-    }
-
-
-    private void dispatchTakePictureIntent() {
+    public void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
@@ -129,8 +114,5 @@ public abstract class BasePatientDetailActivity extends BaseActivity {
 //        mCurrentPhotoPath = "file:" + image.getAbsolutePath();
     }
 
-    private boolean isDataOk() {
-        return commonPersonObjectClient != null && commonPersonObjectClient.getDetails() != null;
-    }
 
 }

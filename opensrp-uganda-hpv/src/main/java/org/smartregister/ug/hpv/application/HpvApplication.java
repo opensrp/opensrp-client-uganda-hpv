@@ -109,7 +109,7 @@ public class HpvApplication extends DrishtiApplication {
             String username = getContext().userService().getAllSharedPreferences().fetchRegisteredANM();
             password = getContext().userService().getGroupId(username);
         }
-        return "password1";
+        return password;
     }
 
     @Override

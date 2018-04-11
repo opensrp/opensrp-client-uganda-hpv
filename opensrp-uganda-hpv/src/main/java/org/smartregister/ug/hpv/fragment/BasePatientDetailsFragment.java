@@ -7,6 +7,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
@@ -15,7 +16,10 @@ import org.smartregister.configurableviews.helper.ConfigurableViewsHelper;
 import org.smartregister.configurableviews.model.ViewConfiguration;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.ug.hpv.R;
-import org.smartregister.ug.hpv.event.EnketoFormSaveCompleteEvent;
+import org.smartregister.ug.hpv.activity.HomeRegisterActivity;
+import org.smartregister.ug.hpv.event.JsonFormSaveCompleteEvent;
+import org.smartregister.ug.hpv.event.PatientRemovedEvent;
+import org.smartregister.ug.hpv.event.PictureUpdatedEvent;
 import org.smartregister.ug.hpv.event.SyncEvent;
 import org.smartregister.ug.hpv.helper.view.RenderContactCardHelper;
 import org.smartregister.ug.hpv.helper.view.RenderPatientDemographicCardHelper;
@@ -47,6 +51,7 @@ public abstract class BasePatientDetailsFragment extends SecuredFragment impleme
     private static String TAG = BasePatientDetailsFragment.class.getCanonicalName();
     private LocationPickerView facilitySelection;
     private static final int REQUEST_CODE_GET_JSON = 3432;
+    private RenderPatientDemographicCardHelper renderPatientDemographicCardHelper;
 
     protected abstract void setPatientDetails(Map<String, String> patientDetails);
 
@@ -58,7 +63,7 @@ public abstract class BasePatientDetailsFragment extends SecuredFragment impleme
 
     protected void renderDemographicsView(View view, Map<String, String> patientDetails) {
         CommonPersonObjectClient client = (CommonPersonObjectClient) view.getTag();
-        RenderPatientDemographicCardHelper renderPatientDemographicCardHelper = new RenderPatientDemographicCardHelper(getActivity(), client);
+        renderPatientDemographicCardHelper = new RenderPatientDemographicCardHelper(getActivity(), client);
         renderPatientDemographicCardHelper.renderView(view, patientDetails);
 
     }
@@ -115,13 +120,20 @@ public abstract class BasePatientDetailsFragment extends SecuredFragment impleme
 
     @Override
     protected void onResumption() {
-        //Overrides
     }
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void refreshView(EnketoFormSaveCompleteEvent enketoFormSaveCompleteEvent) {
+    public void refreshView(JsonFormSaveCompleteEvent jsonFormSaveCompleteEvent) {
         //Refres on form save
+
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void removeFromRegister(PatientRemovedEvent event) {
+        if (event != null) {
+            startActivity(new Intent(getActivity(), HomeRegisterActivity.class));
+        }
 
     }
 
@@ -130,6 +142,14 @@ public abstract class BasePatientDetailsFragment extends SecuredFragment impleme
         if (syncEvent != null && syncEvent.getFetchStatus().equals(FetchStatus.fetched)) {
             processViewConfigurations(getView());
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void refreshView(PictureUpdatedEvent event) {
+        if (event != null && renderPatientDemographicCardHelper != null) {
+            renderPatientDemographicCardHelper.updateProfilePicture(null);
+        }
+
     }
 
     private void initializeRegister(Intent intent, String registerTitle) {
@@ -147,6 +167,7 @@ public abstract class BasePatientDetailsFragment extends SecuredFragment impleme
         }
 
     }
+
 
     @Override
     public void startFormActivity(String formName, String entityId, String metaData) {
@@ -297,10 +318,6 @@ public abstract class BasePatientDetailsFragment extends SecuredFragment impleme
         } else if (componentViewConfiguration.getIdentifier().equals(Constants.CONFIGURATION.COMPONENTS.PATIENT_DETAILS_CONTACT_SCREENING)) {
             renderContactView(json2View, patientDetails);
 
-            TextView addContactView = (TextView) json2View.findViewById(R.id.add_contact);
-            addContactView.setTag(R.id.CLIENT_ID, patientDetails.get(Constants.KEY._ID));
-            addContactView.setOnClickListener(this);
-
         }
     }
 
@@ -317,5 +334,6 @@ public abstract class BasePatientDetailsFragment extends SecuredFragment impleme
         return R.id.content_patient_detail_container;
 
     }
+
 
 }

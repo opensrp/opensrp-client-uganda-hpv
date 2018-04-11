@@ -319,11 +319,7 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
                 AllSharedPreferences allSharedPreferences = new AllSharedPreferences(preferences);
 
                 JSONObject form = new JSONObject(jsonString);
-                if (form.getString(JsonFormUtils.ENCOUNTER_TYPE).equals(Constants.EventType.REMOVE)) {
-
-                    Utils.showToast(this, "Removing Patient...");
-
-                } else if (form.getString(JsonFormUtils.ENCOUNTER_TYPE).equals(Constants.EventType.REGISTRATION)) {
+                if (form.getString(JsonFormUtils.ENCOUNTER_TYPE).equals(Constants.EventType.REGISTRATION)) {
 
                     JsonFormUtils.saveForm(this, HpvApplication.getInstance().getContext(), jsonString, allSharedPreferences.fetchRegisteredANM());
                 }
@@ -337,7 +333,7 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
             AllSharedPreferences allSharedPreferences = new AllSharedPreferences(preferences);
 
             JsonFormUtils.saveImage(this, allSharedPreferences.fetchRegisteredANM(), clientDetails.entityId(), imageLocation);
-            //  updateProfilePicture(gender);
+
         } else if (requestCode == BarcodeIntentIntegrator.REQUEST_CODE && resultCode == RESULT_OK) {
             BarcodeIntentResult res = BarcodeIntentIntegrator.parseActivityResult(requestCode, resultCode, data);
             if (StringUtils.isNotBlank(res.getContents())) {

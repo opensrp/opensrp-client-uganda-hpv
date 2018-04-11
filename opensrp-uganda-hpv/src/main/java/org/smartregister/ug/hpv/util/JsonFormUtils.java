@@ -39,6 +39,7 @@ import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.activity.HomeRegisterActivity;
 import org.smartregister.ug.hpv.activity.HpvJsonFormActivity;
 import org.smartregister.ug.hpv.application.HpvApplication;
+import org.smartregister.ug.hpv.event.PatientRemovedEvent;
 import org.smartregister.ug.hpv.helper.ECSyncHelper;
 import org.smartregister.ug.hpv.repository.UniqueIdRepository;
 import org.smartregister.ug.hpv.sync.HPVClientProcessorForJava;
@@ -136,7 +137,7 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
 
             for (int i = 0; i < fields.length(); i++) {
                 String key = fields.getJSONObject(i).getString(Constants.KEY.KEY);
-                if ("School".equalsIgnoreCase(key)) {
+                if (DBConstants.KEY.SCHOOL.equalsIgnoreCase(key)) {
                     try {
                         String rawValue = fields.getJSONObject(i).getString(Constants.KEY.VALUE);
                         JSONArray valueArray = new JSONArray(rawValue);
@@ -367,6 +368,9 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
 
         } catch (Exception e) {
             Log.e(TAG, "", e);
+        } finally {
+
+            Utils.postEvent(new PatientRemovedEvent());
         }
     }
 

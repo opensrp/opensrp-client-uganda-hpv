@@ -57,18 +57,6 @@ public class PatientDetailsFragment extends BasePatientDetailsFragment implement
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    public void onStop() {
-        EventBus.getDefault().unregister(this);
-        super.onStop();
-    }
-
-    @Override
     protected void onResumption() {
         //Overrides
     }

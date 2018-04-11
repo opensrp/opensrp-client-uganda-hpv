@@ -1,21 +1,24 @@
 package org.smartregister.ug.hpv.activity;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONObject;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.ug.hpv.application.HpvApplication;
+import org.smartregister.ug.hpv.event.PictureUpdatedEvent;
 import org.smartregister.ug.hpv.fragment.PatientDetailsFragment;
 import org.smartregister.ug.hpv.util.Constants;
 import org.smartregister.ug.hpv.util.JsonFormUtils;
+import org.smartregister.ug.hpv.util.Utils;
 
 import java.util.HashMap;
 
@@ -26,6 +29,8 @@ import java.util.HashMap;
 public class PatientDetailActivity extends BasePatientDetailActivity {
     private static final String TAG = PatientDetailActivity.class.getCanonicalName();
     private static final int REQUEST_CODE_GET_JSON = 3432;
+    private CommonPersonObjectClient commonPersonObjectClient;
+    private static final int REQUEST_TAKE_PHOTO = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,8 +43,8 @@ public class PatientDetailActivity extends BasePatientDetailActivity {
         PatientDetailsFragment mBaseFragment = new PatientDetailsFragment();
         patientDetails = (HashMap<String, String>) getIntent().getSerializableExtra(Constants.INTENT_KEY.PATIENT_DETAIL_MAP);
         mBaseFragment.setPatientDetails(patientDetails);
-
-        mBaseFragment.setClient((CommonPersonObjectClient) getIntent().getSerializableExtra(Constants.INTENT_KEY.CLIENT_OBJECT));
+        commonPersonObjectClient = (CommonPersonObjectClient) getIntent().getSerializableExtra(Constants.INTENT_KEY.CLIENT_OBJECT);
+        mBaseFragment.setClient(commonPersonObjectClient);
         return mBaseFragment;
     }
 
@@ -57,13 +62,11 @@ public class PatientDetailActivity extends BasePatientDetailActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        AllSharedPreferences allSharedPreferences = getOpenSRPContext().allSharedPreferences();
         if (requestCode == REQUEST_CODE_GET_JSON && resultCode == RESULT_OK) {
             try {
                 String jsonString = data.getStringExtra("json");
                 Log.d("JSONResult", jsonString);
-
-                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-                AllSharedPreferences allSharedPreferences = new AllSharedPreferences(preferences);
 
                 JSONObject form = new JSONObject(jsonString);
                 if (form.getString(JsonFormUtils.ENCOUNTER_TYPE).equals(Constants.EventType.REMOVE)) {
@@ -74,7 +77,38 @@ public class PatientDetailActivity extends BasePatientDetailActivity {
                 Log.e(TAG, Log.getStackTraceString(e));
             }
 
+        } else if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
+
+            try {
+                String imageLocation = currentfile.getAbsolutePath();
+
+                JsonFormUtils.saveImage(this, allSharedPreferences.fetchRegisteredANM(), commonPersonObjectClient.entityId(), imageLocation);
+                Utils.postEvent(new PictureUpdatedEvent());
+            } catch (Exception e) {
+                Utils.showToast(this, "Error occurred saving image...");
+                Log.e(TAG, e.getMessage());
+            }
+
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onPause() {
+        EventBus.getDefault().unregister(this);
+        super.onPause();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void refreshView(PictureUpdatedEvent event) {
+        if (event != null) {
+            Utils.showToast(this, "Updating pic");
+        }
+
+    }
 }

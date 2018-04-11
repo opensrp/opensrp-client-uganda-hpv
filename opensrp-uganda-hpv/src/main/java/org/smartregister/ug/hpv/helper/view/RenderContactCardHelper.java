@@ -10,6 +10,7 @@ import android.widget.TextView;
 import org.apache.commons.lang3.text.WordUtils;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.ug.hpv.R;
+import org.smartregister.ug.hpv.util.Constants;
 import org.smartregister.ug.hpv.util.DBConstants;
 import org.smartregister.ug.hpv.util.Utils;
 
@@ -53,6 +54,12 @@ public class RenderContactCardHelper extends BaseRenderHelper implements View.On
                 vhtContactTextView.setTag(R.id.CONTACT, caretakerContact);
                 vhtContactTextView.setText(Utils.getFormattedPhoneNumber(vhtContact));
                 vhtContactTextView.setOnClickListener(helperContext);
+
+
+                TextView addContactView = (TextView) view.findViewById(R.id.add_contact);
+                addContactView.setTag(R.id.CLIENT_ID, patientDetails.get(Constants.KEY._ID));
+                addContactView.setTag("ADD_CONTACT");
+                addContactView.setOnClickListener(helperContext);
             }
 
         });
@@ -61,7 +68,11 @@ public class RenderContactCardHelper extends BaseRenderHelper implements View.On
 
     @Override
     public void onClick(View view) {
-        launchPhoneDialer(view.getTag(R.id.CONTACT).toString());
+        if (view.getTag(R.id.CONTACT) != null) {
+            launchPhoneDialer(view.getTag(R.id.CONTACT).toString());
+        } else if (view.getTag() != null && view.getTag().equals("ADD_CONTACT")) {
+            Utils.showToast(context, "Launch edit registration details..");
+        }
 
     }
 

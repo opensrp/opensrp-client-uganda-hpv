@@ -4,5 +4,5 @@ package org.smartregister.ug.hpv.event;
  * Created by ndegwamartin on 09/04/2018.
  */
 
-public class EnketoFormSaveCompleteEvent extends BaseEvent {
+public class JsonFormSaveCompleteEvent extends BaseEvent {
 }
