@@ -7,7 +7,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
@@ -21,6 +20,7 @@ import org.smartregister.ug.hpv.event.JsonFormSaveCompleteEvent;
 import org.smartregister.ug.hpv.event.PatientRemovedEvent;
 import org.smartregister.ug.hpv.event.PictureUpdatedEvent;
 import org.smartregister.ug.hpv.event.SyncEvent;
+import org.smartregister.ug.hpv.helper.LocationHelper;
 import org.smartregister.ug.hpv.helper.view.RenderContactCardHelper;
 import org.smartregister.ug.hpv.helper.view.RenderPatientDemographicCardHelper;
 import org.smartregister.ug.hpv.helper.view.RenderPatientFollowupCardHelper;
@@ -152,16 +152,14 @@ public abstract class BasePatientDetailsFragment extends SecuredFragment impleme
 
     }
 
-    private void initializeRegister(Intent intent, String registerTitle) {
-        intent.putExtra(TOOLBAR_TITLE, registerTitle);
-        startActivity(intent);
-    }
-
     @Override
     public void onClick(View view) {
         try {
 
-            startFormActivity(Constants.JSON_FORM.PATIENT_REMOVAL, patientDetails.get(DBConstants.KEY.BASE_ENTITY_ID), null);
+            String locationId = LocationHelper.getInstance().getOpenMrsLocationId(facilitySelection.getSelectedItem());
+
+            JsonFormUtils.startForm(getActivity(), context(), REQUEST_CODE_GET_JSON, Constants.JSON_FORM.PATIENT_REMOVAL, patientDetails.get(DBConstants.KEY.BASE_ENTITY_ID),
+                    null, locationId);
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
@@ -172,9 +170,8 @@ public abstract class BasePatientDetailsFragment extends SecuredFragment impleme
     @Override
     public void startFormActivity(String formName, String entityId, String metaData) {
         try {
-            String locationId = JsonFormUtils.getOpenMrsLocationId(context(), facilitySelection.getSelectedItem());
-            JsonFormUtils.startForm(getActivity(), context(), REQUEST_CODE_GET_JSON, formName, entityId,
-                    metaData, locationId);
+
+            JsonFormUtils.startFormForEdit(getActivity(), REQUEST_CODE_GET_JSON, metaData);
 
         } catch (Exception e) {
             Log.e(TAG, Log.getStackTraceString(e));
@@ -190,7 +187,7 @@ public abstract class BasePatientDetailsFragment extends SecuredFragment impleme
 
 
         facilitySelection = (LocationPickerView) rootView.findViewById(R.id.facility_selection);
-        facilitySelection.init(context());
+        facilitySelection.init();
 
         setUpButtons(rootView);
     }

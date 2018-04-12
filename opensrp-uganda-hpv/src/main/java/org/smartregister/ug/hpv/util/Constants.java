@@ -21,6 +21,7 @@ public class Constants {
     public static final String CONTACT_TABLE_NAME = "ec_contact";
     public static final String CURRENT_LOCATION_ID = "CURRENT_LOCATION_ID";
     public static final String ADD_CONTACT = "add_contact";
+    public static final String OTHER = "other";
 
     public static final class REGISTER_COLUMNS {
         public static final String ID = "id";
@@ -58,6 +59,9 @@ public class Constants {
         public static final String TREE = "tree";
         public static final String DEFAULT = "default";
         public static final String TAGS = "tags";
+        public static final String MAP = "map";
+        public static final String PHOTO = "photo";
+
     }
 
     public static class INTENT_KEY {

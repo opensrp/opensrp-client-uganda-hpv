@@ -76,7 +76,7 @@ public class RenderPatientDemographicCardHelper extends BaseRenderHelper impleme
 
     private void refreshProfileImage(ImageView profileImageView) {
 
-        Photo photo = ImageUtils.profilePhotoByClient(commonPersonObjectClient);
+        Photo photo = ImageUtils.profilePhotoByClientID(commonPersonObjectClient.entityId());
 
         if (StringUtils.isNotBlank(photo.getFilePath())) {
             try {
@@ -110,7 +110,7 @@ public class RenderPatientDemographicCardHelper extends BaseRenderHelper impleme
             if (commonPersonObjectClient.entityId() != null) { //image already in local storage most likey ):
                 //set profile image by passing the client id.If the image doesn't exist in the image repository then download and save locally
                 profileImageView.setTag(org.smartregister.R.id.entity_id, commonPersonObjectClient.entityId());
-                DrishtiApplication.getCachedImageLoaderInstance().getImageByClientId(commonPersonObjectClient.entityId(), OpenSRPImageLoader.getStaticImageListener(profileImageView, ImageUtils.profileImageResourceByGender(gender), ImageUtils.profileImageResourceByGender(gender)));
+                DrishtiApplication.getCachedImageLoaderInstance().getImageByClientId(commonPersonObjectClient.entityId(), OpenSRPImageLoader.getStaticImageListener(profileImageView, ImageUtils.getProfileImageResourceIDentifier(), ImageUtils.getProfileImageResourceIDentifier()));
 
             }
 

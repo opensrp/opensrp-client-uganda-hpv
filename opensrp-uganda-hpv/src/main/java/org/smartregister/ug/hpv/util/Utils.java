@@ -12,7 +12,6 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.widget.Toast;
 
-import com.fasterxml.jackson.databind.deser.Deserializers;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 
@@ -45,7 +44,8 @@ public class Utils {
 
     }
 
-private static BaseEvent myEvent;
+    private static BaseEvent myEvent;
+
     public static void saveLanguage(String language) {
         AllSharedPreferences allSharedPreferences = new AllSharedPreferences(PreferenceManager.getDefaultSharedPreferences(HpvApplication.getInstance().getApplicationContext()));
         allSharedPreferences.saveLanguagePreference(language);
@@ -73,7 +73,8 @@ private static BaseEvent myEvent;
         }
     }
 
-    public static void postEvent(BaseEvent event) {myEvent = event;
+    public static void postEvent(BaseEvent event) {
+        myEvent = event;
         EventBus.getDefault().post(event);
     }
 
@@ -186,5 +187,13 @@ private static BaseEvent myEvent;
         String[] tokens = Iterables.toArray(Splitter.fixedLength(3).split(phoneNumber), String.class);
         return "256-" + StringUtils.join(tokens, "-");
 
+    }
+
+    public static boolean isEmptyMap(Map map) {
+        return map == null || map.isEmpty();
+    }
+
+    public static boolean isEmptyCollection(Collection collection) {
+        return collection == null || collection.isEmpty();
     }
 }

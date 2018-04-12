@@ -17,7 +17,6 @@ import android.widget.TextView;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONException;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.configurableviews.ConfigurableViewsLibrary;
 import org.smartregister.configurableviews.helper.ConfigurableViewsHelper;
@@ -36,11 +35,11 @@ import org.smartregister.ug.hpv.activity.BaseRegisterActivity;
 import org.smartregister.ug.hpv.activity.HomeRegisterActivity;
 import org.smartregister.ug.hpv.activity.PatientDetailActivity;
 import org.smartregister.ug.hpv.domain.DoseStatus;
+import org.smartregister.ug.hpv.helper.LocationHelper;
 import org.smartregister.ug.hpv.provider.HomeRegisterProvider;
 import org.smartregister.ug.hpv.servicemode.HpvServiceModeOption;
 import org.smartregister.ug.hpv.util.Constants;
 import org.smartregister.ug.hpv.util.DBConstants;
-import org.smartregister.ug.hpv.util.JsonFormUtils;
 import org.smartregister.ug.hpv.util.Utils;
 import org.smartregister.ug.hpv.view.LocationPickerView;
 import org.smartregister.view.activity.SecuredNativeSmartRegisterActivity;
@@ -223,7 +222,7 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
         }
 
         facilitySelection = (LocationPickerView) view.findViewById(R.id.facility_selection);
-        facilitySelection.init(context());
+        facilitySelection.init();
     }
 
     @Override
@@ -404,15 +403,11 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
 
     protected void updateLocationText() {
         if (facilitySelection != null) {
-            facilitySelection.setText(JsonFormUtils.getOpenMrsReadableName(
+            facilitySelection.setText(LocationHelper.getInstance().getOpenMrsReadableName(
                     facilitySelection.getSelectedItem()));
-            try {
+            String locationId = LocationHelper.getInstance().getOpenMrsLocationId(facilitySelection.getSelectedItem());
+            context().allSharedPreferences().savePreference(Constants.CURRENT_LOCATION_ID, locationId);
 
-                String locationId = JsonFormUtils.getOpenMrsLocationId(context(), facilitySelection.getSelectedItem());
-                context().allSharedPreferences().savePreference(Constants.CURRENT_LOCATION_ID, locationId);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
         }
     }
 

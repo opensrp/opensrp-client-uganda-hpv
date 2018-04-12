@@ -124,7 +124,7 @@ android {
             exclude group: 'com.android.support', module: 'recyclerview-v7'
         }
 
-        compile('org.smartregister:opensrp-client-core:1.2.1@aar') {
+        compile('org.smartregister:opensrp-client-core:1.2.6-SNAPSHOT@aar') {
             transitive = true
             exclude group: 'com.github.bmelnychuk', module: 'atv'
             exclude group: 'com.google.guava', module: 'guava'
@@ -141,6 +141,7 @@ android {
 
         compile('org.smartregister:opensrp-client-configurable-views:1.0.3-SNAPSHOT@aar') {
             transitive = true
+            exclude group: 'org.smartregister', module: 'opensrp-client-core'
         }
 
         compile fileTree(dir: 'libs', include: ['*.jar'])

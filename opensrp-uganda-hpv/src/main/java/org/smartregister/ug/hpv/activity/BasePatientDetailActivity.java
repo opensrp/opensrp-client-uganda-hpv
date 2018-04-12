@@ -8,10 +8,10 @@ import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 
-import org.greenrobot.eventbus.EventBus;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.adapter.HPVRegisterActivityPagerAdapter;
+import org.smartregister.ug.hpv.fragment.BasePatientDetailsFragment;
 import org.smartregister.ug.hpv.util.Constants;
 import org.smartregister.view.viewpager.OpenSRPViewPager;
 
@@ -38,6 +38,7 @@ public abstract class BasePatientDetailActivity extends BaseActivity {
     @Bind(R.id.view_pager)
     protected OpenSRPViewPager mPager;
     private CommonPersonObjectClient commonPersonObjectClient;
+    Fragment mBaseFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +52,7 @@ public abstract class BasePatientDetailActivity extends BaseActivity {
 
         Fragment[] otherFragments = {};
 
-        Fragment mBaseFragment = getDetailFragment();
+        mBaseFragment = getDetailFragment();
         mBaseFragment.setArguments(this.getIntent().getExtras());
 
         // Instantiate a ViewPager and a PagerAdapter.
@@ -114,5 +115,16 @@ public abstract class BasePatientDetailActivity extends BaseActivity {
 //        mCurrentPhotoPath = "file:" + image.getAbsolutePath();
     }
 
+
+    @Override
+    public void startFormActivity(String formName, String entityId, String metaData) {
+        try {
+            ((BasePatientDetailsFragment) mBaseFragment).startFormActivity(formName, entityId, metaData);
+
+        } catch (Exception e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        }
+
+    }
 
 }

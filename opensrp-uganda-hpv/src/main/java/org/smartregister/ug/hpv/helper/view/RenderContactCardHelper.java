@@ -74,9 +74,11 @@ public class RenderContactCardHelper extends BaseRenderHelper implements View.On
             launchPhoneDialer(view.getTag(R.id.CONTACT).toString());
         } else if (view.getTag() != null && view.getTag().equals(Constants.ADD_CONTACT)) {
 
-            String formMetadata = JsonFormUtils.getmetaDataForEditForm(context,commonPersonObjectClient);
+            String formMetadata = JsonFormUtils.getAutoPopulatedJsonEditFormString(context,commonPersonObjectClient);
             ((BasePatientDetailActivity)context).startFormActivity(Constants.JSON_FORM.PATIENT_REGISTRATION,view.getTag(R.id.CLIENT_ID
             ).toString(),formMetadata);
+
+
         }
 
     }
