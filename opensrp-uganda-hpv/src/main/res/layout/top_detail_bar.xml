@@ -18,7 +18,11 @@
         android:minWidth="@dimen/loc_picker_text_min_width"
         android:paddingLeft="0dp"
         android:paddingRight="0dp"
-        android:textSize="19sp" />
+        android:textSize="19sp"
+        android:shadowRadius="0"
+        android:textColor="@color/light_grey_text"
+        android:textStyle="normal"
+        android:drawableRight="@drawable/ic_arrow_drop_down_black_24dp"/>
 
 
 </RelativeLayout>

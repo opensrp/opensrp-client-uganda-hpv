@@ -753,21 +753,17 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
                     }
 
                     if (jsonObject.getString(JsonFormUtils.KEY).equalsIgnoreCase(DBConstants.KEY.SCHOOL)) {
-                        List<String> schoolFacilityHierarchy;
+                        List<String> schoolFacilityHierarchy = new ArrayList<>();
                         String address5 = getValue(commonPersonObjectClient.getColumnmaps(), DBConstants.KEY.SCHOOL_NAME, true);
-                        address5 = LocationHelper.getInstance().getOpenMrsLocationId(address5);
-                        if (address5 != null && address5.equalsIgnoreCase("Other")) {
-                            schoolFacilityHierarchy = new ArrayList<>();
-                            schoolFacilityHierarchy.add(address5);
-                        } else {
-                            schoolFacilityHierarchy = LocationHelper.getInstance().getOpenMrsLocationHierarchy(address5);
-                        }
+                        schoolFacilityHierarchy.add(address5);
 
                         String schoolFacilityHierarchyString = AssetHandler.javaToJsonString(schoolFacilityHierarchy, new TypeToken<List<String>>() {
                         }.getType());
                         if (StringUtils.isNotBlank(schoolFacilityHierarchyString)) {
                             jsonObject.put(JsonFormUtils.VALUE, schoolFacilityHierarchyString);
                         }
+
+                        jsonObject.put(JsonFormUtils.READ_ONLY, true);
                     }
 
                 }

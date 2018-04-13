@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Handler;
 import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.apache.commons.lang3.text.WordUtils;
@@ -53,9 +55,11 @@ public class RenderContactCardHelper extends BaseRenderHelper implements View.On
 
                 TextView vhtContactTextView = (TextView) view.findViewById(R.id.vhtContactTextView);
                 String vhtContact = patientDetails.get(DBConstants.KEY.VHT_PHONE);
-                vhtContactTextView.setTag(R.id.CONTACT, caretakerContact);
                 vhtContactTextView.setText(Utils.getFormattedPhoneNumber(vhtContact));
-                vhtContactTextView.setOnClickListener(helperContext);
+
+                RelativeLayout vhtContactNumberView = (RelativeLayout) view.findViewById(R.id.vhtContactNumberView);
+                vhtContactNumberView.setTag(R.id.CONTACT, caretakerContact);
+                vhtContactNumberView.setOnClickListener(helperContext);
 
 
                 TextView addContactView = (TextView) view.findViewById(R.id.add_contact);
@@ -74,9 +78,9 @@ public class RenderContactCardHelper extends BaseRenderHelper implements View.On
             launchPhoneDialer(view.getTag(R.id.CONTACT).toString());
         } else if (view.getTag() != null && view.getTag().equals(Constants.ADD_CONTACT)) {
 
-            String formMetadata = JsonFormUtils.getAutoPopulatedJsonEditFormString(context,commonPersonObjectClient);
-            ((BasePatientDetailActivity)context).startFormActivity(Constants.JSON_FORM.PATIENT_REGISTRATION,view.getTag(R.id.CLIENT_ID
-            ).toString(),formMetadata);
+            String formMetadata = JsonFormUtils.getAutoPopulatedJsonEditFormString(context, commonPersonObjectClient);
+            ((BasePatientDetailActivity) context).startFormActivity(Constants.JSON_FORM.PATIENT_REGISTRATION, view.getTag(R.id.CLIENT_ID
+            ).toString(), formMetadata);
 
 
         }

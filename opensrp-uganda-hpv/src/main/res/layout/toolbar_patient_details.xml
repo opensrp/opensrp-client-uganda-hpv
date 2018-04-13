@@ -8,7 +8,8 @@
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:background="@drawable/transparent_gray_background" >
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/patient_details_toolbar"
@@ -16,10 +17,16 @@
             android:layout_height="?attr/actionBarSize"
             app:contentInsetLeft="10dp"
             app:contentInsetStart="10dp"
-            app:popupTheme="@style/AppTheme.PopupOverlay">
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            android:background="@color/top_bar_gray">
 
             <include layout="@layout/top_detail_bar" />
         </android.support.v7.widget.Toolbar>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:background="@drawable/toolbar_dropshadow" />
 
     </android.support.design.widget.AppBarLayout>
 
