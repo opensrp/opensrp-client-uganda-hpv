@@ -32,5 +32,6 @@
     <string name="login_text">Log In</string>
 
     <string name="complete">Complete</string>
-
+    <string name="title_activity_vaccine_base">VaccineBaseActivity</string>
+    <string name="updating_dialog_title">Updating…</string>
 </resources>

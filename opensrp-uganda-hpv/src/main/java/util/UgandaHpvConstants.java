@@ -19,8 +19,13 @@ public class UgandaHpvConstants extends AllConstants {
     public static final String ENGLISH_LANGUAGE = "English";
     public static final String URDU_LANGUAGE = "Urdu";
     public static final String VIEW_CONFIGURATION_PREFIX = "ViewConfiguration_";
+    public static final String DOB = "dob";
 
     public static class CONFIGURATION {
         public static final String LOGIN = "login";
+    }
+
+    public static final class KEY {
+        public static final String CHILD = "child";
     }
 }

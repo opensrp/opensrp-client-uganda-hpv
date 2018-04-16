@@ -14,6 +14,8 @@ import android.widget.Toast;
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.joda.time.DateTime;
+import org.smartregister.immunization.domain.Vaccine;
+import org.smartregister.immunization.repository.VaccineRepository;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.ug.hpv.application.HpvApplication;
 import org.smartregister.ug.hpv.event.BaseEvent;
@@ -34,6 +36,18 @@ public class Utils {
 
     private static final String TAG = Utils.class.getCanonicalName();
     private static final SimpleDateFormat DB_DF = new SimpleDateFormat("yyyy-MM-dd");
+
+
+    public static void addVaccine(VaccineRepository vaccineRepository, Vaccine vaccine) {
+        try {
+            if (vaccineRepository == null || vaccine == null) {
+                return;
+            }
+            vaccineRepository.add(vaccine);
+        } catch (Exception e) {
+            Log.e(Utils.class.getCanonicalName(), Log.getStackTraceString(e));
+        }
+    }
 
     public static void showToast(Context context, String message) {
         Toast.makeText(context, message, Toast.LENGTH_LONG).show();
@@ -162,6 +176,7 @@ public class Utils {
         map.putAll(extend);
     }
 
-
-
+    public static boolean isEmptyMap(Map map) {
+        return map == null || map.isEmpty();
+    }
 }
