@@ -55,7 +55,7 @@
             <ImageView
                 android:id="@+id/login_logo"
                 android:contentDescription="logo"
-                android:src="@drawable/little_girl_hpv_logo"
+                android:src="@drawable/ic_little_girl_hpv_logo"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/login_logo_height"
                 android:layout_weight="1"
@@ -72,7 +72,8 @@
                 android:textSize="@dimen/login_build_text_view_textSize"
                 android:typeface="sans"
                 android:layout_marginBottom="5dp"
-                android:gravity="center_horizontal" />
+                android:gravity="center_horizontal"
+                android:text="build_number" />
         </LinearLayout>
 
         <!-- Middle section -->
@@ -135,16 +136,16 @@
                     android:id="@+id/login_show_password_checkbox"
                     android:layout_marginLeft="5dp"
                     android:button="@drawable/white_checkbox_bg_selector"
-                    android:width="20dp"
-                    android:height="20dp"/>
+                    android:width="@dimen/checkbox_dimensions"
+                    android:height="@dimen/checkbox_dimensions" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_toRightOf="@id/login_show_password_checkbox"
                     android:layout_centerVertical="true"
-                    android:text="Show Password"
+                    android:text="@string/show_password_text"
                     android:textColor="@android:color/white"
-                    android:layout_marginLeft="5dp"
+                    android:layout_marginLeft="-20dp"
                     android:textSize="@dimen/login_edit_text_textSize"/>
             </RelativeLayout>
 
