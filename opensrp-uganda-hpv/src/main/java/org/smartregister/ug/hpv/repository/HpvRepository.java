@@ -7,9 +7,9 @@ import net.sqlcipher.database.SQLiteDatabase;
 
 import org.smartregister.AllConstants;
 import org.smartregister.configurableviews.repository.ConfigurableViewsRepository;
+import org.smartregister.immunization.repository.VaccineRepository;
 import org.smartregister.repository.EventClientRepository;
 import org.smartregister.repository.Repository;
-import org.smartregister.ug.hpv.application.HpvApplication;
 import org.smartregister.ug.hpv.application.HpvApplication;
 
 /**
@@ -34,8 +34,10 @@ public class HpvRepository extends Repository {
         EventClientRepository.createTable(database, EventClientRepository.Table.event, EventClientRepository.event_column.values());
         EventClientRepository.createTable(database, EventClientRepository.Table.obs, EventClientRepository.obs_column.values());
         UniqueIdRepository.createTable(database);
-        //onUpgrade(database, 1, 2);
+        VaccineRepository.createTable(database);
 
+        updateVaccineRepository(database);
+        //onUpgrade(database, 1, 2);
     }
 
     @Override
@@ -107,4 +109,15 @@ public class HpvRepository extends Repository {
         super.close();
     }
 
+    private void updateVaccineRepository(SQLiteDatabase database) {
+        database.execSQL(VaccineRepository.UPDATE_TABLE_ADD_EVENT_ID_COL);
+        database.execSQL(VaccineRepository.EVENT_ID_INDEX);
+        database.execSQL(VaccineRepository.UPDATE_TABLE_ADD_FORMSUBMISSION_ID_COL);
+        database.execSQL(VaccineRepository.FORMSUBMISSION_INDEX);
+        database.execSQL(VaccineRepository.UPDATE_TABLE_ADD_OUT_OF_AREA_COL);
+        database.execSQL(VaccineRepository.UPDATE_TABLE_ADD_OUT_OF_AREA_COL_INDEX);
+        database.execSQL(VaccineRepository.UPDATE_TABLE_ADD_HIA2_STATUS_COL);
+        database.execSQL(VaccineRepository.ALTER_ADD_CREATED_AT_COLUMN);
+        VaccineRepository.migrateCreatedAt(database);
+    }
 }

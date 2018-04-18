@@ -71,6 +71,7 @@ public class HpvApplication extends DrishtiApplication {
         //Initialize Modules
         CoreLibrary.init(context);
         ConfigurableViewsLibrary.init(context, getRepository());
+        ImmunizationLibrary.init(context, getRepository(), createCommonFtsObject());
 
         DrishtiSyncScheduler.setReceiverClass(HpvSyncBroadcastReceiver.class);
 
