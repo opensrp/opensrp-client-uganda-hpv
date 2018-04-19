@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,4 +8,17 @@
     tools:context="org.smartregister.ug.hpv.activity.VaccineBaseActivity"
     tools:showIn="@layout/activity_vaccine_base">
 
-</android.support.constraint.ConstraintLayout>
+    <Button
+        android:id="@+id/btn_test_create_vaccine"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:text="Hit me!"
+        android:gravity="center"
+        android:layout_gravity="bottom"
+        android:background="#3d0099"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:textColor="@color/white"/>
+
+</LinearLayout>

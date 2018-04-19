@@ -1,5 +1,7 @@
 package org.smartregister.ug.hpv.activity;
 
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -9,14 +11,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Pair;
 import android.view.View;
+import android.widget.Button;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
+import org.smartregister.commonregistry.CommonPersonObject;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.domain.Alert;
 import org.smartregister.immunization.domain.Vaccine;
 import org.smartregister.immunization.domain.VaccineSchedule;
 import org.smartregister.immunization.domain.VaccineWrapper;
+import org.smartregister.immunization.fragment.VaccinationDialogFragment;
 import org.smartregister.immunization.listener.VaccinationActionListener;
 import org.smartregister.immunization.repository.VaccineRepository;
 import org.smartregister.immunization.util.VaccinatorUtils;
@@ -24,11 +29,16 @@ import org.smartregister.immunization.view.VaccineGroup;
 import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.application.HpvApplication;
 import org.smartregister.ug.hpv.helper.LocationHelper;
+import org.smartregister.ug.hpv.view.LocationPickerView;
 import org.smartregister.util.Utils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import util.UgandaHpvConstants;
 
@@ -37,31 +47,59 @@ import static org.smartregister.ug.hpv.activity.LoginActivity.getOpenSRPContext;
 public class VaccineBaseActivity extends AppCompatActivity implements VaccinationActionListener {
 
     private ProgressDialog progressDialog;
+    private LocationPickerView locationPickerView;
     private ArrayList<VaccineGroup> vaccineGroups;
     private boolean isChildActive = false;
     private CommonPersonObjectClient childDetails;
+    private Button btnTestCreateVaccine; // TODO: remove this
 
     private static final String EXTRA_CHILD_DETAILS = "child_details";
+    private final String DIALOG_TAG = this.getClass().getName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vaccine_base);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
         vaccineGroups = new ArrayList<>();
 
+        childDetails = new CommonPersonObjectClient("testCase", new HashMap<String, String>(), "name"); // TODO: remove this
+        childDetails.setColumnmaps(new HashMap<String, String>()); // TODO: remove this
+
+        // TODO: uncomment this
         // Get child details from bundled data
-        Bundle extras = this.getIntent().getExtras();
-        if (extras != null) {
-            Serializable serializable = extras.getSerializable(EXTRA_CHILD_DETAILS);
-            if (serializable != null && serializable instanceof CommonPersonObjectClient) {
-                childDetails = (CommonPersonObjectClient) serializable;
-            }
-        }
+//        Bundle extras = this.getIntent().getExtras();
+//        if (extras != null) {
+//            Serializable serializable = extras.getSerializable(EXTRA_CHILD_DETAILS);
+//            if (serializable != null && serializable instanceof CommonPersonObjectClient) {
+//                childDetails = (CommonPersonObjectClient) serializable;
+//            }
+//        }
 
         initializeProgressDialog();
+        locationPickerView = (LocationPickerView) findViewById(R.id.facility_selection);
+
+        // TODO: remove this
+        btnTestCreateVaccine = (Button) findViewById(R.id.btn_test_create_vaccine);
+        btnTestCreateVaccine.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ArrayList<VaccineWrapper> vaccineWrappers = new ArrayList<VaccineWrapper>();
+                VaccineWrapper vaccineWrapper = new VaccineWrapper();
+                vaccineWrapper.setName("HPV 1");
+                vaccineWrapper.setUpdatedVaccineDate(DateTime.now(), true);
+
+                vaccineWrappers.add(vaccineWrapper);
+
+                vaccineWrapper = new VaccineWrapper();
+                vaccineWrapper.setName("HPV 2");
+                vaccineWrapper.setUpdatedVaccineDate(DateTime.now(), true);
+
+                vaccineWrappers.add(vaccineWrapper);
+                addVaccinationDialogFragment(vaccineWrappers, new VaccineGroup(getApplicationContext()));
+               // saveVaccine(HpvApplication.getInstance().vaccineRepository(),vaccineWrapper);
+            }
+        });
     }
 
     @Override
@@ -77,10 +115,15 @@ public class VaccineBaseActivity extends AppCompatActivity implements Vaccinatio
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
 
-        Serializable serializable = savedInstanceState.getSerializable(EXTRA_CHILD_DETAILS);
-        if (serializable != null && serializable instanceof CommonPersonObjectClient) {
-            childDetails = (CommonPersonObjectClient) serializable;
-        }
+        // TODO: remove this
+        childDetails = new CommonPersonObjectClient("testCase", new HashMap<String, String>(), null); // TODO: remove this
+        childDetails.setColumnmaps(new HashMap<String, String>()); // TODO: remove this
+
+        // TODO: uncomment this
+//        Serializable serializable = savedInstanceState.getSerializable(EXTRA_CHILD_DETAILS);
+//        if (serializable != null && serializable instanceof CommonPersonObjectClient) {
+//            childDetails = (CommonPersonObjectClient) serializable;
+//        }
     }
 
     @Override
@@ -159,9 +202,13 @@ public class VaccineBaseActivity extends AppCompatActivity implements Vaccinatio
         }
         vaccine.setBaseEntityId(childDetails.entityId());
         vaccine.setName(tag.getName());
-        vaccine.setDate(tag.getUpdatedVaccineDate().toDate());
+        vaccine.setDate(Calendar.getInstance().getTime()); // TODO: remove this
+        // vaccine.setDate(tag.getUpdatedVaccineDate().toDate()); // TODO: uncomment this
         vaccine.setAnmId(getOpenSRPContext().allSharedPreferences().fetchRegisteredANM());
-        vaccine.setLocationId(LocationHelper.getInstance().getOpenMrsLocationId("Bukesa Urban Health Centre")); // TODO: make sure you change this to a location chosen by the user
+
+        locationPickerView = (LocationPickerView) findViewById(R.id.facility_selection);
+        // vaccine.setLocationId(LocationHelper.getInstance().getOpenMrsLocationId(locationPickerView.getSelectedItem())); // TODO: uncomment this
+        vaccine.setLocationId("nowhere"); // TODO: remove this
 
         String lastChar = vaccine.getName().substring(vaccine.getName().length() - 1);
         if (StringUtils.isNumeric(lastChar)) {
@@ -208,7 +255,31 @@ public class VaccineBaseActivity extends AppCompatActivity implements Vaccinatio
     }
 
     private void addVaccinationDialogFragment(ArrayList<VaccineWrapper> vaccineWrappers, VaccineGroup vaccineGroup) {
+        FragmentTransaction fragmentTransaction = this.getFragmentManager().beginTransaction();
+        Fragment prev = this.getFragmentManager().findFragmentByTag(DIALOG_TAG);
+        if (prev != null) {
+            fragmentTransaction.remove(prev);
+        }
+
+        fragmentTransaction.addToBackStack(null);
         vaccineGroup.setModalOpen(true);
+
+        // set date of birth
+        String dobString = Utils.getValue(childDetails.getColumnmaps(), UgandaHpvConstants.DOB, false);
+        Date dob = org.smartregister.ug.hpv.util.Utils.dobStringToDate(dobString);
+        if (dob == null) {
+            dob = Calendar.getInstance().getTime();
+        }
+
+        List<Vaccine> vaccineList = HpvApplication.getInstance().vaccineRepository()
+                .findByEntityId(childDetails.entityId());
+        if (vaccineList == null) {
+            vaccineList = new ArrayList<>();
+        }
+
+        VaccinationDialogFragment vaccinationDialogFragment =
+                VaccinationDialogFragment.newInstance(dob, vaccineList, vaccineWrappers, true);
+        vaccinationDialogFragment.show(fragmentTransaction, DIALOG_TAG);
     }
 
     private void addVaccineUndoDialogFragment(VaccineGroup vaccineGroup, VaccineWrapper vaccineWrapper) {
