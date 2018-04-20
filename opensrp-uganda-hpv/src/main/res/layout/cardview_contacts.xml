@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/clientContactScreeningCardView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="5dp"
+    android:background="@drawable/border"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginBottom="10dp"
+            android:orientation="horizontal">
+
+            <org.smartregister.view.customcontrols.CustomFontTextView
+                android:id="@+id/contacts"
+                style="@style/CustomFontTextViewStyle.ClientList"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center_vertical"
+                android:paddingLeft="0dp"
+                android:text="@string/contacts"
+                android:textColor="#000000"
+                android:textSize="22sp" />
+
+            <org.smartregister.view.customcontrols.CustomFontTextView
+                android:id="@+id/add_contact"
+                style="@style/CustomFontTextViewStyle.ClientList"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerInParent="true"
+                android:text="@string/add_contact"
+                android:textAllCaps="true"
+                android:textColor="#3269D4"
+                android:textSize="20sp" />
+        </RelativeLayout>
+
+        <org.smartregister.view.customcontrols.CustomFontTextView
+            android:id="@+id/caretakerTitleTextView"
+            style="@style/CustomFontTextViewStyle.ClientList.Light"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="0dp"
+            android:text="@string/caretaker"
+            android:textColor="@color/dark_grey_text"
+            android:textSize="15sp" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginBottom="10dp"
+            android:orientation="horizontal">
+
+            <org.smartregister.view.customcontrols.CustomFontTextView
+                android:id="@+id/caretakerNameTextView"
+                style="@style/CustomFontTextViewStyle.ClientList.Light"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="0dp"
+                android:text="Emily Olara-Okello"
+                android:textColor="@color/dark_grey_text"
+                android:textSize="19sp" />
+
+            x
+
+            <RelativeLayout
+                android:id="@+id/caretakerContactNumberView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerInParent="true">
+
+                <ImageView
+                    android:id="@+id/caretakerContactIconView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/caretakerContactTextView"
+                    android:layout_alignTop="@+id/caretakerContactTextView"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitEnd"
+                    android:src="@drawable/ic_call" />
+
+                <org.smartregister.view.customcontrols.CustomFontTextView
+                    android:id="@+id/caretakerContactTextView"
+                    style="@style/CustomFontTextViewStyle.ClientList"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/caretakerContactIconView"
+                    android:paddingLeft="0dp"
+                    android:text="256-242-438-722"
+                    android:textAllCaps="false"
+                    android:textColor="#3269D4"
+                    android:textSize="20sp" />
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+        <org.smartregister.view.customcontrols.CustomFontTextView
+            android:id="@+id/vhtTitleTextView"
+            style="@style/CustomFontTextViewStyle.ClientList.Light"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="0dp"
+            android:text="@string/vht"
+            android:textColor="@color/dark_grey_text"
+            android:textSize="15sp" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:orientation="horizontal">
+
+            <org.smartregister.view.customcontrols.CustomFontTextView
+                android:id="@+id/vhtNameTextView"
+                style="@style/CustomFontTextViewStyle.ClientList.Light"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:paddingLeft="0dp"
+                android:text="Janet Kenneth"
+                android:textColor="@color/dark_grey_text"
+                android:textSize="19sp" />
+
+            <RelativeLayout
+                android:id="@+id/vhtContactNumberView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerInParent="true">
+
+                <ImageView
+                    android:id="@+id/vhtContactIconView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/vhtContactTextView"
+                    android:layout_alignTop="@+id/vhtContactTextView"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitEnd"
+                    android:src="@drawable/ic_call" />
+
+                <org.smartregister.view.customcontrols.CustomFontTextView
+                    android:id="@+id/vhtContactTextView"
+                    style="@style/CustomFontTextViewStyle.ClientList"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/vhtContactIconView"
+                    android:paddingLeft="0dp"
+                    android:text="256-753-338-563"
+                    android:textAllCaps="false"
+                    android:textColor="#3269D4"
+                    android:textSize="20sp" />
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+
+    </LinearLayout>
+
+
+</LinearLayout>

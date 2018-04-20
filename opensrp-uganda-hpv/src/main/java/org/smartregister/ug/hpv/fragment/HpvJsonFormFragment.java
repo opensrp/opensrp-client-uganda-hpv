@@ -36,6 +36,7 @@ import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.application.HpvApplication;
 import org.smartregister.ug.hpv.provider.CaretakerLookUpSmartClientsProvider;
 import org.smartregister.ug.hpv.util.CaretakerLookUpUtils;
+import org.smartregister.ug.hpv.util.Constants;
 import org.smartregister.ug.hpv.util.DBConstants;
 import org.smartregister.ug.hpv.viewstates.HpvJsonFormFragmentViewState;
 import org.smartregister.util.Utils;
@@ -179,7 +180,7 @@ public class HpvJsonFormFragment extends JsonFormFragment {
 
                 Map<String, String> metadataMap = new HashMap<>();
                 metadataMap.put(DBConstants.KEY.ENTITY_ID, "");
-                metadataMap.put(DBConstants.KEY.VALUE, "");
+                metadataMap.put(Constants.KEY.VALUE, "");
 
                 writeMetaDataValue(FormUtils.LOOK_UP_JAVAROSA_PROPERTY, metadataMap);
 
@@ -320,7 +321,7 @@ public class HpvJsonFormFragment extends JsonFormFragment {
 
                     Map<String, String> metadataMap = new HashMap<>();
                     metadataMap.put(DBConstants.KEY.ENTITY_ID, DBConstants.KEY.MOTHER);
-                    metadataMap.put(DBConstants.KEY.VALUE, getValue(pc.getColumnmaps(), CaretakerLookUpUtils.baseEntityId, false));
+                    metadataMap.put(Constants.KEY.VALUE, getValue(pc.getColumnmaps(), CaretakerLookUpUtils.baseEntityId, false));
 
                     writeMetaDataValue(FormUtils.LOOK_UP_JAVAROSA_PROPERTY, metadataMap);
 
