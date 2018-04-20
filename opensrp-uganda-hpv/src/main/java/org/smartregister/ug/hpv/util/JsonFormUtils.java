@@ -100,15 +100,15 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
             JSONObject form = new JSONObject(jsonString);
             if (form.getString(ENCOUNTER_TYPE).equals(Constants.EventType.REGISTRATION)) {
 
-                saveRegistration(context, openSrpContext, jsonString, providerId, "photo", "patient", FORM_MODE.CREATE);
+                saveRegistration(context, openSrpContext, jsonString, providerId, "photo", DBConstants.PATIENT_TABLE_NAME, FORM_MODE.CREATE);
 
             } else if (form.getString(ENCOUNTER_TYPE).equals(Constants.EventType.UPDATE_REGISTRATION)) {
 
-                saveRegistration(context, openSrpContext, jsonString, providerId, "photo", "patient", FORM_MODE.EDIT);
+                saveRegistration(context, openSrpContext, jsonString, providerId, "photo", DBConstants.PATIENT_TABLE_NAME, FORM_MODE.EDIT);
 
             } else if (form.getString(ENCOUNTER_TYPE).equals(Constants.EventType.REMOVE)) {
 
-                saveRemovedFromRegister(context, openSrpContext, jsonString, providerId, "patient");
+                saveRemovedFromRegister(context, openSrpContext, jsonString, providerId, DBConstants.PATIENT_TABLE_NAME);
             }
         } catch (JSONException e) {
             Log.e(TAG, Log.getStackTraceString(e));
@@ -658,6 +658,9 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
         obs.setValue(deviceId);
         obs.setFieldDataType("deviceid");
         event.addObs(obs);
+
+        tagSyncMetadata(event);
+
         return event;
     }
 
@@ -777,6 +780,13 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
         return "";
     }
 
+    private static Event tagSyncMetadata(Event event) {
+        AllSharedPreferences sharedPreferences = HpvApplication.getInstance().getContext().userService().getAllSharedPreferences();
+        event.setLocationId(sharedPreferences.fetchDefaultLocalityId(sharedPreferences.fetchRegisteredANM()));
+        event.setTeam(sharedPreferences.fetchDefaultTeam(sharedPreferences.fetchRegisteredANM()));
+        event.setTeamId(sharedPreferences.fetchDefaultTeamId(sharedPreferences.fetchRegisteredANM()));
+        return event;
+    }
 
 ////////////////////////////////////////////////////////////////
 // Inner classes
@@ -955,4 +965,6 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
 ////////////////////////////////////////////////////////////////
 // End Inner classes
 ////////////////////////////////////////////////////////////////
+
+
 }

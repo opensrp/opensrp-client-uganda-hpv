@@ -5,11 +5,11 @@
     <string name="action_language">Language</string>
 
     <!-- General -->
-    <string name="app_name">opensrp-client-uganda-hpv</string>
+    <string name="app_name">Uganda HPV</string>
     <string name="saving_dialog_title">Saving…</string>
     <string name="please_wait_message">Please wait</string>
     <string name="scan_qr_code">Scan QR code</string>
-    <string name="str_search_hint">Search names or ID</string>
+    <string name="str_search_hint">Search name or ID</string>
     <string name="select_language">Select Language</string>
     <string name="no_openmrs_id">No unique ids found. Click on the sync button to get more and if this error persists contact the system admin.</string>
 
@@ -43,5 +43,6 @@
     <string name="clients_key">clients</string>
     <string name="events_key">events</string>
     <string name="manual_sync">Manual Sync</string>
-    <string name="sync_round_complete">Sync round complete...</string>
+    <string name="sync_round_complete">Sync round complete&#8230;</string>
+
 </resources>
