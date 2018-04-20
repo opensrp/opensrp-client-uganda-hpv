@@ -51,7 +51,6 @@ public class VaccineBaseActivity extends AppCompatActivity implements Vaccinatio
     private ArrayList<VaccineGroup> vaccineGroups;
     private boolean isChildActive = false;
     private CommonPersonObjectClient childDetails;
-    private Button btnTestCreateVaccine; // TODO: remove this
 
     private static final String EXTRA_CHILD_DETAILS = "child_details";
     private final String DIALOG_TAG = this.getClass().getName();
@@ -63,43 +62,17 @@ public class VaccineBaseActivity extends AppCompatActivity implements Vaccinatio
 
         vaccineGroups = new ArrayList<>();
 
-        childDetails = new CommonPersonObjectClient("testCase", new HashMap<String, String>(), "name"); // TODO: remove this
-        childDetails.setColumnmaps(new HashMap<String, String>()); // TODO: remove this
-
-        // TODO: uncomment this
         // Get child details from bundled data
-//        Bundle extras = this.getIntent().getExtras();
-//        if (extras != null) {
-//            Serializable serializable = extras.getSerializable(EXTRA_CHILD_DETAILS);
-//            if (serializable != null && serializable instanceof CommonPersonObjectClient) {
-//                childDetails = (CommonPersonObjectClient) serializable;
-//            }
-//        }
+        Bundle extras = this.getIntent().getExtras();
+        if (extras != null) {
+            Serializable serializable = extras.getSerializable(EXTRA_CHILD_DETAILS);
+            if (serializable != null && serializable instanceof CommonPersonObjectClient) {
+                childDetails = (CommonPersonObjectClient) serializable;
+            }
+        }
 
         initializeProgressDialog();
         locationPickerView = (LocationPickerView) findViewById(R.id.facility_selection);
-
-        // TODO: remove this
-        btnTestCreateVaccine = (Button) findViewById(R.id.btn_test_create_vaccine);
-        btnTestCreateVaccine.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ArrayList<VaccineWrapper> vaccineWrappers = new ArrayList<VaccineWrapper>();
-                VaccineWrapper vaccineWrapper = new VaccineWrapper();
-                vaccineWrapper.setName("HPV 1");
-                vaccineWrapper.setUpdatedVaccineDate(DateTime.now(), true);
-
-                vaccineWrappers.add(vaccineWrapper);
-
-                vaccineWrapper = new VaccineWrapper();
-                vaccineWrapper.setName("HPV 2");
-                vaccineWrapper.setUpdatedVaccineDate(DateTime.now(), true);
-
-                vaccineWrappers.add(vaccineWrapper);
-                addVaccinationDialogFragment(vaccineWrappers, new VaccineGroup(getApplicationContext()));
-               // saveVaccine(HpvApplication.getInstance().vaccineRepository(),vaccineWrapper);
-            }
-        });
     }
 
     @Override
@@ -115,15 +88,10 @@ public class VaccineBaseActivity extends AppCompatActivity implements Vaccinatio
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
 
-        // TODO: remove this
-        childDetails = new CommonPersonObjectClient("testCase", new HashMap<String, String>(), null); // TODO: remove this
-        childDetails.setColumnmaps(new HashMap<String, String>()); // TODO: remove this
-
-        // TODO: uncomment this
-//        Serializable serializable = savedInstanceState.getSerializable(EXTRA_CHILD_DETAILS);
-//        if (serializable != null && serializable instanceof CommonPersonObjectClient) {
-//            childDetails = (CommonPersonObjectClient) serializable;
-//        }
+        Serializable serializable = savedInstanceState.getSerializable(EXTRA_CHILD_DETAILS);
+        if (serializable != null && serializable instanceof CommonPersonObjectClient) {
+            childDetails = (CommonPersonObjectClient) serializable;
+        }
     }
 
     @Override
@@ -202,13 +170,11 @@ public class VaccineBaseActivity extends AppCompatActivity implements Vaccinatio
         }
         vaccine.setBaseEntityId(childDetails.entityId());
         vaccine.setName(tag.getName());
-        vaccine.setDate(Calendar.getInstance().getTime()); // TODO: remove this
-        // vaccine.setDate(tag.getUpdatedVaccineDate().toDate()); // TODO: uncomment this
+        vaccine.setDate(tag.getUpdatedVaccineDate().toDate());
         vaccine.setAnmId(getOpenSRPContext().allSharedPreferences().fetchRegisteredANM());
 
         locationPickerView = (LocationPickerView) findViewById(R.id.facility_selection);
-        // vaccine.setLocationId(LocationHelper.getInstance().getOpenMrsLocationId(locationPickerView.getSelectedItem())); // TODO: uncomment this
-        vaccine.setLocationId("nowhere"); // TODO: remove this
+        vaccine.setLocationId(LocationHelper.getInstance().getOpenMrsLocationId(locationPickerView.getSelectedItem()));
 
         String lastChar = vaccine.getName().substring(vaccine.getName().length() - 1);
         if (StringUtils.isNumeric(lastChar)) {
