@@ -1,9 +1,47 @@
 <resources>
+
+    <!-- Actions -->
+    <string name="action_logout">Logout</string>
+    <string name="action_language">Language</string>
+
+    <!-- General -->
     <string name="app_name">opensrp-client-uganda-hpv</string>
+    <string name="saving_dialog_title">Saving…</string>
+    <string name="please_wait_message">Please wait</string>
+    <string name="scan_qr_code">Scan QR code</string>
+    <string name="str_search_hint">Search names or ID</string>
+    <string name="select_language">Select Language</string>
+    <string name="no_openmrs_id">No unique ids found. Click on the sync button to get more and if this error persists contact the system admin.</string>
+
+    <!--Temp -->
+
+    <string name="alphabetical_sort">Alphabetical (Name)</string>
+    <string name="name">Name</string>
+    <string name="opensrp_id">OpenSRP ID</string>
+    <string name="hpv">UG HPV</string>
+    <string name="dismiss">Cancel</string>
+    <string name="dose_d">DOSE (D)</string>
+    <string name="id">ID</string>
+    <string name="service_location">Service Location</string>
+
+
     <string name="unauthorized">Please check the credentials</string>
     <string name="unauthorized_group">Your user group is not allowed to access this device</string>
     <string name="unknown_response">login failed. Try later</string>
     <string name="no_internet_connectivity">No internet connection. Please ensure data connectivity</string>
     <string name="login_text">Log In</string>
     <string name="show_password_text">Show password</string>
+    <string name="complete">Complete</string>
+    <string name="hpv_vaccine_due">HPV Vaccine Due</string>
+    <string name="remove_from_register">REMOVE FROM REGISTER</string>
+    <string name="contact">Contact</string>
+    <string name="contacts">Contacts</string>
+    <string name="add_contact">ADD CONTACT</string>
+    <string name="caretaker">Caretaker</string>
+    <string name="vht">VHT</string>
+    <string name="url_separator">/</string>
+    <string name="clients_key">clients</string>
+    <string name="events_key">events</string>
+    <string name="manual_sync">Manual Sync</string>
+    <string name="sync_round_complete">Sync round complete...</string>
 </resources>

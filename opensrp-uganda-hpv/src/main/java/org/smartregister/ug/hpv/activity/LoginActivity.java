@@ -11,8 +11,8 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
@@ -22,7 +22,6 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewConfiguration;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
@@ -34,20 +33,17 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import org.smartregister.domain.jsonmapping.LoginResponseData;
-
 import org.joda.time.DateTime;
 import org.smartregister.Context;
 import org.smartregister.domain.LoginResponse;
 import org.smartregister.domain.TimeStatus;
+import org.smartregister.domain.jsonmapping.LoginResponseData;
 import org.smartregister.event.Listener;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.sync.DrishtiSyncScheduler;
 import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.application.HpvApplication;
 import org.smartregister.util.Utils;
-
-import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -59,6 +55,7 @@ import java.util.zip.ZipFile;
 
 import util.UgandaHpvConstants;
 
+import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static org.smartregister.domain.LoginResponse.NO_INTERNET_CONNECTIVITY;
 import static org.smartregister.domain.LoginResponse.UNAUTHORIZED;
 import static org.smartregister.domain.LoginResponse.UNKNOWN_RESPONSE;
@@ -79,6 +76,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
         getSupportActionBar().setDisplayShowHomeEnabled(false);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(android.R.color.black)));
@@ -198,6 +196,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void localLoginWith(String userName, String password) {
+
         getOpenSRPContext().userService().localLogin(userName, password);
         goToHome(false);
         new Thread(new Runnable() {
@@ -211,54 +210,60 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void remoteLogin(final View view, final String userName, final String password) {
-        if (!getOpenSRPContext().allSharedPreferences().fetchBaseURL("").isEmpty()) {
-            tryRemoteLogin(userName, password, new Listener<LoginResponse>(){
-                public void onEvent(LoginResponse loginResponse) {
-                    view.setClickable(true);
-                    if (loginResponse == LoginResponse.SUCCESS) {
-                        if (getOpenSRPContext().userService().isUserInPioneerGroup(userName)) {
-                            TimeStatus timeStatus = getOpenSRPContext().userService().validateDeviceTime(
-                                    loginResponse.payload(), UgandaHpvConstants.MAX_SERVER_TIME_DIFFERENCE
-                            );
-                            if (!UgandaHpvConstants.TIME_CHECK || timeStatus.equals(TimeStatus.OK)) {
-                                remoteLoginWith(userName, password, loginResponse.payload());
-                                // TODO: uncomment this code
-                                // Intent intent = new Intent(appContext, PullUniqueIdsIntentService.class);
-                                // appContext.startService(intent);
-                            } else {
-                                if (timeStatus.equals(TimeStatus.TIMEZONE_MISMATCH)) {
-                                    TimeZone serverTimeZone = getOpenSRPContext().userService()
-                                            .getServerTimeZone(loginResponse.payload());
-                                    showErrorDialog(getString(timeStatus.getMessage(),
-                                            serverTimeZone.getDisplayName()));
+
+        try {
+            if (!getOpenSRPContext().allSharedPreferences().fetchBaseURL("").isEmpty()) {
+                tryRemoteLogin(userName, password, new Listener<LoginResponse>() {
+
+                    public void onEvent(LoginResponse loginResponse) {
+                        view.setClickable(true);
+                        if (loginResponse == LoginResponse.SUCCESS) {
+                            if (getOpenSRPContext().userService().isUserInPioneerGroup(userName)) {
+                                TimeStatus timeStatus = getOpenSRPContext().userService().validateDeviceTime(
+                                        loginResponse.payload(), UgandaHpvConstants.MAX_SERVER_TIME_DIFFERENCE
+                                );
+                                if (!UgandaHpvConstants.TIME_CHECK || timeStatus.equals(TimeStatus.OK)) {
+                                    remoteLoginWith(userName, password, loginResponse.payload());
+                                    HpvApplication.getInstance().startPullUniqueIdsService();
                                 } else {
-                                    showErrorDialog(getString(timeStatus.getMessage()));
+                                    if (timeStatus.equals(TimeStatus.TIMEZONE_MISMATCH)) {
+                                        TimeZone serverTimeZone = getOpenSRPContext().userService()
+                                                .getServerTimeZone(loginResponse.payload());
+                                        showErrorDialog(getString(timeStatus.getMessage(),
+                                                serverTimeZone.getDisplayName()));
+                                    } else {
+                                        showErrorDialog(getString(timeStatus.getMessage()));
+                                    }
                                 }
+                            } else {
+                                // Valid user from wrong group trying to log in
+                                showErrorDialog(getString(R.string.unauthorized_group));
                             }
                         } else {
-                            // Valid user from wrong group trying to log in
-                            showErrorDialog(getString(R.string.unauthorized_group));
-                        }
-                    } else {
-                        if (loginResponse == null) {
-                            showErrorDialog("Sorry, your login failed. Please try again");
-                        } else {
-                            if (loginResponse == NO_INTERNET_CONNECTIVITY) {
-                                showErrorDialog(getResources().getString(R.string.no_internet_connectivity));
-                            } else if (loginResponse == UNKNOWN_RESPONSE) {
-                                showErrorDialog(getResources().getString(R.string.unknown_response));
-                            } else if (loginResponse == UNAUTHORIZED) {
-                                showErrorDialog(getResources().getString(R.string.unauthorized));
+                            if (loginResponse == null) {
+                                showErrorDialog("Sorry, your login failed. Please try again");
                             } else {
-                                showErrorDialog(loginResponse.message());
+                                if (loginResponse == NO_INTERNET_CONNECTIVITY) {
+                                    showErrorDialog(getResources().getString(R.string.no_internet_connectivity));
+                                } else if (loginResponse == UNKNOWN_RESPONSE) {
+                                    showErrorDialog(getResources().getString(R.string.unknown_response));
+                                } else if (loginResponse == UNAUTHORIZED) {
+                                    showErrorDialog(getResources().getString(R.string.unauthorized));
+                                } else {
+                                    showErrorDialog(loginResponse.message());
+                                }
                             }
                         }
                     }
-                }
-            });
-        } else {
-            view.setClickable(true);
-            showErrorDialog("OpenSRP Base URL is missing. Please add it in Setting and try again");
+                });
+            } else {
+                view.setClickable(true);
+                showErrorDialog("OpenSRP Base URL is missing. Please add it in Setting and try again");
+            }
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+
+            showErrorDialog("Error occurred trying to login in. Please try again...");
         }
     }
 
@@ -280,8 +285,7 @@ public class LoginActivity extends AppCompatActivity {
         if (remote) {
             //  Utils.startAsyncTask(new SaveTeamLocationsTask(), null); // TODO: remove this
         }
-        HpvApplication.setCrashlyticsUser(getOpenSRPContext());
-        Intent intent = new Intent(this, HomeActivity.class);
+        Intent intent = new Intent(this, HomeRegisterActivity.class);
         intent.putExtra(UgandaHpvConstants.IS_REMOTE_LOGIN, remote);
         startActivity(intent);
 
@@ -321,7 +325,7 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    private  String getVersion() throws PackageManager.NameNotFoundException {
+    private String getVersion() throws PackageManager.NameNotFoundException {
         PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
         return packageInfo.versionName;
     }
@@ -402,7 +406,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
     /**
-     *  ============================ AsyncTasks =====================================
+     * ============================ AsyncTasks =====================================
      */
     private class RemoteLoginTask extends AsyncTask<Void, Void, LoginResponse> {
         private final String username;
@@ -445,5 +449,4 @@ public class LoginActivity extends AppCompatActivity {
 //        }
 //    }
 }
-
 

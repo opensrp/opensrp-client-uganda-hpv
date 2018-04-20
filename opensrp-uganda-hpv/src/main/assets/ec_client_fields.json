@@ -1,0 +1,149 @@
+{
+  "bindobjects": [
+    {
+      "name": "ec_patient",
+      "columns": [
+        {
+          "column_name": "base_entity_id",
+          "type": "Client",
+          "json_mapping": {
+            "field": "baseEntityId"
+          }
+        },
+        {
+          "column_name": "opensrp_id",
+          "type": "Client",
+          "json_mapping": {
+            "field": "identifiers.OpenSRP_ID"
+          }
+        },
+        {
+          "column_name": "first_name",
+          "type": "Client",
+          "json_mapping": {
+            "field": "firstName"
+          }
+        },
+        {
+          "column_name": "last_name",
+          "type": "Client",
+          "json_mapping": {
+            "field": "lastName"
+          }
+        },
+        {
+          "column_name": "gender",
+          "type": "Client",
+          "json_mapping": {
+            "field": "gender"
+          }
+        },
+        {
+          "column_name": "dob",
+          "type": "Client",
+          "json_mapping": {
+            "field": "birthdate"
+          }
+        },
+        {
+          "column_name": "school",
+          "type": "Client",
+          "json_mapping": {
+            "field": "addresses.addressFields.address5"
+          }
+        },
+        {
+          "column_name": "school_name",
+          "type": "Client",
+          "json_mapping": {
+            "field": "attributes.school_name"
+          }
+        },
+        {
+          "column_name": "address",
+          "type": "Client",
+          "json_mapping": {
+            "field": "addresses.addressType"
+          }
+        },
+        {
+          "column_name": "class",
+          "type": "Client",
+          "json_mapping": {
+            "field": "attributes.school_class"
+          }
+        },
+        {
+          "column_name": "caretaker_name",
+          "type": "Client",
+          "json_mapping": {
+            "field": "attributes.caretaker_name"
+          }
+        },
+        {
+          "column_name": "caretaker_phone",
+          "type": "Client",
+          "json_mapping": {
+            "field": "attributes.caretaker_phone"
+          }
+        },
+        {
+          "column_name": "vht_name",
+          "type": "Client",
+          "json_mapping": {
+            "field": "attributes.vht_name"
+          }
+        },
+        {
+          "column_name": "vht_phone",
+          "type": "Client",
+          "json_mapping": {
+            "field": "attributes.vht_phone"
+          }
+        },
+        {
+          "column_name": "last_interacted_with",
+          "type": "Event",
+          "json_mapping": {
+            "field": "version"
+          }
+        },
+        {
+          "column_name": "dose_one_date",
+          "type": "Client",
+          "json_mapping": {
+            "field": "attributes.dose_one_date"
+          }
+        },
+        {
+          "column_name": "date_dose_one_given",
+          "type": "Client",
+          "json_mapping": {
+            "field": "attributes.date_dose_one_given"
+          }
+        },
+        {
+          "column_name": "dose_two_date",
+          "type": "Client",
+          "json_mapping": {
+            "field": "attributes.dose_two_date"
+          }
+        },
+        {
+          "column_name": "date_removed",
+          "type": "Client",
+          "json_mapping": {
+            "field": "attributes.dateRemoved"
+          }
+        },
+        {
+          "column_name": "date_dose_two_given",
+          "type": "Client",
+          "json_mapping": {
+            "field": "attributes.date_dose_two_given"
+          }
+        }
+      ]
+    }
+  ]
+}
