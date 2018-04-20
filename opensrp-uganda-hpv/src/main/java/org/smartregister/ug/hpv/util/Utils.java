@@ -44,6 +44,11 @@ public class Utils {
 
     }
 
+    public static void showShortToast(Context context, String message) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+
+    }
+
     private static BaseEvent myEvent;
 
     public static void saveLanguage(String language) {

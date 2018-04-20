@@ -25,7 +25,6 @@ import org.smartregister.ug.hpv.helper.view.RenderContactCardHelper;
 import org.smartregister.ug.hpv.helper.view.RenderPatientDemographicCardHelper;
 import org.smartregister.ug.hpv.helper.view.RenderPatientFollowupCardHelper;
 import org.smartregister.ug.hpv.util.Constants;
-import org.smartregister.ug.hpv.util.DBConstants;
 import org.smartregister.ug.hpv.util.JsonFormUtils;
 import org.smartregister.ug.hpv.util.Utils;
 import org.smartregister.ug.hpv.view.LocationPickerView;
@@ -36,8 +35,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import static org.smartregister.ug.hpv.activity.BaseRegisterActivity.TOOLBAR_TITLE;
-
 
 /**
  * Created by ndegwamartin on 06/12/2017.
@@ -45,7 +42,6 @@ import static org.smartregister.ug.hpv.activity.BaseRegisterActivity.TOOLBAR_TIT
 
 public abstract class BasePatientDetailsFragment extends SecuredFragment implements View.OnClickListener {
 
-    protected Map<String, String> patientDetails;
     protected CommonPersonObjectClient commonPersonObjectClient;
     protected Map<String, String> languageTranslations;
     private static String TAG = BasePatientDetailsFragment.class.getCanonicalName();
@@ -53,34 +49,32 @@ public abstract class BasePatientDetailsFragment extends SecuredFragment impleme
     private static final int REQUEST_CODE_GET_JSON = 3432;
     private RenderPatientDemographicCardHelper renderPatientDemographicCardHelper;
 
-    protected abstract void setPatientDetails(Map<String, String> patientDetails);
-
 
     protected abstract void setClient(CommonPersonObjectClient commonPersonObjectClient);
 
 
     protected abstract String getViewConfigurationIdentifier();
 
-    protected void renderDemographicsView(View view, Map<String, String> patientDetails) {
+    protected void renderDemographicsView(View view) {
         CommonPersonObjectClient client = (CommonPersonObjectClient) view.getTag();
         renderPatientDemographicCardHelper = new RenderPatientDemographicCardHelper(getActivity(), client);
-        renderPatientDemographicCardHelper.renderView(view, patientDetails);
+        renderPatientDemographicCardHelper.renderView(view);
 
     }
 
-    protected void renderFollowUpView(View view, Map<String, String> patientDetails) {
+    protected void renderFollowUpView(View view) {
         CommonPersonObjectClient client = (CommonPersonObjectClient) view.getTag();
 
         RenderPatientFollowupCardHelper renderPatientFollowupCardHelper = new RenderPatientFollowupCardHelper(getActivity(), client);
-        renderPatientFollowupCardHelper.renderView(view, patientDetails);
+        renderPatientFollowupCardHelper.renderView(view);
 
     }
 
 
-    protected void renderContactView(View view, Map<String, String> patientDetails) {
+    protected void renderContactView(View view) {
         CommonPersonObjectClient client = (CommonPersonObjectClient) view.getTag();
         RenderContactCardHelper renderContactHelper = new RenderContactCardHelper(getActivity(), client);
-        renderContactHelper.renderView(view, patientDetails);
+        renderContactHelper.renderView(view);
     }
 
     protected void processLanguageTokens(Map<String, String> viewLabelsMap, View parentView) {
@@ -158,7 +152,7 @@ public abstract class BasePatientDetailsFragment extends SecuredFragment impleme
 
             String locationId = LocationHelper.getInstance().getOpenMrsLocationId(facilitySelection.getSelectedItem());
 
-            JsonFormUtils.startForm(getActivity(), context(), REQUEST_CODE_GET_JSON, Constants.JSON_FORM.PATIENT_REMOVAL, patientDetails.get(DBConstants.KEY.BASE_ENTITY_ID),
+            JsonFormUtils.startForm(getActivity(), context(), REQUEST_CODE_GET_JSON, Constants.JSON_FORM.PATIENT_REMOVAL, commonPersonObjectClient.getCaseId(),
                     null, locationId);
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
@@ -194,24 +188,12 @@ public abstract class BasePatientDetailsFragment extends SecuredFragment impleme
 
     private void setUpButtons(View rootView) {
 
-        if (patientDetails != null) {
+        if (commonPersonObjectClient != null) {
 
             Button removePatientButton = (Button) rootView.findViewById(R.id.remove_patient);
             if (removePatientButton != null) {
-                removePatientButton.setTag(R.id.CLIENT_ID, patientDetails.get(Constants.KEY._ID));
+                removePatientButton.setTag(R.id.CLIENT_ID, commonPersonObjectClient.getCaseId());
                 removePatientButton.setOnClickListener(this);
-            }
-
-            Button followUpButton = (Button) rootView.findViewById(R.id.follow_up_button);
-            if (followUpButton != null) {
-                followUpButton.setTag(R.id.CLIENT_ID, patientDetails.get(Constants.KEY._ID));
-                followUpButton.setOnClickListener(this);
-            }
-
-            TextView addContactView = (TextView) rootView.findViewById(R.id.add_contact);
-            if (addContactView != null) {
-                addContactView.setTag(R.id.CLIENT_ID, patientDetails.get(Constants.KEY._ID));
-                addContactView.setOnClickListener(this);
             }
         }
     }
@@ -280,7 +262,7 @@ public abstract class BasePatientDetailsFragment extends SecuredFragment impleme
                                         viewParent.addView(json2View);
                                     }
                                     json2View.setTag(commonPersonObjectClient);
-                                    renderViewConfigurationCore(componentViewConfiguration, json2View, patientDetails);
+                                    renderViewConfigurationCore(componentViewConfiguration, json2View);
                                 }
                             }
                         } catch (Exception e) {
@@ -302,18 +284,18 @@ public abstract class BasePatientDetailsFragment extends SecuredFragment impleme
 
     }
 
-    private void renderViewConfigurationCore(ViewConfiguration componentViewConfiguration, View json2View, Map<String, String> patientDetails) {
+    private void renderViewConfigurationCore(ViewConfiguration componentViewConfiguration, View json2View) {
         if (componentViewConfiguration.getIdentifier().equals(Constants.CONFIGURATION.COMPONENTS.PATIENT_DETAILS_DEMOGRAPHICS)) {
 
-            renderDemographicsView(json2View, patientDetails);
+            renderDemographicsView(json2View);
 
         } else if (componentViewConfiguration.getIdentifier().equals(Constants.CONFIGURATION.COMPONENTS.PATIENT_DETAILS_FOLLOWUP)) {
 
-            renderFollowUpView(json2View, patientDetails);
+            renderFollowUpView(json2View);
             Button followUpButton = (Button) json2View.findViewById(R.id.follow_up_button);
-            followUpButton.setTag(R.id.CLIENT_ID, patientDetails.get(Constants.KEY._ID));
+            followUpButton.setTag(R.id.CLIENT_ID, commonPersonObjectClient.getCaseId());
         } else if (componentViewConfiguration.getIdentifier().equals(Constants.CONFIGURATION.COMPONENTS.PATIENT_DETAILS_CONTACT_SCREENING)) {
-            renderContactView(json2View, patientDetails);
+            renderContactView(json2View);
 
         }
     }
@@ -321,9 +303,10 @@ public abstract class BasePatientDetailsFragment extends SecuredFragment impleme
     protected void renderDefaultLayout(View rootView) {
 
         rootView.setTag(commonPersonObjectClient);
-        renderDemographicsView(rootView, patientDetails);
-        renderFollowUpView(rootView, patientDetails);
-        renderContactView(rootView, patientDetails);
+
+        renderDemographicsView(rootView);
+        renderFollowUpView(rootView);
+        renderContactView(rootView);
 
     }
 

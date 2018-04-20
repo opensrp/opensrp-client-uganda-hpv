@@ -180,7 +180,7 @@
         android:layout_toLeftOf="@id/register_client"
         android:layout_toRightOf="@id/location_picker_seperator"
         android:background="@drawable/transparent_gray_background"
-        android:drawableRight="@drawable/ic_arrow_drop_down_black_24dp"
+        android:drawableRight="@drawable/ic_arrow_drop_down_white"
         android:gravity="left|center_vertical"
         android:minWidth="@dimen/loc_picker_text_min_width"
         android:paddingLeft="0dp"

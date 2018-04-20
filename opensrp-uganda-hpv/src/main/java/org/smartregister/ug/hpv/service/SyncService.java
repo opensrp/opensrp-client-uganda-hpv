@@ -17,15 +17,18 @@ import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONObject;
 import org.smartregister.domain.FetchStatus;
+import org.smartregister.domain.Response;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.EventClientRepository;
 import org.smartregister.service.HTTPAgent;
+import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.application.HpvApplication;
 import org.smartregister.ug.hpv.event.SyncEvent;
 import org.smartregister.ug.hpv.helper.ECSyncHelper;
 import org.smartregister.ug.hpv.sync.HpvClientProcessor;
 import org.smartregister.ug.hpv.util.NetworkUtils;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -126,7 +129,7 @@ public class SyncService extends Service {
                 if (pendingEvents.isEmpty()) {
                     return;
                 }
-/*
+
                 String baseUrl = HpvApplication.getInstance().getContext().configuration().dristhiBaseURL();
                 if (baseUrl.endsWith(context.getString(R.string.url_separator))) {
                     baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(context.getString(R.string.url_separator)));
@@ -150,7 +153,7 @@ public class SyncService extends Service {
                     return;
                 }
                 db.markEventsAsSynced(pendingEvents);
-                Log.i(getClass().getName(), "Events synced successfully.");*/
+                Log.i(getClass().getName(), "Events synced successfully.");
             } catch (Exception e) {
                 Log.e(getClass().getName(), e.getMessage());
             }

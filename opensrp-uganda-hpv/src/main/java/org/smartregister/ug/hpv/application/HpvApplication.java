@@ -22,6 +22,7 @@ import org.smartregister.configurableviews.util.Constants;
 import org.smartregister.repository.EventClientRepository;
 import org.smartregister.repository.Repository;
 import org.smartregister.sync.DrishtiSyncScheduler;
+import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.activity.LoginActivity;
 import org.smartregister.ug.hpv.event.LanguageConfigurationEvent;
 import org.smartregister.ug.hpv.event.TriggerSyncEvent;
@@ -259,6 +260,8 @@ public class HpvApplication extends DrishtiApplication {
             String lastSyncTime = intent.getStringExtra(org.smartregister.configurableviews.util.Constants.INTENT_KEY.LAST_SYNC_TIME_STRING);
 
             Utils.writePrefString(context, org.smartregister.configurableviews.util.Constants.INTENT_KEY.LAST_SYNC_TIME_STRING, lastSyncTime);
+
+            Utils.showShortToast(context, context.getString(R.string.sync_round_complete));
 
         }
     };

@@ -1,33 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/toolbar_parent_layout"
+<android.support.design.widget.AppBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:background="@drawable/transparent_gray_background">
 
-    <android.support.design.widget.AppBarLayout
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/patient_details_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/transparent_gray_background" >
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/top_bar_gray">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/patient_details_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:contentInsetLeft="10dp"
-            app:contentInsetStart="10dp"
-            app:popupTheme="@style/AppTheme.PopupOverlay"
-            android:background="@color/top_bar_gray">
+        <include layout="@layout/top_detail_bar" />
+    </android.support.v7.widget.Toolbar>
 
-            <include layout="@layout/top_detail_bar" />
-        </android.support.v7.widget.Toolbar>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="3dp"
-            android:background="@drawable/toolbar_dropshadow" />
-
-    </android.support.design.widget.AppBarLayout>
-
-</LinearLayout>
+</android.support.design.widget.AppBarLayout>

@@ -8,12 +8,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import org.greenrobot.eventbus.EventBus;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.util.Constants;
-
-import java.util.Map;
 
 /**
  * Created by ndegwamartin on 24/11/2017.
@@ -39,11 +36,6 @@ public class PatientDetailsFragment extends BasePatientDetailsFragment implement
 
         super.setupViews(rootView);
         processViewConfigurations(rootView);
-    }
-
-    @Override
-    public void setPatientDetails(Map<String, String> patientDetails) {
-        this.patientDetails = patientDetails;
     }
 
     @Override

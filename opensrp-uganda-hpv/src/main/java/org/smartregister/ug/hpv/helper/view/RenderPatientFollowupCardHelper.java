@@ -21,7 +21,7 @@ import java.util.Map;
  * Created by ndegwamartin on 09/04/2018.
  */
 
-public class RenderPatientFollowupCardHelper extends BaseRenderHelper {
+public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements View.OnClickListener {
 
     private static final String TAG = RenderPatientFollowupCardHelper.class.getCanonicalName();
 
@@ -30,7 +30,10 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper {
     }
 
     @Override
-    public void renderView(final View view, final Map<String, String> extraDetails) {
+    public void renderView(final View view) {
+
+        final RenderPatientFollowupCardHelper helperContext = this;
+
         new Handler().post(new Runnable() {
 
             @Override
@@ -44,7 +47,7 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper {
                     String nextVisitDate = StringUtils.isBlank(dateDoseOneGiven) ? patientDetails.get(DBConstants.KEY.DOSE_ONE_DATE) : patientDetails.get(DBConstants.KEY.DOSE_TWO_DATE);
 
                     if (followUpView != null) {
-
+                        followUpView.setOnClickListener(helperContext);
 
                         followUpView.setText(context.getString(R.string.hpv_vaccine_due) + " - due " + Utils.formatDate(nextVisitDate));
                         DateTime treatmentStartDate = DateTime.parse(nextVisitDate);
@@ -85,5 +88,11 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper {
             }
 
         });
+    }
+
+    @Override
+    public void onClick(View view) {
+        Utils.showToast(context, "Probably clicked on follow up button for !" + commonPersonObjectClient);
+
     }
 }

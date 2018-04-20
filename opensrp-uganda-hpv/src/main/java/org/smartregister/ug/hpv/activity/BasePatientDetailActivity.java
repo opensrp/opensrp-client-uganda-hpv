@@ -31,7 +31,7 @@ import butterknife.ButterKnife;
 
 public abstract class BasePatientDetailActivity extends BaseActivity {
     private static final String TAG = BasePatientDetailActivity.class.getCanonicalName();
-    protected Map<String, String> patientDetails;
+    protected Map<String, String> patientDedtails;
     protected File currentfile;
     private static final int REQUEST_TAKE_PHOTO = 1;
 
@@ -46,7 +46,6 @@ public abstract class BasePatientDetailActivity extends BaseActivity {
         setContentView(R.layout.activity_base);
         ButterKnife.bind(this);
 
-        patientDetails = (HashMap<String, String>) getIntent().getSerializableExtra(Constants.INTENT_KEY.PATIENT_DETAIL_MAP);
         commonPersonObjectClient = (CommonPersonObjectClient) getIntent().getSerializableExtra(Constants.INTENT_KEY.CLIENT_OBJECT);
 
 

@@ -38,6 +38,7 @@ import org.smartregister.ug.hpv.barcode.BarcodeIntentIntegrator;
 import org.smartregister.ug.hpv.barcode.BarcodeIntentResult;
 import org.smartregister.ug.hpv.event.ShowProgressDialogEvent;
 import org.smartregister.ug.hpv.event.SyncEvent;
+import org.smartregister.ug.hpv.event.TriggerSyncEvent;
 import org.smartregister.ug.hpv.fragment.BaseRegisterFragment;
 import org.smartregister.ug.hpv.fragment.HomeRegisterFragment;
 import org.smartregister.ug.hpv.helper.LocationHelper;
@@ -143,6 +144,17 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
             return true;
         } else if (id == R.id.action_logout) {
             logOutUser();
+            return true;
+
+        } else if (id == R.id.action_sync) {
+
+            TriggerSyncEvent syncEvent = new TriggerSyncEvent();
+            syncEvent.setManualSync(true);
+            HpvApplication.getInstance().triggerSync(syncEvent);
+
+            Utils.showToast(this, "Manual Sync triggered...");
+
+            HpvApplication.getInstance().startPullUniqueIdsService();
             return true;
         }
 

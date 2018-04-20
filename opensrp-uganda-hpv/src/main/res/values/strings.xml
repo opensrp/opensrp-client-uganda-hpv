@@ -39,5 +39,10 @@
     <string name="add_contact">ADD CONTACT</string>
     <string name="caretaker">Caretaker</string>
     <string name="vht">VHT</string>
+    <string name="url_separator">/</string>
+    <string name="clients_key">clients</string>
+    <string name="events_key">events</string>
+    <string name="manual_sync">Manual Sync</string>
+    <string name="sync_round_complete">Sync round complete...</string>
 
 </resources>

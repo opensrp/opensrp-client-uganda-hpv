@@ -41,8 +41,6 @@ public class PatientDetailActivity extends BasePatientDetailActivity {
     @Override
     protected Fragment getDetailFragment() {
         PatientDetailsFragment mBaseFragment = new PatientDetailsFragment();
-        patientDetails = (HashMap<String, String>) getIntent().getSerializableExtra(Constants.INTENT_KEY.PATIENT_DETAIL_MAP);
-        mBaseFragment.setPatientDetails(patientDetails);
         commonPersonObjectClient = (CommonPersonObjectClient) getIntent().getSerializableExtra(Constants.INTENT_KEY.CLIENT_OBJECT);
         mBaseFragment.setClient(commonPersonObjectClient);
         return mBaseFragment;

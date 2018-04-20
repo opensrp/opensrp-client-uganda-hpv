@@ -42,7 +42,7 @@ public class RenderPatientDemographicCardHelper extends BaseRenderHelper impleme
     }
 
     @Override
-    public void renderView(final View view, final Map<String, String> extraData) {
+    public void renderView(final View view) {
         final RenderPatientDemographicCardHelper cardHelperContext = this;
         new Handler().post(new Runnable() {
 

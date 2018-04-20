@@ -15,7 +15,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="50dp"
-        android:layout_marginTop="?attr/actionBarSize"
         android:fillViewport="true"
         android:padding="10dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">

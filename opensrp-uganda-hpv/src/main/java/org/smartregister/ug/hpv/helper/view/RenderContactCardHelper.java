@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Handler;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -32,7 +31,7 @@ public class RenderContactCardHelper extends BaseRenderHelper implements View.On
     }
 
     @Override
-    public void renderView(final View view, final Map<String, String> metadata) {
+    public void renderView(final View view) {
         final RenderContactCardHelper helperContext = this;
         new Handler().post(new Runnable() {
 

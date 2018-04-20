@@ -20,5 +20,5 @@ public abstract class BaseRenderHelper {
         this.commonPersonObjectClient = commonPersonObjectClient;
     }
 
-    public abstract void renderView(View containerView, Map<String, String> extraData);
+    public abstract void renderView(View containerView);
 }
