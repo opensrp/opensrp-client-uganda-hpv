@@ -145,9 +145,9 @@ public class ECSyncHelper implements PrefsHelper {
         }
     }
 
-    public List<JSONObject> allEvents(long startSyncTimeStamp, long lastSyncTimeStamp) {
+    public List<EventClient> allEvents(long startSyncTimeStamp, long lastSyncTimeStamp) {
         try {
-            return eventClientRepository.getEvents(startSyncTimeStamp, lastSyncTimeStamp);
+            return eventClientRepository.fetchEventClients(startSyncTimeStamp, lastSyncTimeStamp);
         } catch (Exception e) {
             Log.e(getClass().getName(), "Exception", e);
         }
