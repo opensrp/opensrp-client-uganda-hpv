@@ -43,6 +43,7 @@ import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.sync.DrishtiSyncScheduler;
 import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.application.HpvApplication;
+import org.smartregister.ug.hpv.helper.LocationHelper;
 import org.smartregister.util.Utils;
 
 import java.io.IOException;
@@ -283,7 +284,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void goToHome(boolean remote) {
         if (remote) {
-            //  Utils.startAsyncTask(new SaveTeamLocationsTask(), null); // TODO: remove this
+            Utils.startAsyncTask(new SaveTeamLocationsTask(), null);
         }
         Intent intent = new Intent(this, HomeRegisterActivity.class);
         intent.putExtra(UgandaHpvConstants.IS_REMOTE_LOGIN, remote);
@@ -440,13 +441,12 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    // TODO: uncomment this
-//    private class SaveTeamLocationsTask extends AsyncTask<Void, Void, Void> {
-//        @Override
-//        protected Void doInBackground(Void... params) {
-//            LocationHelper.getInstance().locationsIdsFromHeirarchy();
-//            return null;
-//        }
-//    }
+    private class SaveTeamLocationsTask extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... params) {
+            LocationHelper.getInstance().locationIdsFromHierarchy();
+            return null;
+        }
+    }
 }
 
