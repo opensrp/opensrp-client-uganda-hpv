@@ -8,14 +8,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Pair;
 import android.view.View;
-import android.widget.Button;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
-import org.smartregister.commonregistry.CommonPersonObject;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.domain.Alert;
 import org.smartregister.immunization.domain.Vaccine;
@@ -36,9 +33,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import util.UgandaHpvConstants;
 
@@ -359,18 +354,16 @@ public class VaccineBaseActivity extends AppCompatActivity implements Vaccinatio
 
         @Override
         protected Void doInBackground(Void... params) {
-            if  (tag != null) {
-                if (tag.getDbKey() != null) {
-                    Long dbKey = tag.getDbKey();
-                    vaccineRepository.deleteVaccine(dbKey);
+            if  (tag != null && tag.getDbKey() != null) {
+                Long dbKey = tag.getDbKey();
+                vaccineRepository.deleteVaccine(dbKey);
 
-                    String dobString = Utils.getValue(childDetails.getColumnmaps(), UgandaHpvConstants.DOB, false);
-                    DateTime dateTime = org.smartregister.ug.hpv.util.Utils.dobStringToDateTime(dobString);
-                    if (dateTime != null) {
-                        affectedVaccines = VaccineSchedule.updateOfflineAlerts(childDetails.entityId(), dateTime, UgandaHpvConstants.KEY.CHILD);
-                    }
-                    vaccineList = vaccineRepository.findByEntityId(childDetails.entityId());
+                String dobString = Utils.getValue(childDetails.getColumnmaps(), UgandaHpvConstants.DOB, false);
+                DateTime dateTime = org.smartregister.ug.hpv.util.Utils.dobStringToDateTime(dobString);
+                if (dateTime != null) {
+                    affectedVaccines = VaccineSchedule.updateOfflineAlerts(childDetails.entityId(), dateTime, UgandaHpvConstants.KEY.CHILD);
                 }
+                vaccineList = vaccineRepository.findByEntityId(childDetails.entityId());
             }
             return null;
         }
