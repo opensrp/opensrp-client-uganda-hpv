@@ -30,7 +30,7 @@
     <string name="unknown_response">login failed. Try later</string>
     <string name="no_internet_connectivity">No internet connection. Please ensure data connectivity</string>
     <string name="login_text">Log In</string>
-
+    <string name="show_password_text">Show password</string>
     <string name="complete">Complete</string>
     <string name="title_activity_vaccine_base">VaccineBaseActivity</string>
     <string name="updating_dialog_title">Updating…</string>
