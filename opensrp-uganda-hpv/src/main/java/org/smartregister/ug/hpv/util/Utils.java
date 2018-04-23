@@ -202,9 +202,13 @@ public class Utils {
     }
 
     public static String getFormattedPhoneNumber(String phoneNumber_) {
-        String phoneNumber = phoneNumber_.substring(1);
-        String[] tokens = Iterables.toArray(Splitter.fixedLength(3).split(phoneNumber), String.class);
-        return "256-" + StringUtils.join(tokens, "-");
+        if (phoneNumber_ != null) {
+            String phoneNumber = phoneNumber_.startsWith("0") ? phoneNumber_.substring(1) : phoneNumber_;
+            String[] tokens = Iterables.toArray(Splitter.fixedLength(3).split(phoneNumber), String.class);
+            return "256-" + StringUtils.join(tokens, "-");
+        } else {
+            return "";
+        }
 
     }
 
