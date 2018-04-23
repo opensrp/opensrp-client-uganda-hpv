@@ -1,5 +1,7 @@
 package org.smartregister.ug.hpv.helper;
 
+import org.smartregister.ug.hpv.util.DBConstants;
+
 /**
  * Created by ndegwamartin on 28/01/2018.
  */
@@ -7,6 +9,6 @@ package org.smartregister.ug.hpv.helper;
 public class DBQueryHelper {
 
     public static final String getHomePatientRegisterCondition() {
-        return "";
+        return DBConstants.KEY.DATE_REMOVED + " IS NULL ";
     }
 }

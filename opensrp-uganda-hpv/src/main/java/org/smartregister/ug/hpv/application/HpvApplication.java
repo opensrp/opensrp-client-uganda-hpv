@@ -19,9 +19,12 @@ import org.smartregister.configurableviews.model.MainConfig;
 import org.smartregister.configurableviews.repository.ConfigurableViewsRepository;
 import org.smartregister.configurableviews.service.PullConfigurableViewsIntentService;
 import org.smartregister.configurableviews.util.Constants;
+import org.smartregister.immunization.ImmunizationLibrary;
+import org.smartregister.immunization.repository.VaccineRepository;
 import org.smartregister.repository.EventClientRepository;
 import org.smartregister.repository.Repository;
 import org.smartregister.sync.DrishtiSyncScheduler;
+import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.activity.LoginActivity;
 import org.smartregister.ug.hpv.event.LanguageConfigurationEvent;
 import org.smartregister.ug.hpv.event.TriggerSyncEvent;
@@ -69,6 +72,7 @@ public class HpvApplication extends DrishtiApplication {
         //Initialize Modules
         CoreLibrary.init(context);
         ConfigurableViewsLibrary.init(context, getRepository());
+        ImmunizationLibrary.init(context, getRepository(), createCommonFtsObject());
 
         DrishtiSyncScheduler.setReceiverClass(HpvSyncBroadcastReceiver.class);
 
@@ -104,12 +108,16 @@ public class HpvApplication extends DrishtiApplication {
         return repository;
     }
 
+    public VaccineRepository vaccineRepository() {
+        return ImmunizationLibrary.getInstance().vaccineRepository();
+    }
+
     public String getPassword() {
         if (password == null) {
             String username = getContext().userService().getAllSharedPreferences().fetchRegisteredANM();
             password = getContext().userService().getGroupId(username);
         }
-        return "password1";
+        return password;
     }
 
     @Override
@@ -259,6 +267,8 @@ public class HpvApplication extends DrishtiApplication {
             String lastSyncTime = intent.getStringExtra(org.smartregister.configurableviews.util.Constants.INTENT_KEY.LAST_SYNC_TIME_STRING);
 
             Utils.writePrefString(context, org.smartregister.configurableviews.util.Constants.INTENT_KEY.LAST_SYNC_TIME_STRING, lastSyncTime);
+
+            Utils.showShortToast(context, context.getString(R.string.sync_round_complete));
 
         }
     };
