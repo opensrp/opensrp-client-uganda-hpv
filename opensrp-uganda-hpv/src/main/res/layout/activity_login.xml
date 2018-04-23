@@ -131,13 +131,11 @@
 
                 <CheckBox
                     android:id="@+id/login_show_password_checkbox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="5dp"
                     android:button="@drawable/white_checkbox_bg_selector"
-                    android:width="@dimen/checkbox_dimensions"
-                    android:height="@dimen/checkbox_dimensions" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -145,8 +143,10 @@
                     android:layout_centerVertical="true"
                     android:text="@string/show_password_text"
                     android:textColor="@android:color/white"
-                    android:layout_marginLeft="-20dp"
-                    android:textSize="@dimen/login_edit_text_textSize"/>
+                    android:layout_toRightOf="@id/login_show_password_checkbox"
+                    android:layout_marginLeft="10dp"
+                    android:textSize="@dimen/login_edit_text_textSize"
+                    android:id="@+id/login_show_password_text_view"/>
             </RelativeLayout>
 
             <Button
