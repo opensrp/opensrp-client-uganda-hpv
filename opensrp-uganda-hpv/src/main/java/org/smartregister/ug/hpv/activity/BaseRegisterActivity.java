@@ -140,7 +140,6 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
 
         if (id == R.id.action_language) {
             this.showLanguageDialog();
-            HpvApplication.getInstance().startPullUniqueIdsService();
             return true;
         } else if (id == R.id.action_logout) {
             logOutUser();
@@ -153,8 +152,6 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
             HpvApplication.getInstance().triggerSync(syncEvent);
 
             Utils.showToast(this, "Manual Sync triggered...");
-
-            HpvApplication.getInstance().startPullUniqueIdsService();
             return true;
         }
 

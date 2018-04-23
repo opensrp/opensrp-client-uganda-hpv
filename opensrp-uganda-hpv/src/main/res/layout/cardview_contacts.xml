@@ -121,6 +121,7 @@
             android:textSize="15sp" />
 
         <RelativeLayout
+            android:id="@+id/vhtContactWrapperView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
