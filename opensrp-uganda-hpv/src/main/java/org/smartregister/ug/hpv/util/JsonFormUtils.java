@@ -42,6 +42,7 @@ import org.smartregister.ug.hpv.activity.HomeRegisterActivity;
 import org.smartregister.ug.hpv.activity.HpvJsonFormActivity;
 import org.smartregister.ug.hpv.application.HpvApplication;
 import org.smartregister.ug.hpv.domain.FormLocation;
+import org.smartregister.ug.hpv.event.JsonFormSaveCompleteEvent;
 import org.smartregister.ug.hpv.event.PatientRemovedEvent;
 import org.smartregister.ug.hpv.helper.ECSyncHelper;
 import org.smartregister.ug.hpv.helper.LocationHelper;
@@ -820,6 +821,8 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
                 childSmartRegisterActivity.refreshList(FetchStatus.fetched);
                 childSmartRegisterActivity.hideProgressDialog();
             }
+
+            HpvApplication.getInstance().postEvent(new JsonFormSaveCompleteEvent());
         }
 
         @Override

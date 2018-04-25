@@ -20,7 +20,6 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import org.apache.commons.lang3.StringUtils;
-import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONObject;
@@ -36,6 +35,7 @@ import org.smartregister.ug.hpv.application.HpvApplication;
 import org.smartregister.ug.hpv.barcode.Barcode;
 import org.smartregister.ug.hpv.barcode.BarcodeIntentIntegrator;
 import org.smartregister.ug.hpv.barcode.BarcodeIntentResult;
+import org.smartregister.ug.hpv.event.JsonFormSaveCompleteEvent;
 import org.smartregister.ug.hpv.event.ShowProgressDialogEvent;
 import org.smartregister.ug.hpv.event.SyncEvent;
 import org.smartregister.ug.hpv.event.TriggerSyncEvent;
@@ -216,13 +216,11 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
     @Override
     protected void onResumption() {
         ConfigurableViewsLibrary.getInstance().getConfigurableViewsHelper().registerViewConfigurations(getViewIdentifiers());
-        EventBus.getDefault().register(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -256,14 +254,23 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void showProgressDialog(ShowProgressDialogEvent showProgressDialogEvent) {
-        if (showProgressDialogEvent != null)
+        if (showProgressDialogEvent != null) {
             showProgressDialog();
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void refreshList(SyncEvent syncEvent) {
-        if (syncEvent != null && syncEvent.getFetchStatus().equals(FetchStatus.fetched))
+        if (syncEvent != null && syncEvent.getFetchStatus().equals(FetchStatus.fetched)) {
             refreshList(FetchStatus.fetched);
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void refreshList(JsonFormSaveCompleteEvent saveEvent) {
+        if (saveEvent != null) {
+            refreshList(FetchStatus.fetched);
+        }
     }
 
     public void showProgressDialog() {

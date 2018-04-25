@@ -18,20 +18,22 @@ import org.smartregister.configurableviews.helper.JsonSpecHelper;
 import org.smartregister.configurableviews.model.MainConfig;
 import org.smartregister.configurableviews.repository.ConfigurableViewsRepository;
 import org.smartregister.configurableviews.service.PullConfigurableViewsIntentService;
-import org.smartregister.configurableviews.util.Constants;
 import org.smartregister.repository.EventClientRepository;
 import org.smartregister.repository.Repository;
 import org.smartregister.sync.DrishtiSyncScheduler;
+import org.smartregister.ug.hpv.BuildConfig;
 import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.activity.LoginActivity;
+import org.smartregister.ug.hpv.event.BaseEvent;
 import org.smartregister.ug.hpv.event.LanguageConfigurationEvent;
 import org.smartregister.ug.hpv.event.TriggerSyncEvent;
 import org.smartregister.ug.hpv.event.ViewConfigurationSyncCompleteEvent;
-import org.smartregister.ug.hpv.receiver.HpvSyncBroadcastReceiver;
+import org.smartregister.ug.hpv.receiver.AlarmReceiver;
 import org.smartregister.ug.hpv.repository.HpvRepository;
 import org.smartregister.ug.hpv.repository.UniqueIdRepository;
 import org.smartregister.ug.hpv.service.PullUniqueIdsIntentService;
 import org.smartregister.ug.hpv.service.SyncService;
+import org.smartregister.ug.hpv.util.Constants;
 import org.smartregister.ug.hpv.util.DBConstants;
 import org.smartregister.ug.hpv.util.ServiceTools;
 import org.smartregister.ug.hpv.util.Utils;
@@ -70,8 +72,6 @@ public class HpvApplication extends DrishtiApplication {
         //Initialize Modules
         CoreLibrary.init(context);
         ConfigurableViewsLibrary.init(context, getRepository());
-
-        DrishtiSyncScheduler.setReceiverClass(HpvSyncBroadcastReceiver.class);
 
         startPullConfigurableViewsIntentService(getApplicationContext());
         try {
@@ -249,7 +249,7 @@ public class HpvApplication extends DrishtiApplication {
         public void onReceive(android.content.Context context, Intent intent) {
             // Retrieve the extra data included in the Intent
 
-            int recordsRetrievedCount = intent.getIntExtra(Constants.INTENT_KEY.SYNC_TOTAL_RECORDS, 0);
+            int recordsRetrievedCount = intent.getIntExtra(org.smartregister.configurableviews.util.Constants.INTENT_KEY.SYNC_TOTAL_RECORDS, 0);
             if (recordsRetrievedCount > 0) {
                 LanguageConfigurationEvent event = new LanguageConfigurationEvent(true);//To Do add check for language configs
                 Utils.postEvent(event);
@@ -271,4 +271,18 @@ public class HpvApplication extends DrishtiApplication {
         Intent intent = new Intent(getApplicationContext(), PullUniqueIdsIntentService.class);
         getApplicationContext().startService(intent);
     }
+
+    public void postEvent(BaseEvent event) {
+        Utils.postEvent(event);
+    }
+
+    public static void setAlarms(android.content.Context context) {
+        AlarmReceiver.setAlarm(context, BuildConfig.VACCINE_SYNC_PROCESSING_MINUTES, Constants.ServiceType.VACCINE_SYNC_PROCESSING);
+        AlarmReceiver.setAlarm(context, BuildConfig.IMAGE_UPLOAD_MINUTES, Constants.ServiceType.IMAGE_UPLOAD);
+        AlarmReceiver.setAlarm(context, BuildConfig.PULL_UNIQUE_IDS_MINUTES, Constants.ServiceType.PULL_UNIQUE_IDS);
+        AlarmReceiver.setAlarm(context, BuildConfig.AUTO_SYNC_DURATION, Constants.ServiceType.AUTO_SYNC);
+        AlarmReceiver.setAlarm(context, BuildConfig.AUTO_SYNC_DURATION, Constants.ServiceType.PULL_VIEW_CONFIGURATIONS);
+
+    }
+
 }

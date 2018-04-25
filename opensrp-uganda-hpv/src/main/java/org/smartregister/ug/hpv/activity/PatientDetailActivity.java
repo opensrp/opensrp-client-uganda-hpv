@@ -7,9 +7,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONObject;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.repository.AllSharedPreferences;
@@ -20,8 +17,6 @@ import org.smartregister.ug.hpv.util.Constants;
 import org.smartregister.ug.hpv.util.JsonFormUtils;
 import org.smartregister.ug.hpv.util.Utils;
 
-import java.util.HashMap;
-
 /**
  * Created by ndegwamartin on 09/10/2017.
  */
@@ -31,6 +26,7 @@ public class PatientDetailActivity extends BasePatientDetailActivity {
     private static final int REQUEST_CODE_GET_JSON = 3432;
     private CommonPersonObjectClient commonPersonObjectClient;
     private static final int REQUEST_TAKE_PHOTO = 1;
+    PatientDetailsFragment mBaseFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +36,7 @@ public class PatientDetailActivity extends BasePatientDetailActivity {
 
     @Override
     protected Fragment getDetailFragment() {
-        PatientDetailsFragment mBaseFragment = new PatientDetailsFragment();
+        mBaseFragment = new PatientDetailsFragment();
         commonPersonObjectClient = (CommonPersonObjectClient) getIntent().getSerializableExtra(Constants.INTENT_KEY.CLIENT_OBJECT);
         mBaseFragment.setClient(commonPersonObjectClient);
         return mBaseFragment;
@@ -81,32 +77,14 @@ public class PatientDetailActivity extends BasePatientDetailActivity {
                 String imageLocation = currentfile.getAbsolutePath();
 
                 JsonFormUtils.saveImage(this, allSharedPreferences.fetchRegisteredANM(), commonPersonObjectClient.entityId(), imageLocation);
-                Utils.postEvent(new PictureUpdatedEvent());
+
+                mBaseFragment.refreshView(new PictureUpdatedEvent());
+
             } catch (Exception e) {
                 Utils.showToast(this, "Error occurred saving image...");
                 Log.e(TAG, e.getMessage());
             }
 
         }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    public void onPause() {
-        EventBus.getDefault().unregister(this);
-        super.onPause();
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void refreshView(PictureUpdatedEvent event) {
-        if (event != null) {
-            Utils.showToast(this, "Updating pic");
-        }
-
     }
 }

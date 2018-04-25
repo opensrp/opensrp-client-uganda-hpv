@@ -10,8 +10,8 @@
 
     <RelativeLayout
         android:id="@+id/top_left_layout"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_centerVertical="true">
 
         <TextView
@@ -24,7 +24,7 @@
             android:text="MN"
             android:textAllCaps="true"
             android:textColor="@color/actionbar"
-            android:textSize="25sp" />
+            android:textSize="20sp" />
 
         <ProgressBar
             android:id="@+id/sync_progress_bar"

@@ -92,4 +92,14 @@ public class Constants {
         public static final String PATIENT_REGISTRATION = "patient_registration";
         public static final String PATIENT_REMOVAL = "patient_removal";
     }
+
+    public static final class ServiceType {
+
+        public static final int AUTO_SYNC = 1;
+        public static final int PULL_UNIQUE_IDS = 4;
+        public static final int VACCINE_SYNC_PROCESSING = 5;
+        public static final int IMAGE_UPLOAD = 8;
+        public static final int PULL_VIEW_CONFIGURATIONS = 9;
+
+    }
 }
