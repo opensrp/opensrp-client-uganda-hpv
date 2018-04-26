@@ -11,10 +11,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
+import org.smartregister.immunization.domain.VaccineWrapper;
+import org.smartregister.immunization.view.VaccineGroup;
 import org.smartregister.ug.hpv.R;
+import org.smartregister.ug.hpv.activity.BasePatientDetailActivity;
+import org.smartregister.ug.hpv.helper.VaccinationHelper;
 import org.smartregister.ug.hpv.util.DBConstants;
 import org.smartregister.ug.hpv.util.Utils;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 /**
@@ -24,9 +29,11 @@ import java.util.Map;
 public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements View.OnClickListener {
 
     private static final String TAG = RenderPatientFollowupCardHelper.class.getCanonicalName();
+    private VaccinationHelper vaccinationHelper;
 
     public RenderPatientFollowupCardHelper(Context context, CommonPersonObjectClient client) {
         super(context, client);
+        vaccinationHelper = new VaccinationHelper((BasePatientDetailActivity) context, client);
     }
 
     @Override
@@ -92,7 +99,18 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
 
     @Override
     public void onClick(View view) {
-        Utils.showToast(context, "Probably clicked on follow up button for !" + commonPersonObjectClient);
 
+        ArrayList<VaccineWrapper> vaccineWrappers = new ArrayList<>();
+        VaccineWrapper vaccineWrapper = new VaccineWrapper();
+        vaccineWrapper.setName("HPV 1");
+        vaccineWrapper.setUpdatedVaccineDate(DateTime.now(), true);
+
+        vaccineWrappers.add(vaccineWrapper);
+        vaccineWrapper = new VaccineWrapper();
+        vaccineWrapper.setName("HPV 2");
+        vaccineWrapper.setUpdatedVaccineDate(DateTime.now(), true);
+        vaccineWrappers.add(vaccineWrapper);
+        vaccinationHelper.addVaccinationDialogFragment(vaccineWrappers, new VaccineGroup(context));
     }
+
 }
