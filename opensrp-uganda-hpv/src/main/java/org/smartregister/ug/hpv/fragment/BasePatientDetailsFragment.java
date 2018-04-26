@@ -217,7 +217,7 @@ public abstract class BasePatientDetailsFragment extends SecuredFragment impleme
             if (removePatientButton != null) {
                 removePatientButton.setTag(R.id.CLIENT_ID, commonPersonObjectClient.getCaseId());
                 removePatientButton.setOnClickListener(this);
-            } 
+            }
         }
     }
 

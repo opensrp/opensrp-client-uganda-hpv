@@ -261,8 +261,6 @@ public class HpvApplication extends DrishtiApplication {
 
             Utils.writePrefString(context, org.smartregister.configurableviews.util.Constants.INTENT_KEY.LAST_SYNC_TIME_STRING, lastSyncTime);
 
-            Utils.showShortToast(context, context.getString(R.string.sync_round_complete));
-
         }
     };
 

@@ -29,7 +29,12 @@ public class PatientRepository {
             cursor = db.rawQuery(query, new String[]{baseEntityId});
             if (cursor != null && cursor.moveToFirst()) {
 
-                return ImmutableMap.of(DBConstants.KEY.CARETAKER_NAME, cursor.getString(cursor.getColumnIndex(DBConstants.KEY.CARETAKER_NAME)), DBConstants.KEY.CARETAKER_PHONE, cursor.getString(cursor.getColumnIndex(DBConstants.KEY.CARETAKER_PHONE)), DBConstants.KEY.VHT_NAME, cursor.getString(cursor.getColumnIndex(DBConstants.KEY.VHT_NAME)), DBConstants.KEY.VHT_PHONE, cursor.getString(cursor.getColumnIndex(DBConstants.KEY.VHT_PHONE)));
+                if (cursor.getString(cursor.getColumnIndex(DBConstants.KEY.VHT_PHONE)) != null) {
+                    return ImmutableMap.of(DBConstants.KEY.CARETAKER_NAME, cursor.getString(cursor.getColumnIndex(DBConstants.KEY.CARETAKER_NAME)), DBConstants.KEY.CARETAKER_PHONE, cursor.getString(cursor.getColumnIndex(DBConstants.KEY.CARETAKER_PHONE)), DBConstants.KEY.VHT_NAME, cursor.getString(cursor.getColumnIndex(DBConstants.KEY.VHT_NAME)), DBConstants.KEY.VHT_PHONE, cursor.getString(cursor.getColumnIndex(DBConstants.KEY.VHT_PHONE)));
+                } else {
+                    return ImmutableMap.of(DBConstants.KEY.CARETAKER_NAME, cursor.getString(cursor.getColumnIndex(DBConstants.KEY.CARETAKER_NAME)), DBConstants.KEY.CARETAKER_PHONE, cursor.getString(cursor.getColumnIndex(DBConstants.KEY.CARETAKER_PHONE)));
+
+                }
 
             }
             return null;

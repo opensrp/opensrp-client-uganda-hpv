@@ -40,6 +40,7 @@ android {
         buildConfigField "long", "MAX_SERVER_TIME_DIFFERENCE", "1800000l"
         buildConfigField "boolean", "TIME_CHECK", "false"
         buildConfigField "String", "SYNC_TYPE", '"teamId"'
+        buildConfigField "int", "MAX_SYNC_RETRIES", '3'
         resValue "string", 'opensrp_url', '"https://ug-hpv.smartregister.org/opensrp/"'
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }

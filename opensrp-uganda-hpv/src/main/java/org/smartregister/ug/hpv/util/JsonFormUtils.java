@@ -47,7 +47,7 @@ import org.smartregister.ug.hpv.event.PatientRemovedEvent;
 import org.smartregister.ug.hpv.helper.ECSyncHelper;
 import org.smartregister.ug.hpv.helper.LocationHelper;
 import org.smartregister.ug.hpv.repository.UniqueIdRepository;
-import org.smartregister.ug.hpv.sync.HPVClientProcessorForJava;
+import org.smartregister.ug.hpv.sync.HpvClientProcessorForJava;
 import org.smartregister.ug.hpv.view.LocationPickerView;
 import org.smartregister.util.AssetHandler;
 import org.smartregister.util.DateTimeTypeConverter;
@@ -947,7 +947,7 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
                     saveImage(context, providerId, entityId, imageLocation);
                 }
 
-                HPVClientProcessorForJava.getInstance(context).processClient(ecUpdater.getEvents(lastSyncDate, BaseRepository.TYPE_Unsynced));
+                HpvClientProcessorForJava.getInstance(context).processClient(ecUpdater.getEvents(lastSyncDate, BaseRepository.TYPE_Unsynced));
                 allSharedPreferences.saveLastUpdatedAtDate(lastSyncDate.getTime());
 
             } catch (Exception e) {
