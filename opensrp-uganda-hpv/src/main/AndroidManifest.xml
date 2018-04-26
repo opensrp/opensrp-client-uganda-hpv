@@ -72,10 +72,6 @@
 
         <receiver android:name=".receiver.HpvSyncBroadcastReceiver" />
 
-        <activity
-            android:name=".activity.VaccineBaseActivity"
-            android:label="@string/title_activity_vaccine_base"
-            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>

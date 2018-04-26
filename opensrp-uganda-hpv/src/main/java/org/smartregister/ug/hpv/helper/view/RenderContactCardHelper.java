@@ -54,11 +54,20 @@ public class RenderContactCardHelper extends BaseRenderHelper implements View.On
 
                 TextView vhtContactTextView = (TextView) view.findViewById(R.id.vhtContactTextView);
                 String vhtContact = patientDetails.get(DBConstants.KEY.VHT_PHONE);
-                vhtContactTextView.setText(Utils.getFormattedPhoneNumber(vhtContact));
 
-                RelativeLayout vhtContactNumberView = (RelativeLayout) view.findViewById(R.id.vhtContactNumberView);
-                vhtContactNumberView.setTag(R.id.CONTACT, caretakerContact);
-                vhtContactNumberView.setOnClickListener(helperContext);
+                if (vhtContact != null) {
+                    vhtContactTextView.setText(Utils.getFormattedPhoneNumber(vhtContact));
+
+                    RelativeLayout vhtContactNumberView = (RelativeLayout) view.findViewById(R.id.vhtContactNumberView);
+                    vhtContactNumberView.setTag(R.id.CONTACT, caretakerContact);
+                    vhtContactNumberView.setOnClickListener(helperContext);
+                } else {
+
+                    RelativeLayout vhtContactWrapperView = (RelativeLayout) view.findViewById(R.id.vhtContactWrapperView);
+                    vhtContactWrapperView.setVisibility(View.GONE);
+                    View vhtTitleTextView = view.findViewById(R.id.vhtTitleTextView);
+                    vhtTitleTextView.setVisibility(View.GONE);
+                }
 
 
                 TextView addContactView = (TextView) view.findViewById(R.id.add_contact);

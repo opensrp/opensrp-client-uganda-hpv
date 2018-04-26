@@ -9,7 +9,9 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -28,13 +30,20 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.android.volley.toolbox.ImageLoader;
+
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.joda.time.DateTime;
 import org.smartregister.Context;
+import org.smartregister.configurableviews.model.LoginConfiguration;
+import org.smartregister.configurableviews.model.ViewConfiguration;
 import org.smartregister.domain.LoginResponse;
 import org.smartregister.domain.TimeStatus;
 import org.smartregister.domain.jsonmapping.LoginResponseData;
@@ -43,6 +52,9 @@ import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.sync.DrishtiSyncScheduler;
 import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.application.HpvApplication;
+import org.smartregister.ug.hpv.event.ViewConfigurationSyncCompleteEvent;
+import org.smartregister.ug.hpv.helper.LocationHelper;
+import org.smartregister.ug.hpv.util.ImageLoaderRequest;
 import org.smartregister.util.Utils;
 
 import java.io.IOException;
@@ -60,6 +72,7 @@ import static org.smartregister.domain.LoginResponse.NO_INTERNET_CONNECTIVITY;
 import static org.smartregister.domain.LoginResponse.UNAUTHORIZED;
 import static org.smartregister.domain.LoginResponse.UNKNOWN_RESPONSE;
 import static org.smartregister.util.Log.logError;
+import static org.smartregister.util.Log.logInfo;
 import static util.UgandaHpvConstants.CONFIGURATION.LOGIN;
 import static util.UgandaHpvConstants.VIEW_CONFIGURATION_PREFIX;
 
@@ -109,6 +122,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        processViewCustomizations();
         if (!getOpenSRPContext().IsUserLoggedOut()) {
             goToHome(false);
         }
@@ -283,7 +297,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void goToHome(boolean remote) {
         if (remote) {
-            //  Utils.startAsyncTask(new SaveTeamLocationsTask(), null); // TODO: remove this
+            Utils.startAsyncTask(new SaveTeamLocationsTask(), null);
         }
         Intent intent = new Intent(this, HomeRegisterActivity.class);
         intent.putExtra(UgandaHpvConstants.IS_REMOTE_LOGIN, remote);
@@ -292,13 +306,50 @@ public class LoginActivity extends AppCompatActivity {
         finish();
     }
 
-    private void processViewCustomizations() {
+    private void  processViewCustomizations() {
         try {
             String jsonString = Utils.getPreference(this, VIEW_CONFIGURATION_PREFIX + LOGIN, null);
-            if (jsonString == null) return;
-            // TODO: add remaining lines here
+            if (jsonString == null) {
+                return;
+            }
+
+            ViewConfiguration loginView = HpvApplication.getJsonSpecHelper().getConfigurableView(jsonString);
+            LoginConfiguration metadata = (LoginConfiguration) loginView.getMetadata();
+            LoginConfiguration.Background background = metadata.getBackground();
+
+            TextView showPasswordTextView = (TextView) findViewById(R.id.login_show_password_text_view);
+            if (!metadata.getShowPasswordCheckbox()) {
+                showPasswordCheckBox.setVisibility(View.GONE);
+                showPasswordTextView.setVisibility(View.GONE);
+            } else {
+                showPasswordCheckBox.setVisibility(View.VISIBLE);
+                showPasswordTextView.setVisibility(View.VISIBLE);
+            }
+
+            if (background.getOrientation() != null && background.getStartColor() != null && background.getEndColor() != null) {
+                View loginLayout = findViewById(R.id.login_layout);
+                GradientDrawable gradientDrawable = new GradientDrawable();
+                gradientDrawable.setShape(GradientDrawable.RECTANGLE);
+                gradientDrawable.setOrientation(
+                        GradientDrawable.Orientation.valueOf(background.getOrientation()));
+                gradientDrawable.setColors(new int[]{Color.parseColor(background.getStartColor()),
+                        Color.parseColor(background.getEndColor())});
+                loginLayout.setBackground(gradientDrawable);
+            }
+
+            if (metadata.getLogoUrl() != null) {
+                ImageView imageView = (ImageView) findViewById(R.id.login_logo);
+                ImageLoaderRequest.getInstance(this.getApplicationContext()).getImageLoader()
+                        .get(metadata.getLogoUrl(), ImageLoader.getImageListener(imageView,
+                                R.drawable.ic_little_girl_hpv_logo, R.drawable.ic_little_girl_hpv_logo)).getBitmap();
+                TextView loginBuild = (TextView) findViewById(R.id.login_build_text_view);
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(loginBuild.getLayoutParams());
+                lp.setMargins(0, 0, 0, 0);
+                loginBuild.setLayoutParams(lp);
+            }
+
         } catch (Exception e) {
-            Log.d(TAG, e.getMessage());
+            android.util.Log.d(TAG, e.getMessage());
         }
     }
 
@@ -440,13 +491,20 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    // TODO: uncomment this
-//    private class SaveTeamLocationsTask extends AsyncTask<Void, Void, Void> {
-//        @Override
-//        protected Void doInBackground(Void... params) {
-//            LocationHelper.getInstance().locationsIdsFromHeirarchy();
-//            return null;
-//        }
-//    }
+    private class SaveTeamLocationsTask extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... params) {
+            LocationHelper.getInstance().locationIdsFromHierarchy();
+            return null;
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
+    public void refreshViews(ViewConfigurationSyncCompleteEvent syncCompleteEvent) {
+        if (syncCompleteEvent != null) {
+            logInfo("Refreshing Login View...");
+            processViewCustomizations();
+        }
+    }
 }
 
