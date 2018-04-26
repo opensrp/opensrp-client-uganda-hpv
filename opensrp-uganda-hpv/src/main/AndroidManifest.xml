@@ -70,7 +70,7 @@
         <service android:name=".service.SyncService" />
         <service android:name=".service.PullUniqueIdsIntentService" />
 
-        <receiver android:name=".receiver.HpvSyncBroadcastReceiver" />
+        <receiver android:name=".receiver.OnBootReceiver" />
 
     </application>
 

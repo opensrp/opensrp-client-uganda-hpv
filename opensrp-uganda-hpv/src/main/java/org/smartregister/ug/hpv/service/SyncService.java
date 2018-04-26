@@ -21,12 +21,14 @@ import org.smartregister.domain.Response;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.EventClientRepository;
 import org.smartregister.service.HTTPAgent;
+import org.smartregister.ug.hpv.BuildConfig;
 import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.application.HpvApplication;
 import org.smartregister.ug.hpv.event.SyncEvent;
 import org.smartregister.ug.hpv.helper.ECSyncHelper;
-import org.smartregister.ug.hpv.sync.HpvClientProcessor;
+import org.smartregister.ug.hpv.sync.HpvClientProcessorForJava;
 import org.smartregister.ug.hpv.util.NetworkUtils;
+import org.smartregister.ug.hpv.util.Utils;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -53,7 +55,7 @@ import static org.smartregister.util.Log.logInfo;
 public class SyncService extends Service {
 
     private static final Object EVENTS_SYNC_HPV = "/rest/event/add";
-    private static final int EVENT_PUSH_LIMIT = 25;
+    private static final int EVENT_PUSH_LIMIT = 250;
     public static final int EVENT_PULL_LIMIT = 25;
     private volatile HandlerThread mHandlerThread;
     private ServiceHandler mServiceHandler;
@@ -239,7 +241,7 @@ public class SyncService extends Service {
                                         .map(new Function<Pair<Long, Long>, FetchStatus>() {
                                             @Override
                                             public FetchStatus apply(@NonNull Pair<Long, Long> serverVersionPair) throws Exception {
-                                                HpvClientProcessor.getInstance(context).processClient(ecSyncHelper.allEvents(serverVersionPair.first - 1, serverVersionPair.second));
+                                                HpvClientProcessorForJava.getInstance(context).processClient(ecSyncHelper.allEvents(serverVersionPair.first - 1, serverVersionPair.second));
                                                 return FetchStatus.fetched;
                                             }
                                         });
@@ -287,7 +289,7 @@ public class SyncService extends Service {
 
         } catch (Exception e) {
             Log.e(getClass().getName(), e.getMessage(), e);
-            if (count >= 2) {
+            if (count >= BuildConfig.MAX_SYNC_RETRIES) {
                 //TODO REMOVE
                 stopSelf();
                 return null;
@@ -311,8 +313,11 @@ public class SyncService extends Service {
 
     private void sendSyncStatusBroadcastMessage(FetchStatus fetchStatus, boolean isComplete) {
         EventBus.getDefault().post(new SyncEvent(fetchStatus));
-        if (isComplete)
+        Utils.showShortToast(context, context.getString(R.string.sync_round_complete));
+
+        if (isComplete) {
             stopSelf();
+        }
     }
 
     // inner classes

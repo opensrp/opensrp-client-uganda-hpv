@@ -7,6 +7,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
@@ -48,6 +49,7 @@ public abstract class BasePatientDetailsFragment extends SecuredFragment impleme
     private LocationPickerView facilitySelection;
     private static final int REQUEST_CODE_GET_JSON = 3432;
     private RenderPatientDemographicCardHelper renderPatientDemographicCardHelper;
+    private RenderContactCardHelper renderContactHelper;
 
 
     protected abstract void setClient(CommonPersonObjectClient commonPersonObjectClient);
@@ -73,7 +75,7 @@ public abstract class BasePatientDetailsFragment extends SecuredFragment impleme
 
     protected void renderContactView(View view) {
         CommonPersonObjectClient client = (CommonPersonObjectClient) view.getTag();
-        RenderContactCardHelper renderContactHelper = new RenderContactCardHelper(getActivity(), client);
+        renderContactHelper = new RenderContactCardHelper(getActivity(), client);
         renderContactHelper.renderView(view);
     }
 
@@ -117,9 +119,24 @@ public abstract class BasePatientDetailsFragment extends SecuredFragment impleme
     }
 
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onPause() {
+        EventBus.getDefault().unregister(this);
+        super.onPause();
+    }
+
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void refreshView(JsonFormSaveCompleteEvent jsonFormSaveCompleteEvent) {
-        //Refres on form save
+        if (jsonFormSaveCompleteEvent != null) {
+            renderContactHelper.refreshContacts(commonPersonObjectClient.getCaseId());
+        }
 
     }
 
@@ -148,18 +165,24 @@ public abstract class BasePatientDetailsFragment extends SecuredFragment impleme
 
     @Override
     public void onClick(View view) {
-        try {
 
-            String locationId = LocationHelper.getInstance().getOpenMrsLocationId(facilitySelection.getSelectedItem());
+        if (view.getTag(R.id.CLIENT_ID).equals("testmode")) {
 
-            JsonFormUtils.startForm(getActivity(), context(), REQUEST_CODE_GET_JSON, Constants.JSON_FORM.PATIENT_REMOVAL, commonPersonObjectClient.getCaseId(),
-                    null, locationId);
-        } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Utils.postEvent(new JsonFormSaveCompleteEvent());
+
+        } else {
+            try {
+
+                String locationId = LocationHelper.getInstance().getOpenMrsLocationId(facilitySelection.getSelectedItem());
+
+                JsonFormUtils.startForm(getActivity(), context(), REQUEST_CODE_GET_JSON, Constants.JSON_FORM.PATIENT_REMOVAL, commonPersonObjectClient.getCaseId(),
+                        null, locationId);
+            } catch (Exception e) {
+                Log.e(TAG, e.getMessage());
+            }
         }
 
     }
-
 
     @Override
     public void startFormActivity(String formName, String entityId, String metaData) {
