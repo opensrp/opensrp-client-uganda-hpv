@@ -7,9 +7,9 @@ import android.app.FragmentTransaction;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.immunization.domain.Vaccine;
 import org.smartregister.immunization.domain.VaccineWrapper;
-import org.smartregister.immunization.fragment.VaccinationDialogFragment;
 import org.smartregister.immunization.view.VaccineGroup;
 import org.smartregister.ug.hpv.application.HpvApplication;
+import org.smartregister.ug.hpv.fragment.VaccinationDialogFragmentHPV;
 import org.smartregister.util.Utils;
 
 import java.util.ArrayList;
@@ -56,9 +56,8 @@ public class VaccinationHelper {
         if (vaccineList == null) {
             vaccineList = new ArrayList<>();
         }
-
-        VaccinationDialogFragment vaccinationDialogFragment =
-                VaccinationDialogFragment.newInstance(dob, vaccineList, vaccineWrappers, true);
+      
+        VaccinationDialogFragmentHPV vaccinationDialogFragment = VaccinationDialogFragmentHPV.newInstance(dob, vaccineList, vaccineWrappers, true);
         vaccinationDialogFragment.show(fragmentTransaction, DIALOG_TAG);
     }
 
