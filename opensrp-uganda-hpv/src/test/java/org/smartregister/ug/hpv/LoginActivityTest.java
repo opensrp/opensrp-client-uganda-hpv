@@ -8,6 +8,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.powermock.reflect.Whitebox;
@@ -35,6 +36,11 @@ public class LoginActivityTest extends BaseUnitTest {
     public void setUp() {
         controller = Robolectric.buildActivity(LoginActivity.class).create().start();
         loginActivity = controller.get();
+    }
+
+    @After
+    public void tearDown() {
+        destroyController();
     }
 
     @Test
@@ -135,5 +141,17 @@ public class LoginActivityTest extends BaseUnitTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void destroyController() {
+        try {
+            loginActivity.finish();
+            controller.pause().stop().destroy(); //destroy controller if we can
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        System.gc();
     }
 }
