@@ -58,6 +58,7 @@ public class HpvApplication extends DrishtiApplication {
 
     private static final String TAG = HpvApplication.class.getCanonicalName();
     private String password;
+    public Boolean areAlarmsSet = false;
 
     @Override
     public void onCreate() {

@@ -41,12 +41,8 @@ import org.smartregister.domain.jsonmapping.LoginResponseData;
 import org.smartregister.event.Listener;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.sync.DrishtiSyncScheduler;
-import org.smartregister.ug.hpv.BuildConfig;
 import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.application.HpvApplication;
-import org.smartregister.ug.hpv.receiver.AlarmReceiver;
-import org.smartregister.ug.hpv.util.Constants;
-import org.smartregister.ug.hpv.util.NetworkUtils;
 import org.smartregister.util.Utils;
 
 import java.io.IOException;
@@ -208,9 +204,6 @@ public class LoginActivity extends AppCompatActivity {
             public void run() {
                 android.util.Log.i(getClass().getName(), "Starting DrishtiSyncScheduler " + DateTime.now().toString());
                 DrishtiSyncScheduler.startOnlyIfConnectedToNetwork(getApplicationContext());
-                if (NetworkUtils.isNetworkAvailable()) {
-                    AlarmReceiver.setAlarm(getApplicationContext(), BuildConfig.AUTO_SYNC_DURATION, Constants.ServiceType.AUTO_SYNC);
-                }
                 android.util.Log.i(getClass().getName(), "Started DrishtiSyncScheduler " + DateTime.now().toString());
             }
         }).start();
@@ -286,9 +279,6 @@ public class LoginActivity extends AppCompatActivity {
         getOpenSRPContext().userService().remoteLogin(userName, password, userInfo);
         goToHome(true);
         DrishtiSyncScheduler.startOnlyIfConnectedToNetwork(getApplicationContext());
-        if (NetworkUtils.isNetworkAvailable()) {
-            AlarmReceiver.setAlarm(getApplicationContext(), BuildConfig.AUTO_SYNC_DURATION, Constants.ServiceType.AUTO_SYNC);
-        }
     }
 
     private void goToHome(boolean remote) {

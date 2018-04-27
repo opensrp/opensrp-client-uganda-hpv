@@ -17,13 +17,15 @@ import org.smartregister.util.Log;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 
 public class AlarmReceiver extends BroadcastReceiver {
 
     private static final String TAG = AlarmReceiver.class.getCanonicalName();
-
+    private static final int MIN_STAGGER_VALUE_MILLISECS = 2000;
+    private static final int MAX_STAGGER_VALUE_MILLISECS = 9000;
     private static final String serviceActionName = "org.smartregister.path.action.START_SERVICE_ACTION";
     private static final String serviceTypeName = "serviceType";
     private static final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -58,8 +60,9 @@ public class AlarmReceiver extends BroadcastReceiver {
                     break;
             }
 
-            if (serviceIntent != null)
+            if (serviceIntent != null) {
                 this.startService(context, serviceIntent);
+            }
         }
 
     }
@@ -81,13 +84,14 @@ public class AlarmReceiver extends BroadcastReceiver {
             long triggerAt;
             long triggerInterval;
             if (context == null) {
-                throw new Exception("Unable to schedule service without app context");
+                throw new Exception(TAG + " Unable to schedule service without app context");
             }
 
             // Otherwise schedule based on normal interval
             triggerInterval = TimeUnit.MINUTES.toMillis(triggerIteration);
-            // set trigger time to be current device time + the interval (frequency). Probably randomize this a bit so that services not launch at exactly the same time
-            triggerAt = System.currentTimeMillis() + triggerInterval;
+            // set trigger time to be current device time + the interval (frequency).
+            int staggerValue = MIN_STAGGER_VALUE_MILLISECS + (new Random().nextInt(MAX_STAGGER_VALUE_MILLISECS));//randomize so that services not launch at exactly the same time
+            triggerAt = System.currentTimeMillis() + triggerInterval + staggerValue;
 
             alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
             Intent alarmReceiverIntent = new Intent(context, AlarmReceiver.class);

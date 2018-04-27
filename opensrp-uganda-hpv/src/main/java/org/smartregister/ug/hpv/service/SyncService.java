@@ -314,7 +314,6 @@ public class SyncService extends Service {
         HpvApplication.getInstance().postEvent(new SyncEvent(fetchStatus));
 
         if (isComplete) {
-            Utils.showShortToast(context, context.getString(R.string.sync_round_complete));
             stopSelf();
         }
     }
