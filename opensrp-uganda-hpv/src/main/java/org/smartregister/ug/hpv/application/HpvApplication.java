@@ -30,6 +30,7 @@ import org.smartregister.ug.hpv.event.LanguageConfigurationEvent;
 import org.smartregister.ug.hpv.event.TriggerSyncEvent;
 import org.smartregister.ug.hpv.event.ViewConfigurationSyncCompleteEvent;
 import org.smartregister.ug.hpv.receiver.AlarmReceiver;
+import org.smartregister.ug.hpv.receiver.HpvSyncBroadcastReceiver;
 import org.smartregister.ug.hpv.repository.HpvRepository;
 import org.smartregister.ug.hpv.repository.UniqueIdRepository;
 import org.smartregister.ug.hpv.service.PullUniqueIdsIntentService;
@@ -75,6 +76,7 @@ public class HpvApplication extends DrishtiApplication {
         ConfigurableViewsLibrary.init(context, getRepository());
         ImmunizationLibrary.init(context, getRepository(), createCommonFtsObject());
 
+        DrishtiSyncScheduler.setReceiverClass(HpvSyncBroadcastReceiver.class);
         startPullConfigurableViewsIntentService(getApplicationContext());
         try {
             Utils.saveLanguage("en");

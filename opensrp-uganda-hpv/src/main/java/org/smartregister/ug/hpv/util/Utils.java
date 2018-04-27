@@ -63,8 +63,6 @@ public class Utils {
 
     }
 
-    private static BaseEvent myEvent;
-
     public static void saveLanguage(String language) {
         AllSharedPreferences allSharedPreferences = new AllSharedPreferences(PreferenceManager.getDefaultSharedPreferences(HpvApplication.getInstance().getApplicationContext()));
         allSharedPreferences.saveLanguagePreference(language);
@@ -93,8 +91,15 @@ public class Utils {
     }
 
     public static void postEvent(BaseEvent event) {
-        myEvent = event;
         EventBus.getDefault().post(event);
+    }
+
+    public static void postStickyEvent(BaseEvent event) {//Each Sticky event must be manually cleaned by calling Utils.removeStickyEvent after handling
+        EventBus.getDefault().removeStickyEvent(event);
+    }
+
+    public static void removeStickyEvent(BaseEvent event) {
+        EventBus.getDefault().postSticky(event);
     }
 
     public static <T, E> T getKeyByValue(Map<T, E> map, E value) {

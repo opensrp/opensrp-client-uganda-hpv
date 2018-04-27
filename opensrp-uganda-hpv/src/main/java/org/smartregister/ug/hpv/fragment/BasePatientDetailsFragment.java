@@ -140,9 +140,10 @@ public abstract class BasePatientDetailsFragment extends SecuredFragment impleme
 
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void removeFromRegister(PatientRemovedEvent event) {
         if (event != null) {
+            Utils.removeStickyEvent(event);
             startActivity(new Intent(getActivity(), HomeRegisterActivity.class));
         }
 
@@ -166,20 +167,15 @@ public abstract class BasePatientDetailsFragment extends SecuredFragment impleme
     @Override
     public void onClick(View view) {
 
-        if (view.getTag(R.id.CLIENT_ID).equals("testmode")) {
 
-            Utils.postEvent(new JsonFormSaveCompleteEvent());
+        try {
 
-        } else {
-            try {
+            String locationId = LocationHelper.getInstance().getOpenMrsLocationId(facilitySelection.getSelectedItem());
 
-                String locationId = LocationHelper.getInstance().getOpenMrsLocationId(facilitySelection.getSelectedItem());
-
-                JsonFormUtils.startForm(getActivity(), context(), REQUEST_CODE_GET_JSON, Constants.JSON_FORM.PATIENT_REMOVAL, commonPersonObjectClient.getCaseId(),
-                        null, locationId);
-            } catch (Exception e) {
-                Log.e(TAG, e.getMessage());
-            }
+            JsonFormUtils.startForm(getActivity(), context(), REQUEST_CODE_GET_JSON, Constants.JSON_FORM.PATIENT_REMOVAL, commonPersonObjectClient.getCaseId(),
+                    null, locationId);
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
         }
 
     }
