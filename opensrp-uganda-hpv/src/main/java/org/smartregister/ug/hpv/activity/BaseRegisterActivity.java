@@ -20,6 +20,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import org.apache.commons.lang3.StringUtils;
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONObject;
@@ -219,11 +220,6 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
     protected void onInitialization() {//Implement Abstract Method
     }
 
@@ -250,6 +246,19 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
             });
         }
 
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onPause() {
+        EventBus.getDefault().unregister(this);
+        super.onPause();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -356,6 +365,7 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
             if (StringUtils.isNotBlank(res.getContents())) {
                 Log.d("Scanned QR Code", res.getContents());
                 ((HomeRegisterFragment) mBaseFragment).onQRCodeSucessfullyScanned(res.getContents());
+                ((HomeRegisterFragment) mBaseFragment).setSearchTerm(res.getContents());
             } else Log.i("", "NO RESULT FOR QR CODE");
         }
     }

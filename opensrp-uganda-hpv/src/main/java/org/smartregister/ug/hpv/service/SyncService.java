@@ -14,7 +14,6 @@ import android.util.Log;
 import android.util.Pair;
 
 import org.apache.commons.lang3.StringUtils;
-import org.greenrobot.eventbus.EventBus;
 import org.json.JSONObject;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.Response;
@@ -312,10 +311,10 @@ public class SyncService extends Service {
     }
 
     private void sendSyncStatusBroadcastMessage(FetchStatus fetchStatus, boolean isComplete) {
-        EventBus.getDefault().post(new SyncEvent(fetchStatus));
-        Utils.showShortToast(context, context.getString(R.string.sync_round_complete));
+        HpvApplication.getInstance().postEvent(new SyncEvent(fetchStatus));
 
         if (isComplete) {
+            Utils.showShortToast(context, context.getString(R.string.sync_round_complete));
             stopSelf();
         }
     }

@@ -276,7 +276,7 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
             Log.e(TAG, "", e);
         } finally {
 
-            Utils.postEvent(new PatientRemovedEvent());
+            Utils.postStickyEvent(new PatientRemovedEvent());
         }
     }
 

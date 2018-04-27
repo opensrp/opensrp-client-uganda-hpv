@@ -32,6 +32,9 @@ public class RenderContactCardHelper extends BaseRenderHelper implements View.On
     private TextView vhtNameTextView;
     private TextView vhtContactTextView;
 
+    private RelativeLayout vhtContactWrapperView;
+    private View vhtTitleTextView;
+
     public RenderContactCardHelper(Context context, CommonPersonObjectClient client) {
         super(context, client);
     }
@@ -61,6 +64,10 @@ public class RenderContactCardHelper extends BaseRenderHelper implements View.On
                 vhtContactTextView = (TextView) view.findViewById(R.id.vhtContactTextView);
                 String vhtContact = patientDetails.get(DBConstants.KEY.VHT_PHONE);
 
+
+                vhtContactWrapperView = (RelativeLayout) view.findViewById(R.id.vhtContactWrapperView);
+                vhtTitleTextView = view.findViewById(R.id.vhtTitleTextView);
+
                 if (vhtContact != null) {
                     vhtContactTextView.setText(Utils.getFormattedPhoneNumber(vhtContact));
 
@@ -69,9 +76,7 @@ public class RenderContactCardHelper extends BaseRenderHelper implements View.On
                     vhtContactNumberView.setOnClickListener(helperContext);
                 } else {
 
-                    RelativeLayout vhtContactWrapperView = (RelativeLayout) view.findViewById(R.id.vhtContactWrapperView);
                     vhtContactWrapperView.setVisibility(View.GONE);
-                    View vhtTitleTextView = view.findViewById(R.id.vhtTitleTextView);
                     vhtTitleTextView.setVisibility(View.GONE);
                 }
 
@@ -133,6 +138,9 @@ public class RenderContactCardHelper extends BaseRenderHelper implements View.On
                             vhtContactTextView.setText(Utils.getFormattedPhoneNumber(contactDetails.get(DBConstants.KEY.VHT_PHONE)));
                             commonPersonObjectClient.getColumnmaps().put(DBConstants.KEY.VHT_NAME, contactDetails.get(DBConstants.KEY.VHT_NAME));
                             commonPersonObjectClient.getColumnmaps().put(DBConstants.KEY.VHT_PHONE, contactDetails.get(DBConstants.KEY.VHT_PHONE));
+                            vhtContactWrapperView.setVisibility(View.VISIBLE);
+                            vhtTitleTextView.setVisibility(View.VISIBLE);
+
                         }
 
                     }

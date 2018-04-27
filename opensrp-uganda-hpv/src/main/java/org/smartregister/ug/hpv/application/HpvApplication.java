@@ -22,13 +22,13 @@ import org.smartregister.repository.EventClientRepository;
 import org.smartregister.repository.Repository;
 import org.smartregister.sync.DrishtiSyncScheduler;
 import org.smartregister.ug.hpv.BuildConfig;
-import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.activity.LoginActivity;
 import org.smartregister.ug.hpv.event.BaseEvent;
 import org.smartregister.ug.hpv.event.LanguageConfigurationEvent;
 import org.smartregister.ug.hpv.event.TriggerSyncEvent;
 import org.smartregister.ug.hpv.event.ViewConfigurationSyncCompleteEvent;
 import org.smartregister.ug.hpv.receiver.AlarmReceiver;
+import org.smartregister.ug.hpv.receiver.HpvSyncBroadcastReceiver;
 import org.smartregister.ug.hpv.repository.HpvRepository;
 import org.smartregister.ug.hpv.repository.UniqueIdRepository;
 import org.smartregister.ug.hpv.service.PullUniqueIdsIntentService;
@@ -73,6 +73,7 @@ public class HpvApplication extends DrishtiApplication {
         CoreLibrary.init(context);
         ConfigurableViewsLibrary.init(context, getRepository());
 
+        DrishtiSyncScheduler.setReceiverClass(HpvSyncBroadcastReceiver.class);
         startPullConfigurableViewsIntentService(getApplicationContext());
         try {
             Utils.saveLanguage("en");

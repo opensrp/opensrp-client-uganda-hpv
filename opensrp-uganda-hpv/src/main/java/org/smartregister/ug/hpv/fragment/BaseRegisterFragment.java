@@ -174,6 +174,12 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
         }
     }
 
+    public void setSearchTerm(String searchText) {
+        if (getSearchView() != null) {
+            getSearchView().setText(searchText);
+        }
+    }
+
     protected void filter(String filterString, String joinTableString, String mainConditionString) {
         filters = filterString;
         joinTable = joinTableString;
