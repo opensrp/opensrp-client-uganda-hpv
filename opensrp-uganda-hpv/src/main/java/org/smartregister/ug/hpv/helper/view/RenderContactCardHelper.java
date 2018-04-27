@@ -87,8 +87,6 @@ public class RenderContactCardHelper extends BaseRenderHelper implements View.On
                 addContactView.setOnClickListener(helperContext);
             }
         });
-
-        refreshContacts(commonPersonObjectClient.getCaseId());
     }
 
     @Override

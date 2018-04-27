@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 
 import org.smartregister.configurableviews.service.PullConfigurableViewsIntentService;
+import org.smartregister.ug.hpv.service.SyncService;
+import org.smartregister.ug.hpv.util.ServiceTools;
 
 import static org.smartregister.util.Log.logInfo;
 
@@ -27,5 +29,7 @@ public class UserConfigurableViewsSyncTask {
     private void startPullConfigurableViewsIntentService() {
         Intent intent = new Intent(context, PullConfigurableViewsIntentService.class);
         context.startService(intent);
+
+        ServiceTools.startService(context, SyncService.class);
     }
 }

@@ -92,7 +92,13 @@ public class RenderPatientDemographicCardHelper extends BaseRenderHelper impleme
         } else {
             int backgroundResource = photo.getResourceId();
             profileImageView.setBackground(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? context.getDrawable(backgroundResource) : ContextCompat.getDrawable(context, backgroundResource));
+
+
         }
+       // if (org.smartregister.util.Utils.getValue(commonPersonObjectClient.getColumnmaps(), "has_profile_image", false).equals("true")) {
+            profileImageView.setTag(org.smartregister.R.id.entity_id, commonPersonObjectClient.entityId());
+            DrishtiApplication.getCachedImageLoaderInstance().getImageByClientId(commonPersonObjectClient.entityId(), OpenSRPImageLoader.getStaticImageListener(profileImageView, 0, 0));
+       // }
     }
 
     @Override
