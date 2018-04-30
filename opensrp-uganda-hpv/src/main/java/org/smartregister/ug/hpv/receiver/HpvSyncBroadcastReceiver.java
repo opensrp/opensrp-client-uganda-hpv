@@ -6,7 +6,7 @@ import android.content.Intent;
 
 
 import org.smartregister.ug.hpv.service.SyncService;
-import org.smartregister.ug.hpv.sync.UserConfigurableViewsSyncTask;
+import org.smartregister.ug.hpv.sync.UserConfigurableViewsSyncHelper;
 import org.smartregister.ug.hpv.util.ServiceTools;
 
 import static org.smartregister.util.Log.logInfo;
@@ -22,7 +22,7 @@ public class HpvSyncBroadcastReceiver extends BroadcastReceiver {
 
         ServiceTools.startService(context, SyncService.class);
 
-        UserConfigurableViewsSyncTask hpvUpdateActionsTask = new UserConfigurableViewsSyncTask(context);
+        UserConfigurableViewsSyncHelper hpvUpdateActionsTask = new UserConfigurableViewsSyncHelper(context);
 
         hpvUpdateActionsTask.syncFromServer();
     }

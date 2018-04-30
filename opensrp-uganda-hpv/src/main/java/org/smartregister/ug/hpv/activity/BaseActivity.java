@@ -164,4 +164,10 @@ public abstract class BaseActivity extends SecuredActivity{
             progressDialog.dismiss();
         }
     }
+
+    @Override
+    public void onPause() {
+        hideProgressDialog();
+        super.onPause();
+    }
 }

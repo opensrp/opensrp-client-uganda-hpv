@@ -13,11 +13,11 @@ import static org.smartregister.util.Log.logInfo;
  * Created by ndegwamartin on 15/03/2018.
  */
 
-public class UserConfigurableViewsSyncTask {
+public class UserConfigurableViewsSyncHelper {
 
     private final Context context;
 
-    public UserConfigurableViewsSyncTask(Context context) {
+    public UserConfigurableViewsSyncHelper(Context context) {
         this.context = context;
     }
 

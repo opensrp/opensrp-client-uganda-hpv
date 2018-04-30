@@ -28,6 +28,7 @@ import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.adapter.HPVRegisterActivityPagerAdapter;
 import org.smartregister.ug.hpv.application.HpvApplication;
 import org.smartregister.ug.hpv.fragment.BasePatientDetailsFragment;
+import org.smartregister.ug.hpv.fragment.PatientDetailsFragment;
 import org.smartregister.ug.hpv.helper.LocationHelper;
 import org.smartregister.ug.hpv.helper.VaccinationHelper;
 import org.smartregister.ug.hpv.util.Constants;
@@ -78,7 +79,6 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
 
         commonPersonObjectClient = (CommonPersonObjectClient) getIntent().getSerializableExtra(Constants.INTENT_KEY.CLIENT_OBJECT);
 
-        locationPickerView = (LocationPickerView) findViewById(R.id.facility_selection);
         vaccineGroups = new ArrayList<>();
 
         Fragment[] otherFragments = {};
@@ -227,6 +227,7 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
         vaccine.setDate(tag.getUpdatedVaccineDate().toDate());
         vaccine.setAnmId(getOpenSRPContext().allSharedPreferences().fetchRegisteredANM());
 
+        locationPickerView = ((PatientDetailsFragment) mBaseFragment).getLocationPickerView();
         vaccine.setLocationId(LocationHelper.getInstance().getOpenMrsLocationId(locationPickerView.getSelectedItem()));
 
         String lastChar = vaccine.getName().substring(vaccine.getName().length() - 1);
@@ -410,7 +411,7 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
             String dobString = org.smartregister.util.Utils.getValue(commonPersonObjectClient.getColumnmaps(), UgandaHpvConstants.DOB, false);
             DateTime dateTime = org.smartregister.ug.hpv.util.Utils.dobStringToDateTime(dobString);
             if (dateTime != null) {
-                affectedVaccines = VaccineSchedule.updateOfflineAlerts(commonPersonObjectClient.entityId(), dateTime, UgandaHpvConstants.KEY.CHILD);
+//                affectedVaccines = VaccineSchedule.updateOfflineAlerts(commonPersonObjectClient.entityId(), dateTime, UgandaHpvConstants.KEY.CHILD);
             }
 
             vaccineList = vaccineRepository.findByEntityId(commonPersonObjectClient.entityId());

@@ -19,7 +19,12 @@ import org.smartregister.configurableviews.model.MainConfig;
 import org.smartregister.configurableviews.repository.ConfigurableViewsRepository;
 import org.smartregister.configurableviews.service.PullConfigurableViewsIntentService;
 import org.smartregister.immunization.ImmunizationLibrary;
+import org.smartregister.immunization.domain.VaccineSchedule;
+import org.smartregister.immunization.domain.jsonmapping.Vaccine;
+import org.smartregister.immunization.domain.jsonmapping.VaccineGroup;
 import org.smartregister.immunization.repository.VaccineRepository;
+import org.smartregister.immunization.service.intent.VaccineIntentService;
+import org.smartregister.immunization.util.VaccinatorUtils;
 import org.smartregister.repository.EventClientRepository;
 import org.smartregister.repository.Repository;
 import org.smartregister.sync.DrishtiSyncScheduler;
@@ -42,6 +47,8 @@ import org.smartregister.ug.hpv.util.Utils;
 import org.smartregister.view.activity.DrishtiApplication;
 import org.smartregister.view.receiver.TimeChangedBroadcastReceiver;
 
+import java.util.List;
+
 import static org.smartregister.util.Log.logError;
 import static org.smartregister.util.Log.logInfo;
 
@@ -63,6 +70,7 @@ public class HpvApplication extends DrishtiApplication {
 
     @Override
     public void onCreate() {
+
         super.onCreate();
 
         mInstance = this;
@@ -88,7 +96,9 @@ public class HpvApplication extends DrishtiApplication {
         this.jsonSpecHelper = new JsonSpecHelper(this);
 
         setUpEventHandling();
-
+        initOfflineSchedules();
+        Intent serviceIntent = new Intent(getInstance().getApplicationContext(), VaccineIntentService.class);
+        this.startService(serviceIntent);
     }
 
     public static synchronized HpvApplication getInstance() {
@@ -171,6 +181,15 @@ public class HpvApplication extends DrishtiApplication {
             }
         }
         return commonFtsObject;
+    }
+
+    private void initOfflineSchedules() {
+        try {
+            List<VaccineGroup> childVaccines = VaccinatorUtils.getSupportedVaccines(this);
+            VaccineSchedule.init(childVaccines, null, "child");
+        } catch (Exception e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        }
     }
 
     private static String[] getFtsTables() {
