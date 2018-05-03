@@ -97,8 +97,7 @@ public class HpvApplication extends DrishtiApplication {
 
         setUpEventHandling();
         initOfflineSchedules();
-        Intent serviceIntent = new Intent(getInstance().getApplicationContext(), VaccineIntentService.class);
-        this.startService(serviceIntent);
+        setAlarms(this);
     }
 
     public static synchronized HpvApplication getInstance() {
@@ -302,12 +301,12 @@ public class HpvApplication extends DrishtiApplication {
     }
 
     public static void setAlarms(android.content.Context context) {
+
         AlarmReceiver.setAlarm(context, BuildConfig.VACCINE_SYNC_PROCESSING_MINUTES, Constants.ServiceType.VACCINE_SYNC_PROCESSING);
         AlarmReceiver.setAlarm(context, BuildConfig.IMAGE_UPLOAD_MINUTES, Constants.ServiceType.IMAGE_UPLOAD);
         AlarmReceiver.setAlarm(context, BuildConfig.PULL_UNIQUE_IDS_MINUTES, Constants.ServiceType.PULL_UNIQUE_IDS);
         AlarmReceiver.setAlarm(context, BuildConfig.AUTO_SYNC_DURATION, Constants.ServiceType.AUTO_SYNC);
         AlarmReceiver.setAlarm(context, BuildConfig.AUTO_SYNC_DURATION, Constants.ServiceType.PULL_VIEW_CONFIGURATIONS);
-
     }
 
 }
