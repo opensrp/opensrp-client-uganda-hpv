@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.MenuItem;
 
+import org.smartregister.domain.FetchStatus;
 import org.smartregister.ug.hpv.fragment.HomeRegisterFragment;
 
 import java.util.Arrays;
@@ -51,4 +52,8 @@ public class HomeRegisterActivity extends BaseRegisterActivity {
     }
 
 
+    @Override
+    public void onSyncComplete(FetchStatus fetchStatus) {
+
+    }
 }

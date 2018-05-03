@@ -13,8 +13,12 @@ import android.widget.TextView;
 
 import org.smartregister.Context;
 import org.smartregister.configurableviews.ConfigurableViewsLibrary;
+import org.smartregister.domain.FetchStatus;
 import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.event.LanguageConfigurationEvent;
+import org.smartregister.ug.hpv.event.SyncEvent;
+import org.smartregister.ug.hpv.receiver.SyncStatusBroadcastReceiver;
+import org.smartregister.ug.hpv.util.ServiceTools;
 import org.smartregister.ug.hpv.util.Utils;
 import org.smartregister.util.Log;
 import org.smartregister.view.activity.DrishtiApplication;
@@ -27,7 +31,7 @@ import java.util.Map;
  * Created by ndegwamartin on 09/10/2017.
  */
 
-public abstract class BaseActivity extends SecuredActivity {
+public abstract class BaseActivity extends SecuredActivity implements SyncStatusBroadcastReceiver.SyncStatusListener {
     private static final int MINIUM_LANG_COUNT = 2;
     protected Toolbar toolbar;
 
@@ -127,4 +131,37 @@ public abstract class BaseActivity extends SecuredActivity {
         //Overrides
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerSyncStatusBroadcastReceiver();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterSyncStatusBroadcastReceiver();
+    }
+
+    private void registerSyncStatusBroadcastReceiver() {
+        SyncStatusBroadcastReceiver.getInstance().addSyncStatusListener(this);
+    }
+
+    private void unregisterSyncStatusBroadcastReceiver() {
+        SyncStatusBroadcastReceiver.getInstance().removeSyncStatusListener(this);
+    }
+
+    @Override
+    public void onSyncStart() {
+        startSync();
+    }
+
+    private void startSync() {
+        ServiceTools.startSyncService(getApplicationContext());
+    }
+
+    @Override
+    public void onSyncInProgress(FetchStatus fetchStatus) {
+        Utils.postEvent(new SyncEvent(fetchStatus));
+    }
 }

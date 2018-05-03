@@ -822,7 +822,7 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
                 childSmartRegisterActivity.hideProgressDialog();
             }
 
-            HpvApplication.getInstance().postEvent(new JsonFormSaveCompleteEvent());
+            Utils.postEvent(new JsonFormSaveCompleteEvent());
         }
 
         @Override

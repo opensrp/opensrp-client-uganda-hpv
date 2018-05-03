@@ -70,6 +70,7 @@ android {
             buildConfigField "int", "VACCINE_SYNC_PROCESSING_MINUTES", '30'
             buildConfigField "int", "IMAGE_UPLOAD_MINUTES", '180'
             buildConfigField "int", "PULL_UNIQUE_IDS_MINUTES", '180'
+            buildConfigField "int", "SYNC_VIEW_CONFIGURATIONS_MINUTES", '2'
         }
 
         debug {
@@ -84,6 +85,7 @@ android {
             buildConfigField "int", "VACCINE_SYNC_PROCESSING_MINUTES", '3'
             buildConfigField "int", "IMAGE_UPLOAD_MINUTES", '7'
             buildConfigField "int", "PULL_UNIQUE_IDS_MINUTES", '10'
+            buildConfigField "int", "SYNC_VIEW_CONFIGURATIONS_MINUTES", '2'
             testCoverageEnabled true
         }
     }
