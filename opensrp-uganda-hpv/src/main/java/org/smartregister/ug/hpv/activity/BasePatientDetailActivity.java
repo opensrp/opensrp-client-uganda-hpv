@@ -19,7 +19,6 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 import butterknife.Bind;
@@ -38,7 +37,7 @@ public abstract class BasePatientDetailActivity extends BaseActivity {
     @Bind(R.id.view_pager)
     protected OpenSRPViewPager mPager;
     private CommonPersonObjectClient commonPersonObjectClient;
-    Fragment mBaseFragment;
+    private Fragment mBaseFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
