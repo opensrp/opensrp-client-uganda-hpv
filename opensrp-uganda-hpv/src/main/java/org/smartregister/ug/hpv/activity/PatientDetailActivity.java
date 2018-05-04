@@ -9,7 +9,6 @@ import android.view.MenuItem;
 
 import org.json.JSONObject;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
-import org.smartregister.domain.FetchStatus;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.ug.hpv.application.HpvApplication;
 import org.smartregister.ug.hpv.event.PictureUpdatedEvent;
@@ -87,10 +86,5 @@ public class PatientDetailActivity extends BasePatientDetailActivity {
             }
 
         }
-    }
-
-    @Override
-    public void onSyncComplete(FetchStatus fetchStatus) {
-
     }
 }

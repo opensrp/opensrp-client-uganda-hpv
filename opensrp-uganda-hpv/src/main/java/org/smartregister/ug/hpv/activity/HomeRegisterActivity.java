@@ -52,8 +52,4 @@ public class HomeRegisterActivity extends BaseRegisterActivity {
     }
 
 
-    @Override
-    public void onSyncComplete(FetchStatus fetchStatus) {
-
-    }
 }
