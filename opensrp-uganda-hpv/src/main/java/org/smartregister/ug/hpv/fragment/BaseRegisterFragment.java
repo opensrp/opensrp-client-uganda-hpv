@@ -491,7 +491,6 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
                 } else if (fetchStatus.equals(FetchStatus.fetched)
                         || fetchStatus.equals(FetchStatus.nothingFetched)) {
                     syncStatusSnackbar = Snackbar.make(rootView, R.string.sync_complete, Snackbar.LENGTH_LONG);
-                    refreshListView();
                 } else if (fetchStatus.equals(FetchStatus.noConnection)) {
                     syncStatusSnackbar = Snackbar.make(rootView, R.string.sync_failed_no_internet, Snackbar.LENGTH_LONG);
                 }
