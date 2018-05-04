@@ -11,20 +11,20 @@ import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.smartregister.AllConstants;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.db.EventClient;
+import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.EventClientRepository;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.ug.hpv.BuildConfig;
 import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.application.HpvApplication;
 import org.smartregister.ug.hpv.helper.ECSyncHelper;
-import org.smartregister.ug.hpv.helper.LocationHelper;
 import org.smartregister.ug.hpv.receiver.AlarmReceiver;
 import org.smartregister.ug.hpv.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.ug.hpv.sync.HpvClientProcessorForJava;
+import org.smartregister.ug.hpv.util.Constants;
 import org.smartregister.ug.hpv.util.NetworkUtils;
 
 import java.text.MessageFormat;
@@ -95,9 +95,10 @@ public class SyncIntentService extends IntentService {
 
     private synchronized void fetchRetry(final int count) {
         try {
-            // Fetch locations
-            final String locations = LocationHelper.getInstance().locationIdsFromHierarchy();
-            if (StringUtils.isBlank(locations)) {
+// Fetch team
+            AllSharedPreferences sharedPreferences = HpvApplication.getInstance().getContext().userService().getAllSharedPreferences();
+            String teamId = sharedPreferences.fetchDefaultTeamId(sharedPreferences.fetchRegisteredANM());
+            if (StringUtils.isBlank(teamId)) {
                 complete(FetchStatus.fetchedFailed);
                 return;
             }
@@ -112,7 +113,7 @@ public class SyncIntentService extends IntentService {
             Long lastSyncDatetime = ecSyncUpdater.getLastSyncTimeStamp();
             Log.i(SyncIntentService.class.getName(), "LAST SYNC DT :" + new DateTime(lastSyncDatetime));
 
-            String url = baseUrl + SYNC_URL + "?" + AllConstants.SyncFilters.FILTER_LOCATION_ID + "=" + locations + "&serverVersion=" + lastSyncDatetime + "&limit=" + SyncIntentService.EVENT_PULL_LIMIT;
+            String url = baseUrl + SYNC_URL + "?" + Constants.SyncFilters.FILTER_TEAM_ID + "=" + teamId + "&serverVersion=" + lastSyncDatetime + "&limit=" + SyncIntentService.EVENT_PULL_LIMIT;
             Log.i(SyncIntentService.class.getName(), "URL: " + url);
 
             if (httpAgent == null) {

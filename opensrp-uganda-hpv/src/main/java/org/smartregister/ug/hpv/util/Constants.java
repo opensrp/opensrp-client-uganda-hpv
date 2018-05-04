@@ -102,4 +102,11 @@ public class Constants {
         public static final int PULL_VIEW_CONFIGURATIONS = 9;
 
     }
+
+    public static final class SyncFilters {
+
+        public static final String FILTER_TEAM_ID = "teamId";
+    }
+
+
 }
