@@ -116,6 +116,7 @@ public abstract class BasePatientDetailsFragment extends SecuredFragment impleme
 
     @Override
     protected void onResumption() {
+        //Overrides
     }
 
 

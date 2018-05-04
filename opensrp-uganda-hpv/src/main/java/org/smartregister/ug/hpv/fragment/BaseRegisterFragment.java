@@ -138,7 +138,7 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.register_activity, container, false);
+        View view = inflater.inflate(R.layout.activity_register, container, false);
 
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.register_toolbar);
         AppCompatActivity activity = ((AppCompatActivity) getActivity());

@@ -30,7 +30,6 @@ import org.smartregister.ug.hpv.application.HpvApplication;
 import org.smartregister.ug.hpv.fragment.BasePatientDetailsFragment;
 import org.smartregister.ug.hpv.fragment.PatientDetailsFragment;
 import org.smartregister.ug.hpv.helper.LocationHelper;
-import org.smartregister.ug.hpv.helper.VaccinationHelper;
 import org.smartregister.ug.hpv.util.Constants;
 import org.smartregister.ug.hpv.view.LocationPickerView;
 import org.smartregister.util.Utils;
@@ -42,15 +41,12 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import util.UgandaHpvConstants;
-
-import static org.smartregister.ug.hpv.activity.LoginActivity.getOpenSRPContext;
 
 /**
  * Created by ndegwamartin on 17/11/2017.
@@ -68,8 +64,11 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
     protected OpenSRPViewPager mPager;
 
     private CommonPersonObjectClient commonPersonObjectClient;
-    Fragment mBaseFragment;
+
     private LocationPickerView locationPickerView;
+
+    private Fragment mBaseFragment;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -198,7 +197,7 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
         org.smartregister.util.Utils.startAsyncTask(new UndoVaccineTask(tag, v), null);
     }
 
-    private void saveVaccine(ArrayList<VaccineWrapper> tags, final View view){
+    private void saveVaccine(ArrayList<VaccineWrapper> tags, final View view) {
         if (tags.isEmpty()) {
             return;
         }
@@ -256,7 +255,7 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
                 addVaccineGroup(-1, vaccineGroup, vaccineList, alerts);
             }
         } else {
-            for(VaccineGroup vaccineGroup : vaccineGroups) {
+            for (VaccineGroup vaccineGroup : vaccineGroups) {
                 vaccineGroup.setChildActive(isChildActive);
                 vaccineGroup.updateChildsActiveStatus();
             }
@@ -311,10 +310,7 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
     }
 
 
-
-
     //////////////////////////////// AsyncTasks ////////////////////////////////////
-
 
 
     private class UndoVaccineTask extends AsyncTask<Void, Void, Void> {
@@ -331,13 +327,13 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
         }
 
         @Override
-        protected  void onPreExecute() {
+        protected void onPreExecute() {
             showProgressDialog(getString(R.string.updating_dialog_title), null);
         }
 
         @Override
         protected Void doInBackground(Void... params) {
-            if  (tag != null && tag.getDbKey() != null) {
+            if (tag != null && tag.getDbKey() != null) {
                 Long dbKey = tag.getDbKey();
                 vaccineRepository.deleteVaccine(dbKey);
 

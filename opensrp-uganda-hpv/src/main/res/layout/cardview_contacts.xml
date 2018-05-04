@@ -3,10 +3,13 @@
     android:id="@+id/clientContactScreeningCardView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="5dp"
+    android:layout_marginBottom="10dp"
     android:background="@drawable/border"
     android:orientation="vertical"
-    android:padding="10dp">
+    android:paddingTop="5dp"
+    android:paddingBottom="15dp"
+    android:paddingLeft="15dp"
+    android:paddingRight="15dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -18,7 +21,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginBottom="10dp"
             android:orientation="horizontal">
 
             <org.smartregister.view.customcontrols.CustomFontTextView
@@ -45,37 +47,42 @@
                 android:text="@string/add_contact"
                 android:textAllCaps="true"
                 android:textColor="#3269D4"
-                android:textSize="20sp" />
+                android:textSize="20sp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:paddingLeft="10dp" />
         </RelativeLayout>
 
-        <org.smartregister.view.customcontrols.CustomFontTextView
-            android:id="@+id/caretakerTitleTextView"
-            style="@style/CustomFontTextViewStyle.ClientList.Light"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="0dp"
-            android:text="@string/caretaker"
-            android:textColor="@color/dark_grey_text"
-            android:textSize="15sp" />
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginBottom="10dp"
-            android:orientation="horizontal">
+            android:layout_gravity="center_vertical" >
+
+            <org.smartregister.view.customcontrols.CustomFontTextView
+                android:id="@+id/caretakerTitleTextView"
+                style="@style/CustomFontTextViewStyle.ClientList.Light"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:paddingLeft="0dp"
+                android:text="@string/caretaker"
+                android:textColor="@color/dark_grey_text"
+                android:textSize="15sp" />
 
             <org.smartregister.view.customcontrols.CustomFontTextView
                 android:id="@+id/caretakerNameTextView"
                 style="@style/CustomFontTextViewStyle.ClientList.Light"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@id/caretakerTitleTextView"
                 android:paddingLeft="0dp"
                 android:text="Emily Olara-Okello"
                 android:textColor="@color/dark_grey_text"
                 android:textSize="19sp" />
 
-            x
 
             <RelativeLayout
                 android:id="@+id/caretakerContactNumberView"
@@ -83,7 +90,10 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
-                android:layout_centerInParent="true">
+                android:paddingBottom="15dp"
+                android:paddingLeft="15dp"
+                android:paddingRight="0dp"
+                android:paddingTop="15dp">
 
                 <ImageView
                     android:id="@+id/caretakerContactIconView"
@@ -110,28 +120,31 @@
 
         </RelativeLayout>
 
-        <org.smartregister.view.customcontrols.CustomFontTextView
-            android:id="@+id/vhtTitleTextView"
-            style="@style/CustomFontTextViewStyle.ClientList.Light"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="0dp"
-            android:text="@string/vht"
-            android:textColor="@color/dark_grey_text"
-            android:textSize="15sp" />
-
         <RelativeLayout
             android:id="@+id/vhtContactWrapperView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content" >
+
+
+            <org.smartregister.view.customcontrols.CustomFontTextView
+                android:id="@+id/vhtTitleTextView"
+                style="@style/CustomFontTextViewStyle.ClientList.Light"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:paddingLeft="0dp"
+                android:text="@string/vht"
+                android:textColor="@color/dark_grey_text"
+                android:textSize="15sp" />
 
             <org.smartregister.view.customcontrols.CustomFontTextView
                 android:id="@+id/vhtNameTextView"
                 style="@style/CustomFontTextViewStyle.ClientList.Light"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@id/vhtTitleTextView"
                 android:gravity="left"
                 android:paddingLeft="0dp"
                 android:text="Janet Kenneth"
@@ -144,7 +157,10 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
-                android:layout_centerInParent="true">
+                android:paddingBottom="15dp"
+                android:paddingLeft="15dp"
+                android:paddingRight="0dp"
+                android:paddingTop="15dp">
 
                 <ImageView
                     android:id="@+id/vhtContactIconView"

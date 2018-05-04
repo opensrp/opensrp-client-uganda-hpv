@@ -9,6 +9,7 @@ import android.view.MenuItem;
 
 import org.json.JSONObject;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
+import org.smartregister.domain.FetchStatus;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.ug.hpv.application.HpvApplication;
 import org.smartregister.ug.hpv.event.PictureUpdatedEvent;
@@ -26,7 +27,7 @@ public class PatientDetailActivity extends BasePatientDetailActivity {
     private static final int REQUEST_CODE_GET_JSON = 3432;
     private CommonPersonObjectClient commonPersonObjectClient;
     private static final int REQUEST_TAKE_PHOTO = 1;
-    PatientDetailsFragment mBaseFragment;
+    private PatientDetailsFragment mBaseFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,5 +87,10 @@ public class PatientDetailActivity extends BasePatientDetailActivity {
             }
 
         }
+    }
+
+    @Override
+    public void onSyncComplete(FetchStatus fetchStatus) {
+
     }
 }

@@ -43,8 +43,10 @@ import org.smartregister.ug.hpv.event.TriggerSyncEvent;
 import org.smartregister.ug.hpv.fragment.BaseRegisterFragment;
 import org.smartregister.ug.hpv.fragment.HomeRegisterFragment;
 import org.smartregister.ug.hpv.helper.LocationHelper;
+import org.smartregister.ug.hpv.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.ug.hpv.util.Constants;
 import org.smartregister.ug.hpv.util.JsonFormUtils;
+import org.smartregister.ug.hpv.util.ServiceTools;
 import org.smartregister.ug.hpv.util.Utils;
 import org.smartregister.ug.hpv.view.LocationPickerView;
 import org.smartregister.view.activity.SecuredNativeSmartRegisterActivity;
@@ -63,7 +65,7 @@ import butterknife.ButterKnife;
  * Created by ndegwamartin on 14/03/2018.
  */
 
-public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterActivity {
+public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterActivity implements SyncStatusBroadcastReceiver.SyncStatusListener {
 
     public static final String TAG = BaseRegisterActivity.class.getCanonicalName();
 
@@ -252,12 +254,14 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
     @Override
     public void onResume() {
         super.onResume();
+        registerSyncStatusBroadcastReceiver();
         EventBus.getDefault().register(this);
     }
 
     @Override
     public void onPause() {
         EventBus.getDefault().unregister(this);
+        unregisterSyncStatusBroadcastReceiver();
         super.onPause();
     }
 
@@ -369,4 +373,28 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
             } else Log.i("", "NO RESULT FOR QR CODE");
         }
     }
+
+    private void registerSyncStatusBroadcastReceiver() {
+        SyncStatusBroadcastReceiver.getInstance().addSyncStatusListener(this);
+    }
+
+    private void unregisterSyncStatusBroadcastReceiver() {
+        SyncStatusBroadcastReceiver.getInstance().removeSyncStatusListener(this);
+    }
+
+    @Override
+    public void onSyncStart() {
+        startSync();
+    }
+
+    private void startSync() {
+        ServiceTools.startSyncService(getApplicationContext());
+    }
+
+
+    @Override
+    public void onSyncInProgress(FetchStatus fetchStatus) {
+        Utils.postEvent(new SyncEvent(fetchStatus));
+    }
+
 }
