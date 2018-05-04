@@ -15,12 +15,8 @@ import android.widget.TextView;
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.Context;
 import org.smartregister.configurableviews.ConfigurableViewsLibrary;
-import org.smartregister.domain.FetchStatus;
 import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.event.LanguageConfigurationEvent;
-import org.smartregister.ug.hpv.event.SyncEvent;
-import org.smartregister.ug.hpv.receiver.SyncStatusBroadcastReceiver;
-import org.smartregister.ug.hpv.util.ServiceTools;
 import org.smartregister.ug.hpv.util.Utils;
 import org.smartregister.util.Log;
 import org.smartregister.view.activity.DrishtiApplication;
@@ -33,12 +29,11 @@ import java.util.Map;
  * Created by ndegwamartin on 09/10/2017.
  */
 
-public abstract class BaseActivity extends SecuredActivity implements SyncStatusBroadcastReceiver.SyncStatusListener {
+public abstract class BaseActivity extends SecuredActivity {
 
     private static final int MINIUM_LANG_COUNT = 2;
     protected Toolbar toolbar;
     private ProgressDialog progressDialog;
-
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -136,14 +131,12 @@ public abstract class BaseActivity extends SecuredActivity implements SyncStatus
         //Overrides
     }
 
-
     private void initializeProgressDialog() {
         progressDialog = new ProgressDialog(this);
         progressDialog.setCancelable(false);
         progressDialog.setTitle(getString(R.string.saving_dialog_title));
         progressDialog.setMessage(getString(R.string.please_wait_message));
     }
-
 
     public void showProgressDialog(String title, String message) {
         if (progressDialog != null) {
@@ -168,39 +161,4 @@ public abstract class BaseActivity extends SecuredActivity implements SyncStatus
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        registerSyncStatusBroadcastReceiver();
-    }
-
-    @Override
-    protected void onPause() {
-        hideProgressDialog();
-        unregisterSyncStatusBroadcastReceiver();
-        super.onPause();
-    }
-
-    private void registerSyncStatusBroadcastReceiver() {
-        SyncStatusBroadcastReceiver.getInstance().addSyncStatusListener(this);
-    }
-
-    private void unregisterSyncStatusBroadcastReceiver() {
-        SyncStatusBroadcastReceiver.getInstance().removeSyncStatusListener(this);
-    }
-
-    @Override
-    public void onSyncStart() {
-        startSync();
-    }
-
-    private void startSync() {
-        ServiceTools.startSyncService(getApplicationContext());
-    }
-
-    @Override
-    public void onSyncInProgress(FetchStatus fetchStatus) {
-        Utils.postEvent(new SyncEvent(fetchStatus));
-
-    }
 }

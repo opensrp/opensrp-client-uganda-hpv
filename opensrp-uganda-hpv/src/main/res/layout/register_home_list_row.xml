@@ -25,6 +25,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="3dp"
+            android:paddingLeft="0dp"
             android:gravity="center_horizontal"
             android:text="1029283"
             android:textColor="@color/dark_grey_text"

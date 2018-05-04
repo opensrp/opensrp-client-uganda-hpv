@@ -311,7 +311,6 @@ public class HpvApplication extends DrishtiApplication implements TimeChangedBro
         AlarmReceiver.setAlarm(context, BuildConfig.VACCINE_SYNC_PROCESSING_MINUTES, Constants.ServiceType.VACCINE_SYNC_PROCESSING);
         AlarmReceiver.setAlarm(context, BuildConfig.IMAGE_UPLOAD_MINUTES, Constants.ServiceType.IMAGE_UPLOAD);
         AlarmReceiver.setAlarm(context, BuildConfig.PULL_UNIQUE_IDS_MINUTES, Constants.ServiceType.PULL_UNIQUE_IDS);
-        AlarmReceiver.setAlarm(context, BuildConfig.AUTO_SYNC_DURATION, Constants.ServiceType.AUTO_SYNC);
         AlarmReceiver.setAlarm(context, BuildConfig.SYNC_VIEW_CONFIGURATIONS_MINUTES, Constants.ServiceType.PULL_VIEW_CONFIGURATIONS);
 
     }
