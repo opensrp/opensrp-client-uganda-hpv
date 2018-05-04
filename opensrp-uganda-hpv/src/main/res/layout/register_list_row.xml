@@ -15,6 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingBottom="6dp"
+            android:paddingLeft="10dp"
             android:paddingTop="6dp">
 
             <org.smartregister.view.customcontrols.CustomFontTextView
@@ -24,6 +25,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
+                android:paddingLeft="0dp"
                 android:text="Patient Name"
                 android:textColor="@color/dark_grey_text"
                 android:textSize="18sp" />
@@ -34,6 +36,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/patient_name"
+                android:paddingLeft="0dp"
                 android:text="Caretaker"
                 android:textColor="@color/dark_grey_text"
                 android:textSize="16sp" />
@@ -45,6 +48,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/caretaker_name"
+                android:paddingLeft="0dp"
                 android:text="Age"
                 android:textColor="@color/dark_grey_text"
                 android:textSize="16sp" />
@@ -62,8 +66,7 @@
         android:background="#ffffff"
         android:gravity="center_vertical"
         android:orientation="vertical"
-        android:visibility="gone">
-    </LinearLayout>
+        android:visibility="gone"></LinearLayout>
 
     <LinearLayout
         android:id="@+id/extra_column_2"
@@ -74,7 +77,6 @@
         android:background="#ffffff"
         android:gravity="center_vertical"
         android:orientation="vertical"
-        android:visibility="gone">
-    </LinearLayout>
+        android:visibility="gone"></LinearLayout>
 
 </merge>
