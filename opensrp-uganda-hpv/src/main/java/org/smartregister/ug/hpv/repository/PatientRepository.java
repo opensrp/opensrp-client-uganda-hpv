@@ -10,6 +10,7 @@ import net.sqlcipher.database.SQLiteDatabase;
 import org.smartregister.ug.hpv.application.HpvApplication;
 import org.smartregister.ug.hpv.util.DBConstants;
 
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -46,5 +47,13 @@ public class PatientRepository {
             }
         }
         return null;
+    }
+
+    public static void updateDoseDateGiven(String baseEntityID, String date, String doseNumber) {
+
+        SQLiteDatabase db = HpvApplication.getInstance().getRepository().getReadableDatabase();
+
+        final String query = "UPDATE " + DBConstants.PATIENT_TABLE_NAME + " SET " + "date_dose_" + doseNumber + "_given" + "=" + date;
+        db.rawQuery(query, new String[]{baseEntityID});
     }
 }

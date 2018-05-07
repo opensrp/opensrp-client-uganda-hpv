@@ -24,6 +24,7 @@ import org.smartregister.repository.DetailsRepository;
 import org.smartregister.sync.ClientProcessorForJava;
 import org.smartregister.ug.hpv.application.HpvApplication;
 import org.smartregister.ug.hpv.helper.ECSyncHelper;
+import org.smartregister.ug.hpv.repository.PatientRepository;
 import org.smartregister.ug.hpv.util.Constants;
 import org.smartregister.ug.hpv.util.DBConstants;
 import org.smartregister.ug.hpv.util.Utils;
@@ -43,6 +44,7 @@ public class HpvClientProcessorForJava extends ClientProcessorForJava {
 
     private static final String TAG = HpvClientProcessorForJava.class.getCanonicalName();
     private static HpvClientProcessorForJava instance;
+    private final String  HPV_VACCINATION = "HPV Vaccination";
 
     public HpvClientProcessorForJava(Context context) {
         super(context);
@@ -76,7 +78,7 @@ public class HpvClientProcessorForJava extends ClientProcessorForJava {
                     continue;
                 }
 
-                if (eventType.equals(VaccineIntentService.EVENT_TYPE) || eventType.equals(VaccineIntentService.EVENT_TYPE_OUT_OF_CATCHMENT)) {
+                if (eventType.equals(HPV_VACCINATION) || eventType.equals(VaccineIntentService.EVENT_TYPE_OUT_OF_CATCHMENT)) {
                     if (vaccineTable == null) {
                         continue;
                     }
@@ -149,6 +151,20 @@ public class HpvClientProcessorForJava extends ClientProcessorForJava {
                 Utils.addVaccine(vaccineRepository, vaccineObj);
 
                 Log.d(TAG, "Ending processVaccine table: " + vaccineTable.name);
+
+                Log.d(TAG, "Starting processEC_Patient table");
+
+                PatientRepository patientRepository = new PatientRepository();
+                String baseEntityId = contentValues.getAsString(VaccineRepository.BASE_ENTITY_ID);
+
+                String vaccineName = "one";
+                if (contentValues.getAsString(VaccineRepository.NAME).equals("HPV_2")) {
+                    vaccineName = "two";
+                }
+
+                patientRepository.updateDoseDateGiven(baseEntityId, Utils.getTodaysDate(), vaccineName);
+
+                Log.d(TAG, "Finish processEC_Patient table");
             }
             return true;
 
