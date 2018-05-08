@@ -76,13 +76,15 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
 
                     if (StringUtils.isNotBlank(dateDoseOneGiven)) {
                         TextView doseOneGivenTextView = (TextView) view.findViewById(R.id.dateDoseOneGivenTextView);
-                        doseOneGivenTextView.setText("Dose 1 given " + Utils.formatDate(dateDoseOneGiven));
+                        doseOneGivenTextView.setText(String.format(context.getString(R.string.dose_given_date), "1", Utils.formatDate(dateDoseOneGiven)));
+                        doseOneGivenTextView.setVisibility(View.VISIBLE);
                     }
 
                     String school = patientDetails.get(DBConstants.KEY.SCHOOL_NAME);
                     if (StringUtils.isNotBlank(school)) {
                         TextView locationTextView = (TextView) view.findViewById(R.id.locationVaccineGivenTextView);
-                        locationTextView.setText(StringUtils.capitalize(school));
+                        locationTextView.setVisibility(View.VISIBLE);
+                        locationTextView.setText(String.format(context.getString(R.string.patient_location), StringUtils.capitalize(school)));
                     }
                 } catch (Exception e) {
                     Log.e(TAG, Log.getStackTraceString(e));

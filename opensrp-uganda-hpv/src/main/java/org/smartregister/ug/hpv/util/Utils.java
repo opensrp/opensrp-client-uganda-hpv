@@ -282,21 +282,7 @@ public class Utils {
 
         return false;
     }
-/*
-    public static Drawable getDoseButtonBackground(@Nullable Context context, DoseStatus doseStatus) {
 
-        int backgroundResource;
-
-        if (StringUtils.isNotBlank(doseStatus.getDateDoseTwoGiven()) || doseStatus.isDoseTwoDue()) {
-            backgroundResource = R.color.transparent;
-        } else if (doseStatus.isDoseTwoDue()) {
-            backgroundResource = R.drawable.due_vaccine_grey_bg;
-        } else {
-            backgroundResource = isDoseOverdue(doseStatus) ? R.drawable.due_vaccine_red_bg : R.drawable.due_vaccine_blue_bg;
-        }
-
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? context.getDrawable(backgroundResource) : ContextCompat.getDrawable(context, backgroundResource);
-    }*/
     public static Drawable getDoseButtonBackground(@Nullable Context context, UgandaHpvConstants.State state) {
 
         int backgroundResource;

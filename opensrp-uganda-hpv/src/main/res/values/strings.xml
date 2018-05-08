@@ -23,6 +23,8 @@
     <string name="dose_d">DOSE (D)</string>
     <string name="id">ID</string>
     <string name="service_location">Service Location</string>
+    <string name="patient_location">Location : %1$s</string>
+    <string name="dose_given_date">Dose %1$s given %2$s</string>
 
 
     <string name="unauthorized">Please check the credentials</string>
