@@ -2,9 +2,6 @@ package org.smartregister.ug.hpv.provider;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
-import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +10,6 @@ import android.widget.TextView;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
-import org.joda.time.DateTime;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.configurableviews.ConfigurableViewsLibrary;
 import org.smartregister.configurableviews.helper.ConfigurableViewsHelper;
@@ -49,8 +45,6 @@ public class HomeRegisterProvider implements SmartRegisterCLientsProviderForCurs
     private Set<org.smartregister.configurableviews.model.View> visibleColumns;
     private View.OnClickListener onClickListener;
     private Context context;
-    private static final int DOSE_EXPIRY_WINDOW_DAYS = 10;
-    private static final int DOSE_TWO_WINDOW_MONTHS = 6;
 
 
     public HomeRegisterProvider(Context context, Set visibleColumns, View.OnClickListener onClickListener) {
@@ -117,43 +111,14 @@ public class HomeRegisterProvider implements SmartRegisterCLientsProviderForCurs
 
 
     private void populateDoseColumn(CommonPersonObjectClient pc, View view) {
-
         Button patient = (Button) view.findViewById(R.id.dose_button);
 
-        DoseStatus doseStatus = getCurrentDoseStatus(pc);
+        DoseStatus doseStatus = Utils.getCurrentDoseStatus(pc);
 
         patient.setText(getDoseButtonText(doseStatus));
-        patient.setBackground(getDoseButtonBackground(doseStatus));
-        patient.setTextColor((StringUtils.isNotBlank(doseStatus.getDateDoseTwoGiven()) || doseStatus.isDoseTwoDue()) ? context.getResources().getColor(R.color.lighter_grey_text) : patient.getCurrentTextColor());
+        patient.setBackground(Utils.getDoseButtonBackground(context, Utils.getRegisterViewButtonStatus(doseStatus)));
+        patient.setTextColor(Utils.getDoseButtonTextColor(context, Utils.getRegisterViewButtonStatus(doseStatus)));
         attachDosageOnclickListener(patient, doseStatus);
-    }
-
-    private DoseStatus getCurrentDoseStatus(CommonPersonObjectClient pc) {
-
-        DoseStatus doseStatus = new DoseStatus();
-
-        doseStatus.setDoseOneDate(org.smartregister.util.Utils.getValue(pc.getColumnmaps(), DBConstants.KEY.DOSE_ONE_DATE, false));
-
-        doseStatus.setDoseTwoDate(org.smartregister.util.Utils.getValue(pc.getColumnmaps(), DBConstants.KEY.DOSE_TWO_DATE, false));
-
-        doseStatus.setDateDoseOneGiven(org.smartregister.util.Utils.getValue(pc.getColumnmaps(), DBConstants.KEY.DATE_DOSE_ONE_GIVEN, false));
-
-        doseStatus.setDateDoseOneGiven(org.smartregister.util.Utils.getValue(pc.getColumnmaps(), DBConstants.KEY.DATE_DOSE_TWO_GIVEN, false));
-
-        doseStatus.setDoseTwoDue(StringUtils.isBlank(doseStatus.getDateDoseOneGiven()) && isDoseTwoDue(doseStatus.getDoseTwoDate()));
-
-        return doseStatus;
-    }
-
-    private boolean isDoseTwoDue(String date) {
-        if (StringUtils.isNotBlank(date)) {
-
-            DateTime doseDate = new DateTime(org.smartregister.util.Utils.toDate(date, true));
-            DateTime dueDate = doseDate.plusMonths(DOSE_TWO_WINDOW_MONTHS);
-            return dueDate.isBeforeNow();
-        } else {
-            return false;
-        }
     }
 
     private String getDoseButtonText(DoseStatus doseStatus) {
@@ -174,31 +139,6 @@ public class HomeRegisterProvider implements SmartRegisterCLientsProviderForCurs
         }
 
         return doseText;
-    }
-
-    private Drawable getDoseButtonBackground(DoseStatus doseStatus) {
-
-        int backgroundResource;
-
-        if (StringUtils.isNotBlank(doseStatus.getDateDoseTwoGiven()) || doseStatus.isDoseTwoDue()) {
-            backgroundResource = R.color.transparent;
-        } else if (doseStatus.isDoseTwoDue()) {
-            backgroundResource = R.drawable.due_vaccine_grey_bg;
-        } else {
-
-            backgroundResource = isDoseExpired(doseStatus) ? R.drawable.due_vaccine_red_bg : R.drawable.due_vaccine_blue_bg;
-
-        }
-
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? context.getDrawable(backgroundResource) : ContextCompat.getDrawable(context, backgroundResource);
-    }
-
-    private boolean isDoseExpired(DoseStatus doseStatus) {
-        Boolean isDoseTwo = StringUtils.isNotBlank(doseStatus.getDoseTwoDate());
-        DateTime doseDate = new DateTime(org.smartregister.util.Utils.toDate(isDoseTwo ? doseStatus.getDoseTwoDate() : doseStatus.getDoseOneDate(), true));
-        DateTime expiryDate = doseDate.plusDays(DOSE_EXPIRY_WINDOW_DAYS);
-
-        return expiryDate.isBeforeNow();
     }
 
     private void adjustLayoutParams(View view, TextView details) {
