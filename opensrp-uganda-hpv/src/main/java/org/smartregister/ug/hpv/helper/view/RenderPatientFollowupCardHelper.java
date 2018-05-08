@@ -62,7 +62,7 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
 
                     if (followUpView != null) {
                         followUpView.setOnClickListener(helperContext);
-                        followUpView.setText(context.getString(R.string.hpv_vaccine_due) + " - due " + Utils.formatDate(nextVisitDate));
+                        followUpView.setText(String.format(context.getString(R.string.vaccine_dose_due_on_date),  StringUtils.isBlank(dateDoseOneGiven) ? "1" : "2",Utils.formatDate(nextVisitDate)));
 
                         UgandaHpvConstants.State doseState = Utils.getRegisterViewButtonStatus(doseStatus);
                         followUpView.setBackground(Utils.getDoseButtonBackground(context, doseState));

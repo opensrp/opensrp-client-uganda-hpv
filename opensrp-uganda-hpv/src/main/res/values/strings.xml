@@ -23,7 +23,7 @@
     <string name="dose_d">DOSE (D)</string>
     <string name="id">ID</string>
     <string name="service_location">Service Location</string>
-    <string name="patient_location">Location : %1$s</string>
+    <string name="patient_location">Location: %1$s</string>
     <string name="dose_given_date">Dose %1$s given %2$s</string>
 
 
@@ -37,6 +37,7 @@
     <string name="title_activity_vaccine_base">VaccineBaseActivity</string>
     <string name="updating_dialog_title">Updating…</string>
     <string name="hpv_vaccine_due">HPV Vaccine Due</string>
+    <string name="vaccine_dose_due_on_date">Dose %1$s due %2$s</string>
     <string name="remove_from_register">REMOVE FROM REGISTER</string>
     <string name="contact">Contact</string>
     <string name="contacts">Contacts</string>
