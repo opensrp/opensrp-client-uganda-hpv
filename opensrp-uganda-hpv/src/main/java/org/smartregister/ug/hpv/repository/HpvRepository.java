@@ -118,6 +118,8 @@ public class HpvRepository extends Repository {
         database.execSQL(VaccineRepository.UPDATE_TABLE_ADD_OUT_OF_AREA_COL_INDEX);
         database.execSQL(VaccineRepository.UPDATE_TABLE_ADD_HIA2_STATUS_COL);
         database.execSQL(VaccineRepository.ALTER_ADD_CREATED_AT_COLUMN);
+        database.execSQL(VaccineRepository.UPDATE_TABLE_ADD_TEAM_COL);
+        database.execSQL(VaccineRepository.UPDATE_TABLE_ADD_TEAM_ID_COL);
         VaccineRepository.migrateCreatedAt(database);
     }
 }
