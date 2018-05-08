@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:focusableInTouchMode="true"
-    tools:showIn="@layout/toolbar_patient_details">
+    tools:showIn="@layout/toolbar_patient_details"
+    android:background="@color/top_bar_gray">
 
     <org.smartregister.ug.hpv.view.LocationPickerView
         android:id="@+id/facility_selection"

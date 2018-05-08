@@ -26,7 +26,7 @@ public class PatientDetailActivity extends BasePatientDetailActivity {
     private static final int REQUEST_CODE_GET_JSON = 3432;
     private CommonPersonObjectClient commonPersonObjectClient;
     private static final int REQUEST_TAKE_PHOTO = 1;
-    PatientDetailsFragment mBaseFragment;
+    private PatientDetailsFragment mBaseFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

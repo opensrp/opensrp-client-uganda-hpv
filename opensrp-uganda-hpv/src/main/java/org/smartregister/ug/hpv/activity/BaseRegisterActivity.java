@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v7.app.AlertDialog;
@@ -152,7 +153,8 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
             syncEvent.setManualSync(true);
             HpvApplication.getInstance().triggerSync(syncEvent);
 
-            Utils.showToast(this, "Manual Sync triggered...");
+            Snackbar syncStatusSnackbar = Snackbar.make(this.getWindow().getDecorView(), R.string.manual_sync_triggered, Snackbar.LENGTH_LONG);
+            syncStatusSnackbar.show();
             return true;
         }
 
@@ -369,4 +371,6 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
             } else Log.i("", "NO RESULT FOR QR CODE");
         }
     }
+
+
 }

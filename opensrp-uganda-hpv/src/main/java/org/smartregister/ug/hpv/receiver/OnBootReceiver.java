@@ -3,11 +3,15 @@ package org.smartregister.ug.hpv.receiver;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+
 import org.smartregister.ug.hpv.application.HpvApplication;
 
 public class OnBootReceiver extends BroadcastReceiver {
+    private final Intent serviceIntent;
 
-    private final Intent serviceIntent = new Intent();
+    {
+        serviceIntent = new Intent();
+    }
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -20,4 +24,5 @@ public class OnBootReceiver extends BroadcastReceiver {
     private void restartAlarms(Context context) {
         HpvApplication.setAlarms(context);
     }
+
 }

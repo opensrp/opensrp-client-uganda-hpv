@@ -183,10 +183,10 @@ public class HomeRegisterProvider implements SmartRegisterCLientsProviderForCurs
         if (StringUtils.isNotBlank(doseStatus.getDateDoseTwoGiven()) || doseStatus.isDoseTwoDue()) {
             backgroundResource = R.color.transparent;
         } else if (doseStatus.isDoseTwoDue()) {
-            backgroundResource = R.drawable.due_vaccine_grey_bg;
+            backgroundResource = R.drawable.due_vaccine_grey_bg_no_radius;
         } else {
 
-            backgroundResource = isDoseExpired(doseStatus) ? R.drawable.due_vaccine_red_bg : R.drawable.due_vaccine_blue_bg;
+            backgroundResource = isDoseExpired(doseStatus) ? R.drawable.due_vaccine_red_bg_no_radius : R.drawable.due_vaccine_blue_bg_no_radius;
 
         }
 
