@@ -162,7 +162,7 @@ public class HpvClientProcessorForJava extends ClientProcessorForJava {
                     vaccineName = "two";
                 }
 
-                patientRepository.updateDoseDateGiven(baseEntityId, Utils.getTodaysDate(), vaccineName);
+                patientRepository.updateDateDoseGiven(baseEntityId, Utils.getTodaysDate(), vaccineName);
 
                 Log.d(TAG, "Finish processEC_Patient table");
             }

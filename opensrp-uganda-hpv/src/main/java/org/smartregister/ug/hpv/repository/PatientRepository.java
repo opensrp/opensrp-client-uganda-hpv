@@ -49,7 +49,7 @@ public class PatientRepository {
         return null;
     }
 
-    public static void updateDoseDateGiven(String baseEntityID, String date, String doseNumber) {
+    public static void updateDateDoseGiven(String baseEntityID, String date, String doseNumber) {
 
         SQLiteDatabase db = HpvApplication.getInstance().getRepository().getReadableDatabase();
 
