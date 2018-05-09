@@ -139,6 +139,8 @@ public class HpvClientProcessorForJava extends ClientProcessorForJava {
                 vaccineObj.setDate(date);
                 vaccineObj.setAnmId(contentValues.getAsString(VaccineRepository.ANMID));
                 vaccineObj.setLocationId(contentValues.getAsString(VaccineRepository.LOCATIONID));
+                vaccineObj.setTeamId(contentValues.getAsString(VaccineRepository.TEAM_ID));
+                vaccineObj.setTeam(contentValues.getAsString(VaccineRepository.TEAM));
                 vaccineObj.setSyncStatus(VaccineRepository.TYPE_Synced);
                 vaccineObj.setFormSubmissionId(vaccine.getEvent().getFormSubmissionId());
                 vaccineObj.setEventId(vaccine.getEvent().getEventId());
@@ -160,7 +162,8 @@ public class HpvClientProcessorForJava extends ClientProcessorForJava {
                     doseNumber = "two";
                 }
 
-                PatientRepository.updateDateDoseGiven(baseEntityId, Utils.getTodaysDate(), doseNumber);
+                String dateString = Utils.convertDateFormat(vaccineObj.getDate(), new SimpleDateFormat("dd/MM/yy"));
+                PatientRepository.updateDateDoseGiven(baseEntityId, dateString, doseNumber);
 
                 Log.d(TAG, "Finish processEC_Patient table");
             }

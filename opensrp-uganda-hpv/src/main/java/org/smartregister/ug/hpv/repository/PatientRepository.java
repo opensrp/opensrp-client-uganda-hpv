@@ -1,5 +1,6 @@
 package org.smartregister.ug.hpv.repository;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.util.Log;
 
@@ -51,9 +52,13 @@ public class PatientRepository {
 
     public static void updateDateDoseGiven(String baseEntityID, String date, String doseNumber) {
 
-        SQLiteDatabase db = HpvApplication.getInstance().getRepository().getReadableDatabase();
-
-        final String query = "UPDATE " + DBConstants.PATIENT_TABLE_NAME + " SET " + "date_dose_" + doseNumber + "_given" + "=" + date;
-        db.rawQuery(query, new String[]{baseEntityID});
+        try {
+            SQLiteDatabase db = HpvApplication.getInstance().getRepository().getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put("date_dose_" + doseNumber + "_given", date);
+            db.update(DBConstants.PATIENT_TABLE_NAME, values, DBConstants.KEY.BASE_ENTITY_ID + " = ?", new String[]{baseEntityID});
+        } catch (Exception e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        }
     }
 }
