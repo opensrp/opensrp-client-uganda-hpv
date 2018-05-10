@@ -270,20 +270,6 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void refreshList(SyncEvent syncEvent) {
-        if (syncEvent != null && syncEvent.getFetchStatus().equals(FetchStatus.fetched)) {
-            refreshList(FetchStatus.fetched);
-        }
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void refreshList(JsonFormSaveCompleteEvent saveEvent) {
-        if (saveEvent != null) {
-            refreshList(FetchStatus.fetched);
-        }
-    }
-
     public void showProgressDialog() {
         progressDialog = new ProgressDialog(this);
         progressDialog.setCancelable(false);
