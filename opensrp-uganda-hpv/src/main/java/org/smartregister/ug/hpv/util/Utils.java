@@ -265,6 +265,14 @@ public class Utils {
         return false;
     }
 
+    public static String calculateVaccineDueDate(String date) {
+
+        DateTime dateTime = new DateTime(org.smartregister.util.Utils.toDate(date, true));
+        DateTime dueDate = dateTime.plusMonths(6);
+
+        return convertDateFormat(dueDate.toDate(), DB_DF);
+    }
+
     /**
      * Is the dose due based on the dose date & the current time
      *

@@ -163,7 +163,7 @@ public class HpvClientProcessorForJava extends ClientProcessorForJava {
                 }
 
                 String dateString = Utils.convertDateFormat(vaccineObj.getDate(), new SimpleDateFormat("dd/MM/yy"));
-                PatientRepository.updateDateDoseGiven(baseEntityId, dateString, doseNumber);
+                PatientRepository.updateDoseDates(baseEntityId, dateString, doseNumber);
 
                 Log.d(TAG, "Finish processEC_Patient table");
             }

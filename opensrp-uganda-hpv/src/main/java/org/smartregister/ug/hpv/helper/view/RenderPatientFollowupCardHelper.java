@@ -12,13 +12,13 @@ import org.joda.time.DateTime;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.domain.Photo;
 import org.smartregister.immunization.domain.VaccineWrapper;
-import org.smartregister.immunization.util.ImageUtils;
 import org.smartregister.immunization.view.VaccineGroup;
 import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.activity.BasePatientDetailActivity;
 import org.smartregister.ug.hpv.domain.DoseStatus;
 import org.smartregister.ug.hpv.helper.VaccinationHelper;
 import org.smartregister.ug.hpv.util.DBConstants;
+import org.smartregister.ug.hpv.util.ImageUtils;
 import org.smartregister.ug.hpv.util.Utils;
 
 import java.util.ArrayList;
@@ -122,7 +122,7 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
         boolean isToday = (vaccineWrapper.getVaccineDate().getMillis() - DateTime.now().withTimeAtStartOfDay().getMillis()) == 0;
         vaccineWrapper.setUpdatedVaccineDate(vaccineDateTime, isToday);
 
-        Photo photo = ImageUtils.profilePhotoByClient(commonPersonObjectClient);
+        Photo photo = ImageUtils.profilePhotoByClientID(commonPersonObjectClient.getCaseId());
         vaccineWrapper.setPhoto(photo);
 
         String firstName = getValue(commonPersonObjectClient.getColumnmaps(), "first_name", true);
