@@ -31,6 +31,7 @@ import org.smartregister.ug.hpv.application.HpvApplication;
 import org.smartregister.ug.hpv.fragment.BasePatientDetailsFragment;
 import org.smartregister.ug.hpv.fragment.PatientDetailsFragment;
 import org.smartregister.ug.hpv.helper.LocationHelper;
+import org.smartregister.ug.hpv.repository.PatientRepository;
 import org.smartregister.ug.hpv.util.Constants;
 import org.smartregister.ug.hpv.view.LocationPickerView;
 import org.smartregister.util.Utils;
@@ -245,6 +246,22 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
         }
         org.smartregister.ug.hpv.util.Utils.addVaccine(vaccineRepository, vaccine);
         tag.setDbKey(vaccine.getId());
+
+        updateEcPatient(vaccine.getBaseEntityId(), vaccine.getName(), vaccine.getDate());
+    }
+
+    private void updateEcPatient(String baseEntityId, String vaccineName, Date date) {
+        Log.d(TAG, "Starting processEC_Patient table");
+
+        String doseNumber = "one";
+        if (vaccineName.equals("hpv_2")) {
+            doseNumber = "two";
+        }
+
+        String dateString = org.smartregister.ug.hpv.util.Utils.convertDateFormat(date, new SimpleDateFormat("dd/MM/yy"));
+        PatientRepository.updateDoseDates(baseEntityId, dateString, doseNumber);
+
+        Log.d(TAG, "Finish processEC_Patient table");
     }
 
 

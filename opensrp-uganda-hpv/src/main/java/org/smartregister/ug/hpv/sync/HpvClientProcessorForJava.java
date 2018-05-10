@@ -153,22 +153,9 @@ public class HpvClientProcessorForJava extends ClientProcessorForJava {
                 Utils.addVaccine(vaccineRepository, vaccineObj);
 
                 Log.d(TAG, "Ending processVaccine table: " + vaccineTable.name);
-
-                Log.d(TAG, "Starting processEC_Patient table");
-
-                String baseEntityId = contentValues.getAsString(VaccineRepository.BASE_ENTITY_ID);
-                String doseNumber = "one";
-                if (contentValues.getAsString(VaccineRepository.NAME).equals("hpv_2")) {
-                    doseNumber = "two";
-                }
-
-                String dateString = Utils.convertDateFormat(vaccineObj.getDate(), new SimpleDateFormat("dd/MM/yy"));
-                PatientRepository.updateDoseDates(baseEntityId, dateString, doseNumber);
-
-                Log.d(TAG, "Finish processEC_Patient table");
             }
-            return true;
 
+            return true;
         } catch (Exception e) {
             Log.e(TAG, "Process Vaccine Error", e);
             return null;

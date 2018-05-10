@@ -130,7 +130,9 @@ android {
     }
     dependencies {
 
-        compile('org.smartregister:opensrp-client-immunization:1.2.100-SNAPSHOT@aar') {
+
+        compile('org.smartregister:opensrp-client-immunization:1.2.101-SNAPSHOT@aar') {
+            transitive = true
             exclude group: 'org.smartregister', module: 'opensrp-client-core'
             exclude group: 'org.smartregister', module: 'opensrp-client-native-form'
         }
