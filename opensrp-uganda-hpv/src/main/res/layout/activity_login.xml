@@ -127,7 +127,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="10dp">
+                android:layout_marginTop="@dimen/checkbox_margin_top">
 
                 <CheckBox
                     android:id="@+id/login_show_password_checkbox"
