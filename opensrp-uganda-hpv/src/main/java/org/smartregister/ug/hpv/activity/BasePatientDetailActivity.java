@@ -19,7 +19,6 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 import butterknife.Bind;
@@ -37,17 +36,13 @@ public abstract class BasePatientDetailActivity extends BaseActivity {
 
     @Bind(R.id.view_pager)
     protected OpenSRPViewPager mPager;
-    private CommonPersonObjectClient commonPersonObjectClient;
-    Fragment mBaseFragment;
+    private Fragment mBaseFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
         ButterKnife.bind(this);
-
-        commonPersonObjectClient = (CommonPersonObjectClient) getIntent().getSerializableExtra(Constants.INTENT_KEY.CLIENT_OBJECT);
-
 
         Fragment[] otherFragments = {};
 

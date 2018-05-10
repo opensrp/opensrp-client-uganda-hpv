@@ -5,8 +5,6 @@ import android.view.View;
 
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 
-import java.util.Map;
-
 /**
  * Created by ndegwamartin on 09/04/2018.
  */

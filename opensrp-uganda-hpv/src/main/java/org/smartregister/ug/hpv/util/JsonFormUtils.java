@@ -531,12 +531,10 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
             List<FormLocation> upToFacilities = LocationHelper.getInstance().generateLocationHierarchyTree(false, healthFacilities);
 
             String defaultFacilityString = AssetHandler.javaToJsonString(defaultFacility,
-                    new com.google.common.reflect.TypeToken<List<String>>() {
-                    }.getType());
+                    new TypeToken<List<String>>() {}.getType());
 
             String upToFacilitiesString = AssetHandler.javaToJsonString(upToFacilities,
-                    new com.google.common.reflect.TypeToken<List<FormLocation>>() {
-                    }.getType());
+                    new TypeToken<List<FormLocation>>() {}.getType());
 
             for (int i = 0; i < questions.length(); i++) {
                 if (questions.getJSONObject(i).getString(Constants.KEY.KEY).equalsIgnoreCase(LocationHelper.SCHOOL)) {

@@ -40,6 +40,7 @@ public class Utils {
 
     private static final String TAG = Utils.class.getCanonicalName();
     private static final SimpleDateFormat DB_DF = new SimpleDateFormat("yyyy-MM-dd");
+    private static BaseEvent myEvent;
 
 
     public static void addVaccine(VaccineRepository vaccineRepository, Vaccine vaccine) {
@@ -62,8 +63,6 @@ public class Utils {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
 
     }
-
-    private static BaseEvent myEvent;
 
     public static void saveLanguage(String language) {
         AllSharedPreferences allSharedPreferences = new AllSharedPreferences(PreferenceManager.getDefaultSharedPreferences(HpvApplication.getInstance().getApplicationContext()));

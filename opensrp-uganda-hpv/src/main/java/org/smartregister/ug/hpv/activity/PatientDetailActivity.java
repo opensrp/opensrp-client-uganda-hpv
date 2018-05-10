@@ -20,8 +20,6 @@ import org.smartregister.ug.hpv.util.Constants;
 import org.smartregister.ug.hpv.util.JsonFormUtils;
 import org.smartregister.ug.hpv.util.Utils;
 
-import java.util.HashMap;
-
 /**
  * Created by ndegwamartin on 09/10/2017.
  */

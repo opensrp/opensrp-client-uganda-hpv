@@ -14,8 +14,6 @@ import org.smartregister.ug.hpv.helper.LocationHelper;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-;
-
 /**
  * @author Jason Rogena - jrogena@ona.io
  * @since 03/03/2017
