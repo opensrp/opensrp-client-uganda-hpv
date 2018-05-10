@@ -8,11 +8,9 @@ import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 
-import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.adapter.HPVRegisterActivityPagerAdapter;
 import org.smartregister.ug.hpv.fragment.BasePatientDetailsFragment;
-import org.smartregister.ug.hpv.util.Constants;
 import org.smartregister.view.viewpager.OpenSRPViewPager;
 
 import java.io.File;
