@@ -149,9 +149,10 @@ public abstract class BasePatientDetailsFragment extends SecuredFragment impleme
     }
 
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void refreshView(JsonFormSaveCompleteEvent jsonFormSaveCompleteEvent) {
         if (jsonFormSaveCompleteEvent != null) {
+            Utils.removeStickyEvent(jsonFormSaveCompleteEvent);
             renderContactHelper.refreshContacts(commonPersonObjectClient.getCaseId());
         }
 
@@ -173,8 +174,9 @@ public abstract class BasePatientDetailsFragment extends SecuredFragment impleme
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void refreshView(PictureUpdatedEvent event) {
+        Utils.removeStickyEvent(event);
         if (event != null && renderPatientDemographicCardHelper != null) {
             renderPatientDemographicCardHelper.updateProfilePicture(null);
         }

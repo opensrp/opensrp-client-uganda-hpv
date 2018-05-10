@@ -106,11 +106,12 @@ public class Utils {
     }
 
     public static void postStickyEvent(BaseEvent event) {//Each Sticky event must be manually cleaned by calling Utils.removeStickyEvent after handling
-        EventBus.getDefault().removeStickyEvent(event);
+        EventBus.getDefault().postSticky(event);
     }
 
     public static void removeStickyEvent(BaseEvent event) {
-        EventBus.getDefault().postSticky(event);
+        EventBus.getDefault().removeStickyEvent(event);
+
     }
 
     public static <T, E> T getKeyByValue(Map<T, E> map, E value) {
