@@ -61,7 +61,7 @@
                 android:layout_weight="1"
                 android:contentDescription="logo"
                 android:scaleType="centerInside"
-                android:src="@drawable/little_girl_hpv_logo" />
+                android:src="@drawable/ic_little_girl_hpv_logo" />
 
             <TextView
                 android:id="@+id/login_build_text_view"
@@ -72,7 +72,8 @@
                 android:gravity="center_horizontal"
                 android:textColor="#90c4dc"
                 android:textSize="@dimen/login_build_text_view_textSize"
-                android:typeface="sans" />
+                android:typeface="sans"
+                android:text="build_number" />
         </LinearLayout>
 
         <!-- Middle section -->
@@ -126,28 +127,30 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="10dp">
+                android:layout_marginTop="@dimen/checkbox_margin_top">
 
                 <CheckBox
                     android:id="@+id/login_show_password_checkbox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="5dp"
-                    android:width="20dp"
-                    android:height="20dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginTop="15dp"
                     android:button="@drawable/white_checkbox_bg_selector"
-                    android:textColor="#fff" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:scaleX="@dimen/checkbox_scale"
+                    android:scaleY="@dimen/checkbox_scale" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_marginLeft="5dp"
-                    android:layout_toRightOf="@id/login_show_password_checkbox"
-                    android:text="Show Password"
+                    android:text="@string/show_password_text"
                     android:textColor="@android:color/white"
-                    android:textSize="@dimen/login_edit_text_textSize" />
+                    android:layout_toRightOf="@id/login_show_password_checkbox"
+                    android:layout_marginLeft="10dp"
+                    android:textSize="@dimen/login_edit_text_textSize"
+                    android:id="@+id/login_show_password_text_view"/>
             </RelativeLayout>
 
             <Button

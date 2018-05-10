@@ -2,41 +2,45 @@ package org.smartregister.ug.hpv.sync;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
-import org.smartregister.sync.ClientProcessor;
+import org.smartregister.clientandeventmodel.DateUtil;
+import org.smartregister.domain.db.Client;
+import org.smartregister.domain.db.Event;
+import org.smartregister.domain.db.EventClient;
+import org.smartregister.domain.jsonmapping.ClientClassification;
+import org.smartregister.domain.jsonmapping.ClientField;
+import org.smartregister.domain.jsonmapping.Column;
+import org.smartregister.domain.jsonmapping.Table;
+import org.smartregister.repository.AllSharedPreferences;
+import org.smartregister.repository.DetailsRepository;
+import org.smartregister.sync.ClientProcessorForJava;
+import org.smartregister.ug.hpv.application.HpvApplication;
+import org.smartregister.ug.hpv.helper.ECSyncHelper;
 import org.smartregister.ug.hpv.util.Constants;
 import org.smartregister.ug.hpv.util.DBConstants;
 
-import java.util.Arrays;
-import java.util.HashMap;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by ndegwamartin on 15/03/2018.
  */
 
-public class HpvClientProcessor extends ClientProcessor {
+public class HpvClientProcessor extends ClientProcessorForJava {
 
-    private static final String TAG = "HpvClientProcessor";
+    private static final String TAG = HpvClientProcessor.class.getCanonicalName();
     private static HpvClientProcessor instance;
-
-    private static final String[] RESULT_TYPES = {"GeneXpert Result", "Smear Result", "Culture Result", "X-Ray Result"};
-
-    private static final String[] BMI_EVENT_TYPES = {"Follow up Visit", "Treatment Initiation", "intreatment TB patient"};
-
-    private static final String SQLITE_DATE_FORMAT = "yyyy-MM-dd";
-
-    private static final String EVENT_TYPE_KEY = "eventType";
-    public static final String[] CLIENT_EVENTS = {"Screening", "positive TB patient", "intreatment TB patient"};
-
-    public static final String DIAGNOSIS_EVENT = "TB Diagnosis";
-    public static final String TREATMENT_INITIATION = "Treatment Initiation";
-    public static final String CONTACT_SCREENING = "Contact Screening";
 
     public HpvClientProcessor(Context context) {
         super(context);
@@ -50,80 +54,228 @@ public class HpvClientProcessor extends ClientProcessor {
         return instance;
     }
 
+
     @Override
-    public synchronized void processClient(List<JSONObject> events) throws Exception {
-        String clientClassificationStr = getFileContents("ec_client_classification.json");
-        String clientResultStr = getFileContents("ec_client_result.json");
-        String clientBMIStr = getFileContents("ec_client_bmi.json");
+    public void processClient(List<EventClient> eventClients) throws Exception {
 
-        if (!events.isEmpty()) {
-            for (JSONObject event : events) {
+        ClientClassification clientClassification = assetJsonToJava("ec_client_classification.json", ClientClassification.class);
+        //Table vaccineTable = assetJsonToJava("ec_client_vaccine.json", Table.class);
 
-                String eventType = event.has(EVENT_TYPE_KEY) ? event.getString(EVENT_TYPE_KEY) : null;
+        if (!eventClients.isEmpty()) {
+            List<Event> unsyncEvents = new ArrayList<>();
+            for (EventClient eventClient : eventClients) {
+                Event event = eventClient.getEvent();
+                if (event == null) {
+                    return;
+                }
+
+                String eventType = event.getEventType();
                 if (eventType == null) {
                     continue;
                 }
 
-                if (Arrays.asList(RESULT_TYPES).contains(eventType)) {
-                    JSONObject clientResultJson = new JSONObject(clientResultStr);
-                    if (isNullOrEmptyJSONObject(clientResultJson)) {
+               /* if (eventType.equals(VaccineIntentService.EVENT_TYPE) || eventType.equals(VaccineIntentService.EVENT_TYPE_OUT_OF_CATCHMENT)) {
+                    if (vaccineTable == null) {
                         continue;
-                    }
-                    processResult(event, clientResultJson);
-                } else {
-                    if (Arrays.asList(BMI_EVENT_TYPES).contains(eventType)) {
-                        JSONObject clientBMIJson = new JSONObject(clientBMIStr);
-                        if (!isNullOrEmptyJSONObject(clientBMIJson)) {
-                            processBMI(event, clientBMIJson);
-                        }
                     }
 
-                    JSONObject clientClassificationJson = new JSONObject(clientClassificationStr);
-                    if (isNullOrEmptyJSONObject(clientClassificationJson)) {
+                    processVaccine(eventClient, vaccineTable, eventType.equals(VaccineIntentService.EVENT_TYPE_OUT_OF_CATCHMENT));
+                }  else */
+                if (eventType.equals(Constants.EventType.REMOVE)) {
+                    unsyncEvents.add(event);
+                } else if (eventType.equals(Constants.EventType.REGISTRATION) || eventType.equals(Constants.EventType.UPDATE_REGISTRATION)) {
+                    if (clientClassification == null) {
                         continue;
                     }
+
+                    Client client = eventClient.getClient();
                     //iterate through the events
-                    if (event.has(DBConstants.KEY.CLIENT)) {
-                        processEvent(event, event.getJSONObject(DBConstants.KEY.CLIENT), clientClassificationJson);
+                    if (client != null) {
+                        processEvent(event, client, clientClassification);
 
-                        // processEvent(event, event.getJSONObject(DBConstants.KEY.CLIENT), clientClassificationJson, Arrays.asList(new String[]{"deathdate", "attributes.dateRemoved"}));
+                    }
+                }
+            }
+
+            // Unsync events that are should not be in this device
+            if (!unsyncEvents.isEmpty()) {
+                unSync(unsyncEvents);
+            }
+        }
+    }
+
+
+    private Boolean processVaccine(EventClient vaccine, Table vaccineTable, boolean outOfCatchment) throws Exception {
+
+        try {
+            if (vaccine == null || vaccine.getEvent() == null) {
+                return false;
+            }
+
+            if (vaccineTable == null) {
+                return false;
+            }
+
+            Log.d(TAG, "Starting processVaccine table: " + vaccineTable.name);
+
+            ContentValues contentValues = processCaseModel(vaccine, vaccineTable);
+
+            // save the values to db
+            if (contentValues != null && contentValues.size() > 0) {
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                /*
+                Date date = simpleDateFormat.parse(contentValues.getAsString(VaccineRepository.DATE));
+
+                VaccineRepository vaccineRepository = HpvApplication.getInstance().vaccineRepository();
+                Vaccine vaccineObj = new Vaccine();
+                vaccineObj.setBaseEntityId(contentValues.getAsString(VaccineRepository.BASE_ENTITY_ID));
+                vaccineObj.setName(contentValues.getAsString(VaccineRepository.NAME));
+                if (contentValues.containsKey(VaccineRepository.CALCULATION)) {
+                    vaccineObj.setCalculation(parseInt(contentValues.getAsString(VaccineRepository.CALCULATION)));
+                }
+                vaccineObj.setDate(date);
+                vaccineObj.setAnmId(contentValues.getAsString(VaccineRepository.ANMID));
+                vaccineObj.setLocationId(contentValues.getAsString(VaccineRepository.LOCATIONID));
+                vaccineObj.setSyncStatus(VaccineRepository.TYPE_Synced);
+                vaccineObj.setFormSubmissionId(vaccine.getEvent().getFormSubmissionId());
+                vaccineObj.setEventId(vaccine.getEvent().getEventId());
+                vaccineObj.setOutOfCatchment(outOfCatchment ? 1 : 0);
+
+                String createdAtString = contentValues.getAsString(VaccineRepository.CREATED_AT);
+                Date createdAt = getDate(createdAtString);
+                vaccineObj.setCreatedAt(createdAt);
+
+                Utils.addVaccine(vaccineRepository, vaccineObj);
+*/
+                Log.d(TAG, "Ending processVaccine table: " + vaccineTable.name);
+            }
+            return true;
+
+        } catch (Exception e) {
+            Log.e(TAG, "Process Vaccine Error", e);
+            return null;
+        }
+    }
+
+    private Integer parseInt(String string) {
+        try {
+            return Integer.valueOf(string);
+        } catch (NumberFormatException e) {
+            Log.e(TAG, e.toString(), e);
+        }
+        return null;
+    }
+
+    private ContentValues processCaseModel(EventClient eventClient, Table table) {
+        try {
+            List<Column> columns = table.columns;
+            ContentValues contentValues = new ContentValues();
+
+            for (Column column : columns) {
+                processCaseModel(eventClient.getEvent(), eventClient.getClient(), column, contentValues);
+            }
+
+            return contentValues;
+        } catch (Exception e) {
+            Log.e(TAG, e.toString(), e);
+        }
+        return null;
+    }
+
+    private Float parseFloat(String string) {
+        try {
+            return Float.valueOf(string);
+        } catch (NumberFormatException e) {
+            Log.e(TAG, e.toString(), e);
+        }
+        return null;
+    }
+
+    private Date getDate(String eventDateStr) {
+        Date date = null;
+        if (StringUtils.isNotBlank(eventDateStr)) {
+            try {
+                DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ");
+                date = dateFormat.parse(eventDateStr);
+            } catch (ParseException e) {
+                try {
+                    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+                    date = dateFormat.parse(eventDateStr);
+                } catch (ParseException pe) {
+                    try {
+                        date = DateUtil.parseDate(eventDateStr);
+                    } catch (ParseException pee) {
+                        Log.e(TAG, pee.toString(), pee);
                     }
                 }
             }
         }
+        return date;
     }
 
-    private boolean processBMI(JSONObject event, JSONObject clientBMIJson) {
 
+    private boolean unSync(ECSyncHelper ecSyncHelper, DetailsRepository detailsRepository, List<Table> bindObjects, Event event, String registeredAnm) {
+        try {
+            String baseEntityId = event.getBaseEntityId();
+            String providerId = event.getProviderId();
 
+            if (providerId.equals(registeredAnm)) {
+                boolean eventDeleted = ecSyncHelper.deleteEventsByBaseEntityId(baseEntityId);
+                boolean clientDeleted = ecSyncHelper.deleteClient(baseEntityId);
+                Log.d(getClass().getName(), "EVENT_DELETED: " + eventDeleted);
+                Log.d(getClass().getName(), "ClIENT_DELETED: " + clientDeleted);
+
+                boolean detailsDeleted = detailsRepository.deleteDetails(baseEntityId);
+                Log.d(getClass().getName(), "DETAILS_DELETED: " + detailsDeleted);
+
+                for (Table bindObject : bindObjects) {
+                    String tableName = bindObject.name;
+
+                    boolean caseDeleted = deleteCase(tableName, baseEntityId);
+                    Log.d(getClass().getName(), "CASE_DELETED: " + caseDeleted);
+                }
+
+                return true;
+            }
+        } catch (Exception e) {
+            Log.e(TAG, e.toString(), e);
+        }
         return false;
     }
 
-    private boolean isInValidRecord(JSONObject event, JSONObject jsonObject) {
-
-        return event == null || event.length() == 0 || jsonObject == null || jsonObject.length() == 0;
-    }
-
-    private boolean processResult(JSONObject event, JSONObject clientResultJson) {
-
+    private boolean unSync(List<Event> events) {
         try {
 
-            if (isInValidRecord(event, clientResultJson)) {
+            if (events == null || events.isEmpty()) {
                 return false;
             }
 
-            ContentValues contentValues = processCaseModel(event, clientResultJson);
-            // save the values to db
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+            AllSharedPreferences allSharedPreferences = new AllSharedPreferences(preferences);
+            String registeredAnm = allSharedPreferences.fetchRegisteredANM();
 
+            ClientField clientField = assetJsonToJava("ec_client_fields.json", ClientField.class);
+            if (clientField == null) {
+                return false;
+            }
+
+            List<Table> bindObjects = clientField.bindobjects;
+            DetailsRepository detailsRepository = HpvApplication.getInstance().getContext().detailsRepository();
+            ECSyncHelper ecUpdater = ECSyncHelper.getInstance(getContext());
+
+            for (Event event : events) {
+                unSync(ecUpdater, detailsRepository, bindObjects, event, registeredAnm);
+            }
 
             return true;
 
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage(), e);
-            return false;
+            Log.e(TAG, e.toString(), e);
         }
 
+        return false;
     }
+
 
     private ContentValues processCaseModel(JSONObject entity, JSONObject clientClassificationJson) {
         try {
@@ -221,33 +373,23 @@ public class HpvClientProcessor extends ClientProcessor {
         return null;
     }
 
-
-    private Map<String, String> getObsFromEvent(JSONObject event) {
-        Map<String, String> obs = new HashMap<String, String>();
-
-        try {
-            String obsKey = "obs";
-            if (event.has(obsKey)) {
-                JSONArray obsArray = event.getJSONArray(obsKey);
-                if (obsArray != null && obsArray.length() > 0) {
-                    for (int i = 0; i < obsArray.length(); i++) {
-                        JSONObject object = obsArray.getJSONObject(i);
-                        String key = object.has("formSubmissionField") ? object
-                                .getString("formSubmissionField") : null;
-                        List<String> values =
-                                object.has(VALUES_KEY) ? getValues(object.get(VALUES_KEY)) : null;
-                        for (String conceptValue : values) {
-                            String value = getHumanReadableConceptResponse(conceptValue, object);
-                            if (key != null && value != null) {
-                                obs.put(key, value);
-                            }
-                        }
-                    }
-                }
+    protected List<String> getValues(Object jsonObject) throws JSONException {
+        List<String> values = new ArrayList<String>();
+        if (jsonObject == null) {
+            return values;
+        } else if (jsonObject instanceof JSONArray) {
+            JSONArray jsonArray = (JSONArray) jsonObject;
+            for (int i = 0; i < jsonArray.length(); i++) {
+                values.add(jsonArray.get(i).toString());
             }
-        } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+        } else {
+            values.add(jsonObject.toString());
         }
-        return obs;
+        return values;
+    }
+
+    @Override
+    public String[] getOpenmrsGenIds() {
+        return new String[]{DBConstants.KEY.OPENSRP_ID};
     }
 }

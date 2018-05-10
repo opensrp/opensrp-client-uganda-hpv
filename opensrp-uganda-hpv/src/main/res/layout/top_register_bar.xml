@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:background="@color/actionbar"
     android:focusableInTouchMode="true"
-    tools:showIn="@layout/register_toolbar">
+    tools:showIn="@layout/toolbar_register">
 
     <RelativeLayout
         android:id="@+id/top_left_layout"
@@ -177,9 +177,10 @@
         style="@style/CustomFontTextViewStyle.NavBar.Bold"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
-        android:layout_toRightOf="@id/location_picker_seperator"
         android:layout_toLeftOf="@id/register_client"
+        android:layout_toRightOf="@id/location_picker_seperator"
         android:background="@drawable/transparent_gray_background"
+        android:drawableRight="@drawable/ic_arrow_drop_down_white"
         android:gravity="left|center_vertical"
         android:minWidth="@dimen/loc_picker_text_min_width"
         android:paddingLeft="0dp"

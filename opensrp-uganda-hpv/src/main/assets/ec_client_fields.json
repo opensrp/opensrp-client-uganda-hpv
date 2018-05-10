@@ -53,6 +53,13 @@
           }
         },
         {
+          "column_name": "school_name",
+          "type": "Client",
+          "json_mapping": {
+            "field": "attributes.school_name"
+          }
+        },
+        {
           "column_name": "address",
           "type": "Client",
           "json_mapping": {

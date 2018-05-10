@@ -1,5 +1,6 @@
 package org.smartregister.ug.hpv.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -16,7 +17,6 @@ import android.widget.TextView;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONException;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.configurableviews.ConfigurableViewsLibrary;
 import org.smartregister.configurableviews.helper.ConfigurableViewsHelper;
@@ -33,12 +33,13 @@ import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.activity.BaseRegisterActivity;
 import org.smartregister.ug.hpv.activity.HomeRegisterActivity;
+import org.smartregister.ug.hpv.activity.PatientDetailActivity;
 import org.smartregister.ug.hpv.domain.DoseStatus;
+import org.smartregister.ug.hpv.helper.LocationHelper;
 import org.smartregister.ug.hpv.provider.HomeRegisterProvider;
 import org.smartregister.ug.hpv.servicemode.HpvServiceModeOption;
 import org.smartregister.ug.hpv.util.Constants;
 import org.smartregister.ug.hpv.util.DBConstants;
-import org.smartregister.ug.hpv.util.JsonFormUtils;
 import org.smartregister.ug.hpv.util.Utils;
 import org.smartregister.ug.hpv.view.LocationPickerView;
 import org.smartregister.view.activity.SecuredNativeSmartRegisterActivity;
@@ -221,7 +222,7 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
         }
 
         facilitySelection = (LocationPickerView) view.findViewById(R.id.facility_selection);
-        facilitySelection.init(context());
+        facilitySelection.init();
     }
 
     @Override
@@ -259,15 +260,20 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
                 tableName + "." + DBConstants.KEY.FIRST_NAME,
                 tableName + "." + DBConstants.KEY.LAST_NAME,
                 tableName + "." + DBConstants.KEY.CARETAKER_NAME,
+                tableName + "." + DBConstants.KEY.CARETAKER_PHONE,
+                tableName + "." + DBConstants.KEY.VHT_NAME,
+                tableName + "." + DBConstants.KEY.VHT_PHONE,
                 tableName + "." + DBConstants.KEY.DOB,
                 tableName + "." + DBConstants.KEY.OPENSRP_ID,
                 tableName + "." + DBConstants.KEY.CLASS,
                 tableName + "." + DBConstants.KEY.SCHOOL,
+                tableName + "." + DBConstants.KEY.SCHOOL_NAME,
                 tableName + "." + DBConstants.KEY.DOSE_ONE_DATE,
                 tableName + "." + DBConstants.KEY.DATE_DOSE_ONE_GIVEN,
                 tableName + "." + DBConstants.KEY.DOSE_TWO_DATE,
+                tableName + "." + DBConstants.KEY.DATE_DOSE_TWO_GIVEN,
                 tableName + "." + DBConstants.KEY.GENDER,
-                tableName + "." + DBConstants.KEY.DATE_DOSE_TWO_GIVEN};
+                tableName + "." + DBConstants.KEY.DATE_REMOVED};
         String[] allColumns = ArrayUtils.addAll(columns, getAdditionalColumns(tableName));
         queryBUilder.SelectInitiateMainTable(tableName, allColumns);
         mainSelect = queryBUilder.mainCondition(mainCondition);
@@ -338,7 +344,7 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
 
     @Override
     protected void startRegistration() {
-        ((HomeRegisterActivity) getActivity()).startFormActivity("patient_registration", null, null);
+        ((HomeRegisterActivity) getActivity()).startFormActivity(Constants.JSON_FORM.PATIENT_REGISTRATION, null, null);
     }
 
     @Override
@@ -355,7 +361,18 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
     }
 
     private void goToPatientDetailActivity(CommonPersonObjectClient patient) {
-        Utils.showToast(getActivity(), "Navigating to Profile view for " + patient.toString());
+        Map<String, String> patientDetails = patient.getDetails();
+        Intent intent = null;
+        String registerToken = "";
+        intent = new Intent(getActivity(), PatientDetailActivity.class);
+        registerToken = Constants.VIEW_CONFIGS.HOME_REGISTER;
+
+        String registerTitle = Utils.readPrefString(getActivity(), TOOLBAR_TITLE + registerToken, "");
+        intent.putExtra(Constants.INTENT_KEY.REGISTER_TITLE, registerTitle);
+        intent.putExtra(Constants.INTENT_KEY.PATIENT_DETAIL_MAP, (HashMap) patientDetails);
+        intent.putExtra(Constants.INTENT_KEY.CLIENT_OBJECT, patient);
+        intent.putExtra(Constants.INTENT_KEY.OPENSRP_ID, patientDetails.get(Constants.INTENT_KEY.OPENSRP_ID));
+        startActivity(intent);
     }
 
     class RegisterActionHandler implements View.OnClickListener {
@@ -386,15 +403,11 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
 
     protected void updateLocationText() {
         if (facilitySelection != null) {
-            facilitySelection.setText(JsonFormUtils.getOpenMrsReadableName(
+            facilitySelection.setText(LocationHelper.getInstance().getOpenMrsReadableName(
                     facilitySelection.getSelectedItem()));
-            try {
+            String locationId = LocationHelper.getInstance().getOpenMrsLocationId(facilitySelection.getSelectedItem());
+            context().allSharedPreferences().savePreference(Constants.CURRENT_LOCATION_ID, locationId);
 
-                String locationId = JsonFormUtils.getOpenMrsLocationId(context(), facilitySelection.getSelectedItem());
-                context().allSharedPreferences().savePreference(Constants.CURRENT_LOCATION_ID, locationId);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
         }
     }
 

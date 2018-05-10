@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/patient_detail_button_footer"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:layout_margin="10dp"
+    android:layout_marginLeft="20dp"
+    android:layout_marginRight="20dp"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+
+    <Button
+        android:id="@+id/remove_patient"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_centerInParent="true"
+        android:layout_centerVertical="true"
+        android:layout_gravity="center_vertical"
+        android:adjustViewBounds="true"
+        android:background="@drawable/red_shadow_button_bg"
+        android:hapticFeedbackEnabled="true"
+        android:inputType="textCapCharacters"
+        android:minWidth="170dp"
+        android:paddingBottom="15dp"
+        android:paddingTop="15dp"
+        android:text="@string/remove_from_register"
+        android:textAllCaps="true"
+        android:textAppearance="?android:textAppearanceSmall"
+        android:textColor="@color/status_bar_text_almost_white"
+        android:textSize="15sp"
+        app:textAllCaps="true" />
+
+
+
+
+</RelativeLayout>
