@@ -7,8 +7,8 @@ import android.content.Intent;
 import android.support.v4.content.WakefulBroadcastReceiver;
 
 import org.smartregister.configurableviews.service.PullConfigurableViewsIntentService;
-import org.smartregister.service.ImageUploadSyncService;
 import org.smartregister.ug.hpv.application.HpvApplication;
+import org.smartregister.ug.hpv.exception.MissingApplicationContextException;
 import org.smartregister.ug.hpv.service.HpvImageUploadSyncService;
 import org.smartregister.ug.hpv.service.PullUniqueIdsIntentService;
 import org.smartregister.ug.hpv.service.intent.SyncIntentService;
@@ -85,7 +85,7 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
             long triggerAt;
             long triggerInterval;
             if (context == null) {
-                throw new Exception(TAG + " Unable to schedule service without app context");
+                throw new MissingApplicationContextException(TAG + " Unable to schedule service without app context");
             }
 
             // Otherwise schedule based on normal interval

@@ -8,18 +8,15 @@ import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 
-import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.adapter.HPVRegisterActivityPagerAdapter;
 import org.smartregister.ug.hpv.fragment.BasePatientDetailsFragment;
-import org.smartregister.ug.hpv.util.Constants;
 import org.smartregister.view.viewpager.OpenSRPViewPager;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -30,13 +27,11 @@ import butterknife.ButterKnife;
 
 public abstract class BasePatientDetailActivity extends BaseActivity {
     private static final String TAG = BasePatientDetailActivity.class.getCanonicalName();
-    protected Map<String, String> patientDedtails;
     protected File currentfile;
     private static final int REQUEST_TAKE_PHOTO = 1;
 
     @Bind(R.id.view_pager)
     protected OpenSRPViewPager mPager;
-    private CommonPersonObjectClient commonPersonObjectClient;
     private Fragment mBaseFragment;
 
     @Override
@@ -44,8 +39,6 @@ public abstract class BasePatientDetailActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
         ButterKnife.bind(this);
-
-        commonPersonObjectClient = (CommonPersonObjectClient) getIntent().getSerializableExtra(Constants.INTENT_KEY.CLIENT_OBJECT);
 
 
         Fragment[] otherFragments = {};
