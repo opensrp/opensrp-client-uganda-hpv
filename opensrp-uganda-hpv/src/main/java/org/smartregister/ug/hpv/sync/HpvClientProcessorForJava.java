@@ -36,6 +36,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static org.smartregister.ug.hpv.util.Utils.updateEcPatient;
+
 /**
  * Created by ndegwamartin on 15/03/2018.
  */
@@ -151,8 +153,9 @@ public class HpvClientProcessorForJava extends ClientProcessorForJava {
                 vaccineObj.setCreatedAt(createdAt);
 
                 Utils.addVaccine(vaccineRepository, vaccineObj);
-
                 Log.d(TAG, "Ending processVaccine table: " + vaccineTable.name);
+
+                updateEcPatient(vaccineObj.getBaseEntityId(), vaccineObj.getName(), vaccineObj.getDate());
             }
 
             return true;

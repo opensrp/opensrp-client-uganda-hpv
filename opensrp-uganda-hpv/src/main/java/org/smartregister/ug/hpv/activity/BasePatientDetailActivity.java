@@ -51,6 +51,7 @@ import butterknife.ButterKnife;
 import util.UgandaHpvConstants;
 
 import static org.smartregister.ug.hpv.activity.LoginActivity.getOpenSRPContext;
+import static org.smartregister.ug.hpv.util.Utils.updateEcPatient;
 
 /**
  * Created by ndegwamartin on 17/11/2017.
@@ -250,27 +251,12 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
         updateEcPatient(vaccine.getBaseEntityId(), vaccine.getName(), vaccine.getDate());
     }
 
-    private void updateEcPatient(String baseEntityId, String vaccineName, Date date) {
-        Log.d(TAG, "Starting processEC_Patient table");
-
-        String doseNumber = "one";
-        if (vaccineName.equals("hpv_2")) {
-            doseNumber = "two";
-        }
-
-        String dateString = org.smartregister.ug.hpv.util.Utils.convertDateFormat(date, new SimpleDateFormat("dd/MM/yy"));
-        PatientRepository.updateDoseDates(baseEntityId, dateString, doseNumber);
-
-        Log.d(TAG, "Finish processEC_Patient table");
-    }
-
 
     private void addVaccineGroup(int canvasId, org.smartregister.immunization.domain.jsonmapping.VaccineGroup vaccineGroupData, List<Vaccine> vaccineList, List<Alert> alerts) {
         // TODO: Add logic to add vaccine group to view (similar to Zeir)
         VaccineGroup curGroup = new VaccineGroup(this);
         vaccineGroups.add(curGroup);
     }
-
 
     private void updateVaccinationViews(List<Vaccine> vaccineList, List<Alert> alerts) {
         if (vaccineGroups == null) {

@@ -30,6 +30,7 @@ import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.application.HpvApplication;
 import org.smartregister.ug.hpv.domain.DoseStatus;
 import org.smartregister.ug.hpv.event.BaseEvent;
+import org.smartregister.ug.hpv.repository.PatientRepository;
 import org.smartregister.util.DateUtil;
 
 import java.text.SimpleDateFormat;
@@ -228,6 +229,22 @@ public class Utils {
         }
 
     }
+
+    public static void updateEcPatient(String baseEntityId, String vaccineName, Date date) {
+        Log.d(TAG, "Starting processEC_Patient table");
+
+        String doseNumber = "one";
+        if (vaccineName.equals("hpv_2")) {
+            doseNumber = "two";
+        }
+
+        String dateString = org.smartregister.ug.hpv.util.Utils.convertDateFormat(date, new SimpleDateFormat("dd/MM/yy"));
+        PatientRepository.updateDoseDates(baseEntityId, dateString, doseNumber);
+
+        Log.d(TAG, "Finish processEC_Patient table");
+    }
+
+
 
     public static boolean isEmptyMap(Map map) {
         return map == null || map.isEmpty();
