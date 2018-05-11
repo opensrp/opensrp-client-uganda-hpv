@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v7.app.AlertDialog;
@@ -37,9 +38,10 @@ import org.smartregister.ug.hpv.barcode.Barcode;
 import org.smartregister.ug.hpv.barcode.BarcodeIntentIntegrator;
 import org.smartregister.ug.hpv.barcode.BarcodeIntentResult;
 import org.smartregister.ug.hpv.event.ShowProgressDialogEvent;
-import org.smartregister.ug.hpv.event.SyncEvent;
+import org.smartregister.ug.hpv.event.TriggerSyncEvent;
 import org.smartregister.ug.hpv.fragment.BaseRegisterFragment;
 import org.smartregister.ug.hpv.fragment.HomeRegisterFragment;
+import org.smartregister.ug.hpv.helper.LocationHelper;
 import org.smartregister.ug.hpv.util.Constants;
 import org.smartregister.ug.hpv.util.JsonFormUtils;
 import org.smartregister.ug.hpv.util.Utils;
@@ -100,7 +102,6 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
             }
         }
 
-
         detailsRepository = detailsRepository == null ? HpvApplication.getInstance().getContext().detailsRepository() : detailsRepository;
         if (clientDetails != null) {
             details = detailsRepository.getAllDetailsForClient(clientDetails.entityId());
@@ -139,10 +140,19 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
 
         if (id == R.id.action_language) {
             this.showLanguageDialog();
-            HpvApplication.getInstance().startPullUniqueIdsService();
             return true;
         } else if (id == R.id.action_logout) {
             logOutUser();
+            return true;
+
+        } else if (id == R.id.action_sync) {
+
+            TriggerSyncEvent syncEvent = new TriggerSyncEvent();
+            syncEvent.setManualSync(true);
+            HpvApplication.getInstance().triggerSync(syncEvent);
+
+            Snackbar syncStatusSnackbar = Snackbar.make(this.getWindow().getDecorView(), R.string.manual_sync_triggered, Snackbar.LENGTH_LONG);
+            syncStatusSnackbar.show();
             return true;
         }
 
@@ -207,13 +217,6 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
     @Override
     protected void onResumption() {
         ConfigurableViewsLibrary.getInstance().getConfigurableViewsHelper().registerViewConfigurations(getViewIdentifiers());
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -245,16 +248,24 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
 
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void showProgressDialog(ShowProgressDialogEvent showProgressDialogEvent) {
-        if (showProgressDialogEvent != null)
-            showProgressDialog();
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onPause() {
+        EventBus.getDefault().unregister(this);
+        super.onPause();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void refreshList(SyncEvent syncEvent) {
-        if (syncEvent != null && syncEvent.getFetchStatus().equals(FetchStatus.fetched))
-            refreshList(FetchStatus.fetched);
+    public void showProgressDialog(ShowProgressDialogEvent showProgressDialogEvent) {
+        if (showProgressDialogEvent != null) {
+            showProgressDialog();
+        }
     }
 
     public void showProgressDialog() {
@@ -289,9 +300,9 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
 
 
     public void startQrCodeScanner() {
-        BarcodeIntentIntegrator integ = new BarcodeIntentIntegrator(this);
-        integ.addExtra(Barcode.SCAN_MODE, Barcode.QR_MODE);
-        integ.initiateScan();
+        BarcodeIntentIntegrator barcodeIntentIntegrator = new BarcodeIntentIntegrator(this);
+        barcodeIntentIntegrator.addExtra(Barcode.SCAN_MODE, Barcode.QR_MODE);
+        barcodeIntentIntegrator.initiateScan();
     }
 
     @Override
@@ -299,7 +310,7 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
         try {
             if (mBaseFragment instanceof HomeRegisterFragment) {
                 LocationPickerView locationPickerView = ((HomeRegisterFragment) mBaseFragment).getLocationPickerView();
-                String locationId = JsonFormUtils.getOpenMrsLocationId(context(), locationPickerView.getSelectedItem());
+                String locationId = LocationHelper.getInstance().getOpenMrsLocationId(locationPickerView.getSelectedItem());
                 JsonFormUtils.startForm(this, context(), REQUEST_CODE_GET_JSON, formName, entityId,
                         metaData, locationId);
             }
@@ -320,11 +331,7 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
                 AllSharedPreferences allSharedPreferences = new AllSharedPreferences(preferences);
 
                 JSONObject form = new JSONObject(jsonString);
-                if (form.getString(JsonFormUtils.ENCOUNTER_TYPE).equals(Constants.EventType.Remove)) {
-
-                    Utils.showToast(this, "Removing Patient...");
-
-                } else if (form.getString(JsonFormUtils.ENCOUNTER_TYPE).equals(Constants.EventType.REGISTRATION)) {
+                if (form.getString(JsonFormUtils.ENCOUNTER_TYPE).equals(Constants.EventType.REGISTRATION)) {
 
                     JsonFormUtils.saveForm(this, HpvApplication.getInstance().getContext(), jsonString, allSharedPreferences.fetchRegisteredANM());
                 }
@@ -338,14 +345,16 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
             AllSharedPreferences allSharedPreferences = new AllSharedPreferences(preferences);
 
             JsonFormUtils.saveImage(this, allSharedPreferences.fetchRegisteredANM(), clientDetails.entityId(), imageLocation);
-            //updateProfilePicture(gender);
+
         } else if (requestCode == BarcodeIntentIntegrator.REQUEST_CODE && resultCode == RESULT_OK) {
             BarcodeIntentResult res = BarcodeIntentIntegrator.parseActivityResult(requestCode, resultCode, data);
             if (StringUtils.isNotBlank(res.getContents())) {
                 Log.d("Scanned QR Code", res.getContents());
                 ((HomeRegisterFragment) mBaseFragment).onQRCodeSucessfullyScanned(res.getContents());
+                ((HomeRegisterFragment) mBaseFragment).setSearchTerm(res.getContents());
             } else Log.i("", "NO RESULT FOR QR CODE");
         }
     }
+
 
 }

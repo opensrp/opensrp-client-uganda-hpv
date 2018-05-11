@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/clientFollowupCardView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="10dp"
+    android:background="@drawable/border"
+    android:orientation="vertical"
+    android:padding="15dp">
+
+    <org.smartregister.view.customcontrols.CustomFontTextView
+        android:id="@+id/followup"
+        style="@style/CustomFontTextViewStyle.ClientList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:paddingLeft="0dp"
+        android:text="@string/hpv_vaccine_due"
+        android:textColor="#000000"
+        android:textSize="22sp" />
+
+    <Button
+        android:id="@+id/follow_up_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="10dp"
+        android:adjustViewBounds="true"
+        android:background="@drawable/due_vaccine_blue_bg"
+        android:gravity="center_vertical"
+        android:hapticFeedbackEnabled="true"
+        android:minWidth="250dp"
+        android:padding="10dp"
+        android:text="Dose 2 due 24/10/2017"
+        android:textAllCaps="false"
+        android:textColor="@color/status_bar_text_almost_white"
+        android:textSize="15sp" />
+
+    <org.smartregister.view.customcontrols.CustomFontTextView
+        android:id="@+id/dateDoseOneGivenTextView"
+        style="@style/CustomFontTextViewStyle.ClientList.Light"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="0dp"
+        android:text="Dose 1 given 10/3/2017"
+        android:textColor="@color/dark_grey_text"
+        android:textSize="18sp" />
+
+    <org.smartregister.view.customcontrols.CustomFontTextView
+        android:id="@+id/locationVaccineGivenTextView"
+        style="@style/CustomFontTextViewStyle.ClientList.Light"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="0dp"
+        android:text="Location: Masaka HCII"
+        android:textColor="@color/dark_grey_text"
+        android:textSize="18sp" />
+
+
+</LinearLayout>

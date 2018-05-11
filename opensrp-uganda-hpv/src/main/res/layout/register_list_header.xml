@@ -9,7 +9,7 @@
         android:layout_weight="4"
         android:text="@string/name"
         android:textAllCaps="true"
-        android:textColor="@color/dark_grey"
+        android:textColor="@color/dark_grey_text"
         android:textSize="16sp" />
 
     <org.smartregister.view.customcontrols.CustomFontTextView
@@ -20,9 +20,10 @@
         android:layout_centerHorizontal="true"
         android:layout_weight="2.6"
         android:gravity="center_horizontal"
+        android:paddingLeft="0dp"
         android:text="Header 2"
         android:textAllCaps="true"
-        android:textColor="@color/dark_grey"
+        android:textColor="@color/dark_grey_text"
         android:textSize="16sp"
         android:visibility="gone" />
 
@@ -34,9 +35,10 @@
         android:layout_centerHorizontal="true"
         android:layout_weight="2.6"
         android:gravity="center_horizontal"
+        android:paddingLeft="0dp"
         android:text="Header 3"
         android:textAllCaps="true"
-        android:textColor="@color/dark_grey"
+        android:textColor="@color/dark_grey_text"
         android:textSize="16sp"
         android:visibility="gone" />
 </merge>

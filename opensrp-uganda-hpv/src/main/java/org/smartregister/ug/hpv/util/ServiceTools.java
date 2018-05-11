@@ -5,7 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 
 import org.smartregister.ug.hpv.application.HpvApplication;
-import org.smartregister.ug.hpv.application.HpvApplication;
+import org.smartregister.ug.hpv.receiver.AlarmReceiver;
+import org.smartregister.ug.hpv.service.intent.SyncIntentService;
 
 import java.util.List;
 
@@ -37,5 +38,28 @@ public class ServiceTools {
             HpvApplication.getInstance().startService(intent);
         }
 
+    }
+
+    public static void startSyncService(Context context) {
+        if (context == null) {
+            return;
+        }
+
+        Intent intent = new Intent(context, SyncIntentService.class);
+        context.startService(intent);
+
+    }
+
+    public static void startService(Context context, Class serviceClass, boolean wakeup) {
+        if (context == null || serviceClass == null) {
+            return;
+        }
+
+        Intent intent = new Intent(context, serviceClass);
+        if (wakeup) {
+            AlarmReceiver.startWakefulService(context, intent);
+        } else {
+            context.startService(intent);
+        }
     }
 }

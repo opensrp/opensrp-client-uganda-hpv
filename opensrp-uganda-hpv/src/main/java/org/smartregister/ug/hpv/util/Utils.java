@@ -6,10 +6,14 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.widget.Toast;
+
+import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
 
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
@@ -40,6 +44,10 @@ public class Utils {
 
     }
 
+    public static void showShortToast(Context context, String message) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+
+    }
 
     public static void saveLanguage(String language) {
         AllSharedPreferences allSharedPreferences = new AllSharedPreferences(PreferenceManager.getDefaultSharedPreferences(HpvApplication.getInstance().getApplicationContext()));
@@ -70,6 +78,15 @@ public class Utils {
 
     public static void postEvent(BaseEvent event) {
         EventBus.getDefault().post(event);
+    }
+
+    public static void postStickyEvent(BaseEvent event) {//Each Sticky event must be manually cleaned by calling Utils.removeStickyEvent after handling
+        EventBus.getDefault().postSticky(event);
+    }
+
+    public static void removeStickyEvent(BaseEvent event) {
+        EventBus.getDefault().removeStickyEvent(event);
+
     }
 
     public static <T, E> T getKeyByValue(Map<T, E> map, E value) {
@@ -162,6 +179,36 @@ public class Utils {
         map.putAll(extend);
     }
 
+    public static String getFormattedAgeString(String dobString) {
+        String formattedAge = "";
+        if (!TextUtils.isEmpty(dobString)) {
+            DateTime dateTime = new DateTime(dobString);
+            Date dob = dateTime.toDate();
+            long timeDiff = Calendar.getInstance().getTimeInMillis() - dob.getTime();
 
+            if (timeDiff >= 0) {
+                formattedAge = DateUtil.getDuration(timeDiff);
+            }
+        }
+        return formattedAge.contains("y") ? formattedAge.substring(0, formattedAge.indexOf('y')) : formattedAge;
+    }
 
+    public static String getFormattedPhoneNumber(String phoneNumber_) {
+        if (phoneNumber_ != null) {
+            String phoneNumber = phoneNumber_.startsWith("0") ? phoneNumber_.substring(1) : phoneNumber_;
+            String[] tokens = Iterables.toArray(Splitter.fixedLength(3).split(phoneNumber), String.class);
+            return "256-" + StringUtils.join(tokens, "-");
+        } else {
+            return "";
+        }
+
+    }
+
+    public static boolean isEmptyMap(Map map) {
+        return map == null || map.isEmpty();
+    }
+
+    public static boolean isEmptyCollection(Collection collection) {
+        return collection == null || collection.isEmpty();
+    }
 }

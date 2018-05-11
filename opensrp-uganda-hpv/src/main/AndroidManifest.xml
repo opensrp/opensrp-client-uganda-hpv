@@ -9,9 +9,10 @@
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
 
     <application
@@ -26,7 +27,7 @@
             android:name=".activity.LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Login"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize">
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -56,6 +57,13 @@
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
+        <activity
+            android:name=".activity.PatientDetailActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
@@ -66,9 +74,18 @@
                 android:resource="@xml/captured_images_path" />
         </provider>
 
-        <service android:name=".service.SyncService" />
+        <service android:name=".service.intent.SyncIntentService" />
+        <service android:name=".service.intent.ValidateIntentService" />
+        <service android:name=".service.intent.ExtendedSyncIntentService" />
         <service android:name=".service.PullUniqueIdsIntentService" />
-        <receiver android:name=".receiver.HpvSyncBroadcastReceiver" />
+        <service android:name=".service.HpvImageUploadSyncService" />
+
+        <receiver android:name=".receiver.AlarmReceiver" />
+        <receiver android:name=".receiver.OnBootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
 
     </application>
 

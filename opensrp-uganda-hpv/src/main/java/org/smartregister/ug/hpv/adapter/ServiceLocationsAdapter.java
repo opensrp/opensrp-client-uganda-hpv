@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.smartregister.ug.hpv.R;
-import org.smartregister.ug.hpv.util.JsonFormUtils;
+import org.smartregister.ug.hpv.helper.LocationHelper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,7 +55,7 @@ public class ServiceLocationsAdapter extends BaseAdapter {
             view.setId(position + 2321);
 
             TextView text1 = (TextView) view.findViewById(android.R.id.text1);
-            text1.setText(JsonFormUtils.getOpenMrsReadableName(locationNames.get(position)));
+            text1.setText(LocationHelper.getInstance().getOpenMrsReadableName(locationNames.get(position)));
             views.put(locationNames.get(position), view);
         }
 
@@ -91,5 +91,9 @@ public class ServiceLocationsAdapter extends BaseAdapter {
 
     public String getLocationAt(int position) {
         return locationNames.get(position);
+    }
+
+    public ArrayList<String> getLocationNames() {
+        return locationNames;
     }
 }

@@ -13,7 +13,7 @@ import org.smartregister.domain.db.EventClient;
 import org.smartregister.repository.EventClientRepository;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.ug.hpv.application.HpvApplication;
-import org.smartregister.ug.hpv.service.SyncService;
+import org.smartregister.ug.hpv.service.intent.SyncIntentService;
 import org.smartregister.util.Utils;
 
 import java.util.ArrayList;
@@ -126,7 +126,7 @@ public class ECSyncHelper implements PrefsHelper {
             Long lastSyncDatetime = getLastSyncTimeStamp();
             Log.i(ECSyncHelper.class.getName(), "LAST SYNC DT :" + new DateTime(lastSyncDatetime));
 
-            String url = baseUrl + SEARCH_URL + "?" + filter + "=" + filterValue + "&serverVersion=" + lastSyncDatetime + "&limit=" + SyncService.EVENT_PULL_LIMIT;
+            String url = baseUrl + SEARCH_URL + "?" + filter + "=" + filterValue + "&serverVersion=" + lastSyncDatetime + "&limit=" + SyncIntentService.EVENT_PULL_LIMIT;
             Log.i(ECSyncHelper.class.getName(), "URL: " + url);
 
             if (httpAgent == null) {
@@ -145,9 +145,9 @@ public class ECSyncHelper implements PrefsHelper {
         }
     }
 
-    public List<JSONObject> allEvents(long startSyncTimeStamp, long lastSyncTimeStamp) {
+    public List<EventClient> allEvents(long startSyncTimeStamp, long lastSyncTimeStamp) {
         try {
-            return eventClientRepository.getEvents(startSyncTimeStamp, lastSyncTimeStamp);
+            return eventClientRepository.fetchEventClients(startSyncTimeStamp, lastSyncTimeStamp);
         } catch (Exception e) {
             Log.e(getClass().getName(), "Exception", e);
         }
