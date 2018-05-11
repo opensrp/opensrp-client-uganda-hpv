@@ -7,11 +7,7 @@ import android.content.Intent;
 import org.smartregister.ug.hpv.application.HpvApplication;
 
 public class OnBootReceiver extends BroadcastReceiver {
-    private final Intent serviceIntent;
-
-    {
-        serviceIntent = new Intent();
-    }
+    private final Intent serviceIntent = new Intent();
 
     @Override
     public void onReceive(Context context, Intent intent) {
