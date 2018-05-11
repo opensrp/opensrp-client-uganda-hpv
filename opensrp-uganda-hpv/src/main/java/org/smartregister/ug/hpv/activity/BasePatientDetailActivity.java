@@ -42,7 +42,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -54,7 +53,6 @@ import util.UgandaHpvConstants;
 
 public abstract class BasePatientDetailActivity extends BaseActivity implements VaccinationActionListener {
     private static final String TAG = BasePatientDetailActivity.class.getCanonicalName();
-    protected Map<String, String> patientDedtails;
     protected File currentfile;
     private static final int REQUEST_TAKE_PHOTO = 1;
     private ArrayList<VaccineGroup> vaccineGroups;
@@ -62,11 +60,8 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
 
     @Bind(R.id.view_pager)
     protected OpenSRPViewPager mPager;
-
     private CommonPersonObjectClient commonPersonObjectClient;
-
     private LocationPickerView locationPickerView;
-
     private Fragment mBaseFragment;
 
 
@@ -75,7 +70,6 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
         ButterKnife.bind(this);
-
         commonPersonObjectClient = (CommonPersonObjectClient) getIntent().getSerializableExtra(Constants.INTENT_KEY.CLIENT_OBJECT);
 
         vaccineGroups = new ArrayList<>();
