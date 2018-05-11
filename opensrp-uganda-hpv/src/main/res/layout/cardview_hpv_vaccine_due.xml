@@ -3,10 +3,10 @@
     android:id="@+id/clientFollowupCardView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="5dp"
+    android:layout_marginBottom="10dp"
     android:background="@drawable/border"
     android:orientation="vertical"
-    android:padding="10dp">
+    android:padding="15dp">
 
     <org.smartregister.view.customcontrols.CustomFontTextView
         android:id="@+id/followup"
@@ -45,7 +45,8 @@
         android:paddingLeft="0dp"
         android:text="Dose 1 given 10/3/2017"
         android:textColor="@color/dark_grey_text"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        android:visibility="gone" />
 
     <org.smartregister.view.customcontrols.CustomFontTextView
         android:id="@+id/locationVaccineGivenTextView"
@@ -55,7 +56,8 @@
         android:paddingLeft="0dp"
         android:text="Location: Masaka HCII"
         android:textColor="@color/dark_grey_text"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        android:visibility="gone" />
 
 
 </LinearLayout>

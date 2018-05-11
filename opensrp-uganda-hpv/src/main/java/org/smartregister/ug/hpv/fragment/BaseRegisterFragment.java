@@ -3,6 +3,7 @@ package org.smartregister.ug.hpv.fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -28,6 +29,7 @@ import org.smartregister.cursoradapter.CursorSortOption;
 import org.smartregister.cursoradapter.SecuredNativeSmartRegisterCursorAdapterFragment;
 import org.smartregister.cursoradapter.SmartRegisterPaginatedCursorAdapter;
 import org.smartregister.cursoradapter.SmartRegisterQueryBuilder;
+import org.smartregister.domain.FetchStatus;
 import org.smartregister.provider.SmartRegisterClientsProvider;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.ug.hpv.R;
@@ -35,11 +37,14 @@ import org.smartregister.ug.hpv.activity.BaseRegisterActivity;
 import org.smartregister.ug.hpv.activity.HomeRegisterActivity;
 import org.smartregister.ug.hpv.activity.PatientDetailActivity;
 import org.smartregister.ug.hpv.domain.DoseStatus;
+import org.smartregister.ug.hpv.event.SyncEvent;
 import org.smartregister.ug.hpv.helper.LocationHelper;
 import org.smartregister.ug.hpv.provider.HomeRegisterProvider;
+import org.smartregister.ug.hpv.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.ug.hpv.servicemode.HpvServiceModeOption;
 import org.smartregister.ug.hpv.util.Constants;
 import org.smartregister.ug.hpv.util.DBConstants;
+import org.smartregister.ug.hpv.util.ServiceTools;
 import org.smartregister.ug.hpv.util.Utils;
 import org.smartregister.ug.hpv.view.LocationPickerView;
 import org.smartregister.view.activity.SecuredNativeSmartRegisterActivity;
@@ -53,6 +58,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import util.UgandaHpvConstants;
+
 import static android.view.View.GONE;
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
@@ -64,7 +71,7 @@ import static org.smartregister.ug.hpv.util.Constants.VIEW_CONFIGS.COMMON_REGIST
  * Created by ndegwamartin on 14/03/2018.
  */
 
-public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCursorAdapterFragment {
+public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCursorAdapterFragment implements SyncStatusBroadcastReceiver.SyncStatusListener {
 
     protected Set<org.smartregister.configurableviews.model.View> visibleColumns = new TreeSet<>();
     protected CommonPersonObjectClient patient;
@@ -75,6 +82,8 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
     private LocationPickerView facilitySelection;
 
     private static final String TAG = BaseRegisterFragment.class.getCanonicalName();
+    private Snackbar syncStatusSnackbar;
+    private View rootView;
 
     @Override
     protected SecuredNativeSmartRegisterActivity.DefaultOptionsProvider getDefaultOptionsProvider() {
@@ -138,7 +147,8 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.register_activity, container, false);
+        View view = inflater.inflate(R.layout.activity_register, container, false);
+        rootView = view;//handle to the root
 
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.register_toolbar);
         AppCompatActivity activity = ((AppCompatActivity) getActivity());
@@ -171,6 +181,12 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
         if (getSearchView() != null) {
             getSearchView().removeTextChangedListener(textWatcher);
             getSearchView().addTextChangedListener(textWatcher);
+        }
+    }
+
+    public void setSearchTerm(String searchText) {
+        if (getSearchView() != null) {
+            getSearchView().setText(searchText);
         }
     }
 
@@ -228,6 +244,10 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
     @Override
     protected void onResumption() {
         super.onResumption();
+        renderView();
+    }
+
+    private void renderView() {
         getDefaultOptionsProvider();
         if (isPausedOrRefreshList()) {
             initializeQueries();
@@ -348,7 +368,14 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
     }
 
     @Override
-    protected void onCreation() {//Implement Abstract Method
+    protected void onCreation() {
+        Bundle extras = getActivity().getIntent().getExtras();
+        if (extras != null) {
+            boolean isRemote = extras.getBoolean(UgandaHpvConstants.IS_REMOTE_LOGIN);
+            if (isRemote) {
+                startSync();
+            }
+        }
     }
 
     protected abstract String getMainCondition();
@@ -414,6 +441,86 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
     public LocationPickerView getFacilitySelection() {
         return facilitySelection;
     }
+
+
+    private void registerSyncStatusBroadcastReceiver() {
+        SyncStatusBroadcastReceiver.getInstance().addSyncStatusListener(this);
+    }
+
+    private void unregisterSyncStatusBroadcastReceiver() {
+        SyncStatusBroadcastReceiver.getInstance().removeSyncStatusListener(this);
+    }
+
+    @Override
+    public void onSyncInProgress(FetchStatus fetchStatus) {
+        Utils.postEvent(new SyncEvent(fetchStatus));
+        refreshSyncStatusViews(fetchStatus);
+    }
+
+    @Override
+    public void onSyncStart() {
+        refreshSyncStatusViews(null);
+    }
+
+
+    @Override
+    public void onSyncComplete(FetchStatus fetchStatus) {
+        refreshSyncStatusViews(fetchStatus);
+    }
+
+    private void refreshSyncStatusViews(FetchStatus fetchStatus) {
+
+
+        if (SyncStatusBroadcastReceiver.getInstance().isSyncing()) {
+            if (syncStatusSnackbar != null) syncStatusSnackbar.dismiss();
+            syncStatusSnackbar = Snackbar.make(rootView, R.string.syncing,
+                    Snackbar.LENGTH_LONG);
+            syncStatusSnackbar.show();
+        } else {
+            if (fetchStatus != null) {
+                if (syncStatusSnackbar != null) syncStatusSnackbar.dismiss();
+                if (fetchStatus.equals(FetchStatus.fetchedFailed)) {
+                    syncStatusSnackbar = Snackbar.make(rootView, R.string.sync_failed, Snackbar.LENGTH_INDEFINITE);
+                    syncStatusSnackbar.setActionTextColor(getResources().getColor(R.color.snackbar_action_color));
+                    syncStatusSnackbar.setAction(R.string.retry, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            startSync();
+                        }
+                    });
+                } else if (fetchStatus.equals(FetchStatus.fetched)
+                        || fetchStatus.equals(FetchStatus.nothingFetched)) {
+
+                        setRefreshList(true);
+                        renderView();
+
+                    syncStatusSnackbar = Snackbar.make(rootView, R.string.sync_complete, Snackbar.LENGTH_LONG);
+                } else if (fetchStatus.equals(FetchStatus.noConnection)) {
+                    syncStatusSnackbar = Snackbar.make(rootView, R.string.sync_failed_no_internet, Snackbar.LENGTH_LONG);
+                }
+                syncStatusSnackbar.show();
+            }
+
+        }
+
+    }
+
+    private void startSync() {
+        ServiceTools.startSyncService(getActivity());
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        registerSyncStatusBroadcastReceiver();
+    }
+
+    @Override
+    public void onPause() {
+        unregisterSyncStatusBroadcastReceiver();
+        super.onPause();
+    }
+
 }
 
 

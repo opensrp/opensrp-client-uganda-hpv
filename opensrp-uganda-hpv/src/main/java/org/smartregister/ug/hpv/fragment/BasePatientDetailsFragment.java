@@ -1,12 +1,15 @@
 package org.smartregister.ug.hpv.fragment;
 
 import android.content.Intent;
+import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
@@ -24,8 +27,10 @@ import org.smartregister.ug.hpv.helper.LocationHelper;
 import org.smartregister.ug.hpv.helper.view.RenderContactCardHelper;
 import org.smartregister.ug.hpv.helper.view.RenderPatientDemographicCardHelper;
 import org.smartregister.ug.hpv.helper.view.RenderPatientFollowupCardHelper;
+import org.smartregister.ug.hpv.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.ug.hpv.util.Constants;
 import org.smartregister.ug.hpv.util.JsonFormUtils;
+import org.smartregister.ug.hpv.util.ServiceTools;
 import org.smartregister.ug.hpv.util.Utils;
 import org.smartregister.ug.hpv.view.LocationPickerView;
 import org.smartregister.view.fragment.SecuredFragment;
@@ -35,12 +40,14 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
+import util.UgandaHpvConstants;
+
 
 /**
  * Created by ndegwamartin on 06/12/2017.
  */
 
-public abstract class BasePatientDetailsFragment extends SecuredFragment implements View.OnClickListener {
+public abstract class BasePatientDetailsFragment extends SecuredFragment implements View.OnClickListener, SyncStatusBroadcastReceiver.SyncStatusListener {
 
     protected CommonPersonObjectClient commonPersonObjectClient;
     protected Map<String, String> languageTranslations;
@@ -48,6 +55,9 @@ public abstract class BasePatientDetailsFragment extends SecuredFragment impleme
     private LocationPickerView facilitySelection;
     private static final int REQUEST_CODE_GET_JSON = 3432;
     private RenderPatientDemographicCardHelper renderPatientDemographicCardHelper;
+    private RenderContactCardHelper renderContactHelper;
+    private Snackbar syncStatusSnackbar;
+    private View rootView;
 
 
     protected abstract void setClient(CommonPersonObjectClient commonPersonObjectClient);
@@ -73,7 +83,7 @@ public abstract class BasePatientDetailsFragment extends SecuredFragment impleme
 
     protected void renderContactView(View view) {
         CommonPersonObjectClient client = (CommonPersonObjectClient) view.getTag();
-        RenderContactCardHelper renderContactHelper = new RenderContactCardHelper(getActivity(), client);
+        renderContactHelper = new RenderContactCardHelper(getActivity(), client);
         renderContactHelper.renderView(view);
     }
 
@@ -109,23 +119,49 @@ public abstract class BasePatientDetailsFragment extends SecuredFragment impleme
 
     @Override
     protected void onCreation() {
-        //Overrides
+        Bundle extras = getActivity().getIntent().getExtras();
+        if (extras != null) {
+            boolean isRemote = extras.getBoolean(UgandaHpvConstants.IS_REMOTE_LOGIN);
+            if (isRemote) {
+                startSync();
+            }
+        }
     }
 
     @Override
     protected void onResumption() {
+        //Overrides
     }
 
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Override
+    public void onResume() {
+        super.onResume();
+        EventBus.getDefault().register(this);
+        registerSyncStatusBroadcastReceiver();
+    }
+
+    @Override
+    public void onPause() {
+        EventBus.getDefault().unregister(this);
+        unregisterSyncStatusBroadcastReceiver();
+        super.onPause();
+    }
+
+
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void refreshView(JsonFormSaveCompleteEvent jsonFormSaveCompleteEvent) {
-        //Refres on form save
+        if (jsonFormSaveCompleteEvent != null) {
+            Utils.removeStickyEvent(jsonFormSaveCompleteEvent);
+            renderContactHelper.refreshContacts(commonPersonObjectClient.getCaseId());
+        }
 
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void removeFromRegister(PatientRemovedEvent event) {
         if (event != null) {
+            Utils.removeStickyEvent(event);
             startActivity(new Intent(getActivity(), HomeRegisterActivity.class));
         }
 
@@ -138,8 +174,9 @@ public abstract class BasePatientDetailsFragment extends SecuredFragment impleme
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void refreshView(PictureUpdatedEvent event) {
+        Utils.removeStickyEvent(event);
         if (event != null && renderPatientDemographicCardHelper != null) {
             renderPatientDemographicCardHelper.updateProfilePicture(null);
         }
@@ -148,6 +185,8 @@ public abstract class BasePatientDetailsFragment extends SecuredFragment impleme
 
     @Override
     public void onClick(View view) {
+
+
         try {
 
             String locationId = LocationHelper.getInstance().getOpenMrsLocationId(facilitySelection.getSelectedItem());
@@ -159,7 +198,6 @@ public abstract class BasePatientDetailsFragment extends SecuredFragment impleme
         }
 
     }
-
 
     @Override
     public void startFormActivity(String formName, String entityId, String metaData) {
@@ -184,6 +222,7 @@ public abstract class BasePatientDetailsFragment extends SecuredFragment impleme
         facilitySelection.init();
 
         setUpButtons(rootView);
+        this.rootView = rootView;
     }
 
     private void setUpButtons(View rootView) {
@@ -315,5 +354,66 @@ public abstract class BasePatientDetailsFragment extends SecuredFragment impleme
 
     }
 
+    private void registerSyncStatusBroadcastReceiver() {
+        SyncStatusBroadcastReceiver.getInstance().addSyncStatusListener(this);
+    }
+
+    private void unregisterSyncStatusBroadcastReceiver() {
+        SyncStatusBroadcastReceiver.getInstance().removeSyncStatusListener(this);
+    }
+
+    @Override
+    public void onSyncInProgress(FetchStatus fetchStatus) {
+        Utils.postEvent(new SyncEvent(fetchStatus));
+        refreshSyncStatusViews(fetchStatus);
+    }
+
+    @Override
+    public void onSyncStart() {
+        refreshSyncStatusViews(null);
+    }
+
+
+    @Override
+    public void onSyncComplete(FetchStatus fetchStatus) {
+        refreshSyncStatusViews(fetchStatus);
+    }
+
+    private void refreshSyncStatusViews(FetchStatus fetchStatus) {
+
+
+        if (SyncStatusBroadcastReceiver.getInstance().isSyncing()) {
+            if (syncStatusSnackbar != null) syncStatusSnackbar.dismiss();
+            syncStatusSnackbar = Snackbar.make(rootView, R.string.syncing,
+                    Snackbar.LENGTH_LONG);
+            syncStatusSnackbar.show();
+        } else {
+            if (fetchStatus != null) {
+                if (syncStatusSnackbar != null) syncStatusSnackbar.dismiss();
+                if (fetchStatus.equals(FetchStatus.fetchedFailed)) {
+                    syncStatusSnackbar = Snackbar.make(rootView, R.string.sync_failed, Snackbar.LENGTH_INDEFINITE);
+                    syncStatusSnackbar.setActionTextColor(getResources().getColor(R.color.snackbar_action_color));
+                    syncStatusSnackbar.setAction(R.string.retry, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            startSync();
+                        }
+                    });
+                } else if (fetchStatus.equals(FetchStatus.fetched)
+                        || fetchStatus.equals(FetchStatus.nothingFetched)) {
+                    syncStatusSnackbar = Snackbar.make(rootView, R.string.sync_complete, Snackbar.LENGTH_LONG);
+                } else if (fetchStatus.equals(FetchStatus.noConnection)) {
+                    syncStatusSnackbar = Snackbar.make(rootView, R.string.sync_failed_no_internet, Snackbar.LENGTH_LONG);
+                }
+                syncStatusSnackbar.show();
+            }
+
+        }
+
+    }
+
+    private void startSync() {
+        ServiceTools.startSyncService(getActivity());
+    }
 
 }

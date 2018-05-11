@@ -1,0 +1,62 @@
+[
+  {
+    "name": "Registration",
+    "id": "registration",
+    "vaccines": [
+      {
+        "name": "HPV 1",
+        "type": "HPV",
+        "openmrs_date": {
+          "parent_entity": "159708AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+          "entity": "concept",
+          "entity_id": "1410AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+        },
+        "openmrs_calculate": {
+          "parent_entity": "159708AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+          "entity": "concept",
+          "entity_id": "1418AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+          "calculation": 1
+        },
+        "schedule": {
+          "due": [
+            {
+              "reference": "dose_one_date",
+              "offset": "+0d",
+              "window": "+10d"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "name": "6 months",
+    "id": "six_mths",
+    "vaccines": [
+      {
+        "name": "HPV 2",
+        "type": "HPV",
+        "openmrs_date": {
+          "parent_entity": "159708AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+          "entity": "concept",
+          "entity_id": "1410AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+        },
+        "openmrs_calculate": {
+          "parent_entity": "159708AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+          "entity": "concept",
+          "entity_id": "1418AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+          "calculation": 2
+        },
+        "schedule": {
+          "due": [
+            {
+              "reference": "date_dose_one_given",
+              "offset": "+6m",
+              "window": "+10d"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

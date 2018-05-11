@@ -23,6 +23,7 @@ import org.smartregister.immunization.listener.VaccinationActionListener;
 import org.smartregister.immunization.repository.VaccineRepository;
 import org.smartregister.immunization.util.VaccinatorUtils;
 import org.smartregister.immunization.view.VaccineGroup;
+import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.application.HpvApplication;
 import org.smartregister.ug.hpv.helper.LocationHelper;
@@ -170,6 +171,10 @@ public class VaccineBaseActivity extends AppCompatActivity implements Vaccinatio
 
         locationPickerView = (LocationPickerView) findViewById(R.id.facility_selection);
         vaccine.setLocationId(LocationHelper.getInstance().getOpenMrsLocationId(locationPickerView.getSelectedItem()));
+
+        AllSharedPreferences sharedPreferences = getOpenSRPContext().allSharedPreferences();
+        vaccine.setTeam(sharedPreferences.fetchDefaultTeam(sharedPreferences.fetchRegisteredANM()));
+        vaccine.setTeamId(sharedPreferences.fetchDefaultTeamId(sharedPreferences.fetchRegisteredANM()));
 
         String lastChar = vaccine.getName().substring(vaccine.getName().length() - 1);
         if (StringUtils.isNumeric(lastChar)) {

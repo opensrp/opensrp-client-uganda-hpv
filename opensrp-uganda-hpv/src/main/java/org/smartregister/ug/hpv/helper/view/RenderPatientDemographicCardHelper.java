@@ -92,7 +92,13 @@ public class RenderPatientDemographicCardHelper extends BaseRenderHelper impleme
         } else {
             int backgroundResource = photo.getResourceId();
             profileImageView.setBackground(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? context.getDrawable(backgroundResource) : ContextCompat.getDrawable(context, backgroundResource));
+
+
         }
+        // if (org.smartregister.util.Utils.getValue(commonPersonObjectClient.getColumnmaps(), "has_profile_image", false).equals("true")) {
+        profileImageView.setTag(org.smartregister.R.id.entity_id, commonPersonObjectClient.entityId());
+        DrishtiApplication.getCachedImageLoaderInstance().getImageByClientId(commonPersonObjectClient.entityId(), OpenSRPImageLoader.getStaticImageListener(profileImageView, 0, 0));
+        // }
     }
 
     @Override
@@ -105,18 +111,12 @@ public class RenderPatientDemographicCardHelper extends BaseRenderHelper impleme
     }
 
     public void updateProfilePicture(Gender gender) {
-        if (isDataOk()) {
-
-            if (commonPersonObjectClient.entityId() != null) { //image already in local storage most likey ):
-                //set profile image by passing the client id.If the image doesn't exist in the image repository then download and save locally
-                profileImageView.setTag(org.smartregister.R.id.entity_id, commonPersonObjectClient.entityId());
-                DrishtiApplication.getCachedImageLoaderInstance().getImageByClientId(commonPersonObjectClient.entityId(), OpenSRPImageLoader.getStaticImageListener(profileImageView, ImageUtils.getProfileImageResourceIDentifier(), ImageUtils.getProfileImageResourceIDentifier()));
-
-            }
-
+        if (isDataOk() && commonPersonObjectClient.entityId() != null) { //image already in local storage most likey ):
+            //set profile image by passing the client id.If the image doesn't exist in the image repository then download and save locally
+            profileImageView.setTag(org.smartregister.R.id.entity_id, commonPersonObjectClient.entityId());
+            DrishtiApplication.getCachedImageLoaderInstance().getImageByClientId(commonPersonObjectClient.entityId(), OpenSRPImageLoader.getStaticImageListener(profileImageView, ImageUtils.getProfileImageResourceIDentifier(), ImageUtils.getProfileImageResourceIDentifier()));
         }
+
         refreshProfileImage(profileImageView);
     }
-
-
 }

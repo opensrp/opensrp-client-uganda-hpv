@@ -8,5 +8,4 @@
     <stroke
         android:width="0.3dp"
         android:color="@color/vaccine_blue_bg_stk" />
-    <corners android:radius="2dp" />
 </shape>

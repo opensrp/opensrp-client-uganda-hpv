@@ -42,11 +42,12 @@ import org.smartregister.ug.hpv.activity.HomeRegisterActivity;
 import org.smartregister.ug.hpv.activity.HpvJsonFormActivity;
 import org.smartregister.ug.hpv.application.HpvApplication;
 import org.smartregister.ug.hpv.domain.FormLocation;
+import org.smartregister.ug.hpv.event.JsonFormSaveCompleteEvent;
 import org.smartregister.ug.hpv.event.PatientRemovedEvent;
 import org.smartregister.ug.hpv.helper.ECSyncHelper;
 import org.smartregister.ug.hpv.helper.LocationHelper;
 import org.smartregister.ug.hpv.repository.UniqueIdRepository;
-import org.smartregister.ug.hpv.sync.HPVClientProcessorForJava;
+import org.smartregister.ug.hpv.sync.HpvClientProcessorForJava;
 import org.smartregister.ug.hpv.view.LocationPickerView;
 import org.smartregister.util.AssetHandler;
 import org.smartregister.util.DateTimeTypeConverter;
@@ -86,10 +87,7 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
     public static final String encounterType = "Update Birth Registration";
     private static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
-    private static final String LOCATION_HIERARCHY = "locationsHierarchy";
     public static final String ENCOUNTER_LOCATION = "encounter_location";
-    private static final String MAP = "map";
-
 
     public static final Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").registerTypeAdapter(DateTime.class, new DateTimeTypeConverter()).create();
 
@@ -275,7 +273,7 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
             Log.e(TAG, "", e);
         } finally {
 
-            Utils.postEvent(new PatientRemovedEvent());
+            Utils.postStickyEvent(new PatientRemovedEvent());
         }
     }
 
@@ -534,7 +532,8 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
                     new TypeToken<List<String>>() {}.getType());
 
             String upToFacilitiesString = AssetHandler.javaToJsonString(upToFacilities,
-                    new TypeToken<List<FormLocation>>() {}.getType());
+                    new TypeToken<List<FormLocation>>() {
+                    }.getType());
 
             for (int i = 0; i < questions.length(); i++) {
                 if (questions.getJSONObject(i).getString(Constants.KEY.KEY).equalsIgnoreCase(LocationHelper.SCHOOL)) {
@@ -818,6 +817,8 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
                 childSmartRegisterActivity.refreshList(FetchStatus.fetched);
                 childSmartRegisterActivity.hideProgressDialog();
             }
+
+            Utils.postStickyEvent(new JsonFormSaveCompleteEvent());
         }
 
         @Override
@@ -942,7 +943,7 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
                     saveImage(context, providerId, entityId, imageLocation);
                 }
 
-                HPVClientProcessorForJava.getInstance(context).processClient(ecUpdater.getEvents(lastSyncDate, BaseRepository.TYPE_Unsynced));
+                HpvClientProcessorForJava.getInstance(context).processClient(ecUpdater.getEvents(lastSyncDate, BaseRepository.TYPE_Unsynced));
                 allSharedPreferences.saveLastUpdatedAtDate(lastSyncDate.getTime());
 
             } catch (Exception e) {
