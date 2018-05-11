@@ -393,6 +393,7 @@ public class HpvClientProcessorForJava extends ClientProcessorForJava {
     public String[] getOpenmrsGenIds() {
         return new String[]{DBConstants.KEY.OPENSRP_ID};
     }
+
     @Override
     public void updateFTSsearch(String tableName, String entityId, ContentValues contentValues) {
 
