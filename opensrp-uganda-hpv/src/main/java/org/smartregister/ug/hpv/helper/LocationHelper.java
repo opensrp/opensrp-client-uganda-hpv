@@ -42,8 +42,8 @@ public class LocationHelper {
 
     static {
         ALLOWED_LEVELS = new ArrayList<>();
-        ALLOWED_LEVELS.add("Health Facility");
-        ALLOWED_LEVELS.add("Zone");
+        ALLOWED_LEVELS.add(DEFAULT_LOCATION_LEVEL);
+        ALLOWED_LEVELS.add(SCHOOL);
     }
 
     public static LocationHelper getInstance() {

@@ -92,8 +92,16 @@ public class Utils {
     }
 
     public static void postEvent(BaseEvent event) {
-        myEvent = event;
         EventBus.getDefault().post(event);
+    }
+
+    public static void postStickyEvent(BaseEvent event) {//Each Sticky event must be manually cleaned by calling Utils.removeStickyEvent after handling
+        EventBus.getDefault().postSticky(event);
+    }
+
+    public static void removeStickyEvent(BaseEvent event) {
+        EventBus.getDefault().removeStickyEvent(event);
+
     }
 
     public static <T, E> T getKeyByValue(Map<T, E> map, E value) {
@@ -201,9 +209,13 @@ public class Utils {
     }
 
     public static String getFormattedPhoneNumber(String phoneNumber_) {
-        String phoneNumber = phoneNumber_.substring(1);
-        String[] tokens = Iterables.toArray(Splitter.fixedLength(3).split(phoneNumber), String.class);
-        return "256-" + StringUtils.join(tokens, "-");
+        if (phoneNumber_ != null) {
+            String phoneNumber = phoneNumber_.startsWith("0") ? phoneNumber_.substring(1) : phoneNumber_;
+            String[] tokens = Iterables.toArray(Splitter.fixedLength(3).split(phoneNumber), String.class);
+            return "256-" + StringUtils.join(tokens, "-");
+        } else {
+            return "";
+        }
 
     }
 

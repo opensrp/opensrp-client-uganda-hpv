@@ -12,6 +12,7 @@ import org.apache.commons.lang3.text.WordUtils;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.activity.BasePatientDetailActivity;
+import org.smartregister.ug.hpv.repository.PatientRepository;
 import org.smartregister.ug.hpv.util.Constants;
 import org.smartregister.ug.hpv.util.DBConstants;
 import org.smartregister.ug.hpv.util.JsonFormUtils;
@@ -26,6 +27,14 @@ import java.util.Map;
 
 public class RenderContactCardHelper extends BaseRenderHelper implements View.OnClickListener {
 
+    private TextView caretakerNameTextView;
+    private TextView caretakerContactTextView;
+    private TextView vhtNameTextView;
+    private TextView vhtContactTextView;
+
+    private RelativeLayout vhtContactWrapperView;
+    private View vhtTitleTextView;
+
     public RenderContactCardHelper(Context context, CommonPersonObjectClient client) {
         super(context, client);
     }
@@ -38,27 +47,38 @@ public class RenderContactCardHelper extends BaseRenderHelper implements View.On
             @Override
             public void run() {
                 Map<String, String> patientDetails = commonPersonObjectClient.getDetails();
-                TextView caretakerNameTextView = (TextView) view.findViewById(R.id.caretakerNameTextView);
+                caretakerNameTextView = (TextView) view.findViewById(R.id.caretakerNameTextView);
                 String fullName = patientDetails.get(DBConstants.KEY.CARETAKER_NAME);
                 caretakerNameTextView.setText(WordUtils.capitalizeFully(fullName));
 
-                TextView caretakerContactTextView = (TextView) view.findViewById(R.id.caretakerContactTextView);
+                caretakerContactTextView = (TextView) view.findViewById(R.id.caretakerContactTextView);
                 String caretakerContact = patientDetails.get(DBConstants.KEY.CARETAKER_PHONE);
                 caretakerContactTextView.setTag(R.id.CONTACT, caretakerContact);
                 caretakerContactTextView.setText(Utils.getFormattedPhoneNumber(caretakerContact));
                 caretakerContactTextView.setOnClickListener(helperContext);
 
-                TextView vhtNameTextView = (TextView) view.findViewById(R.id.vhtNameTextView);
+                vhtNameTextView = (TextView) view.findViewById(R.id.vhtNameTextView);
                 String vhtName = patientDetails.get(DBConstants.KEY.VHT_NAME);
                 vhtNameTextView.setText(WordUtils.capitalizeFully(vhtName));
 
-                TextView vhtContactTextView = (TextView) view.findViewById(R.id.vhtContactTextView);
+                vhtContactTextView = (TextView) view.findViewById(R.id.vhtContactTextView);
                 String vhtContact = patientDetails.get(DBConstants.KEY.VHT_PHONE);
-                vhtContactTextView.setText(Utils.getFormattedPhoneNumber(vhtContact));
 
-                RelativeLayout vhtContactNumberView = (RelativeLayout) view.findViewById(R.id.vhtContactNumberView);
-                vhtContactNumberView.setTag(R.id.CONTACT, caretakerContact);
-                vhtContactNumberView.setOnClickListener(helperContext);
+
+                vhtContactWrapperView = (RelativeLayout) view.findViewById(R.id.vhtContactWrapperView);
+                vhtTitleTextView = view.findViewById(R.id.vhtTitleTextView);
+
+                if (vhtContact != null) {
+                    vhtContactTextView.setText(Utils.getFormattedPhoneNumber(vhtContact));
+
+                    RelativeLayout vhtContactNumberView = (RelativeLayout) view.findViewById(R.id.vhtContactNumberView);
+                    vhtContactNumberView.setTag(R.id.CONTACT, caretakerContact);
+                    vhtContactNumberView.setOnClickListener(helperContext);
+                } else {
+
+                    vhtContactWrapperView.setVisibility(View.GONE);
+                    vhtTitleTextView.setVisibility(View.GONE);
+                }
 
 
                 TextView addContactView = (TextView) view.findViewById(R.id.add_contact);
@@ -66,9 +86,7 @@ public class RenderContactCardHelper extends BaseRenderHelper implements View.On
                 addContactView.setTag(Constants.ADD_CONTACT);
                 addContactView.setOnClickListener(helperContext);
             }
-
         });
-
     }
 
     @Override
@@ -81,7 +99,6 @@ public class RenderContactCardHelper extends BaseRenderHelper implements View.On
             ((BasePatientDetailActivity) context).startFormActivity(Constants.JSON_FORM.PATIENT_REGISTRATION, view.getTag(R.id.CLIENT_ID
             ).toString(), formMetadata);
 
-
         }
 
     }
@@ -89,5 +106,46 @@ public class RenderContactCardHelper extends BaseRenderHelper implements View.On
     private void launchPhoneDialer(String phoneNumber) {
         Intent intent = new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", phoneNumber, null));
         context.startActivity(intent);
+    }
+
+    public void refreshContacts(final String baseEntityId) {
+
+        final Handler mHandler = new Handler();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+
+                final Map<String, String> contactDetails = PatientRepository.getPatientContacts(baseEntityId);
+                contactDetails.toString();
+
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        caretakerNameTextView.setText(WordUtils.capitalizeFully(contactDetails.get(DBConstants.KEY.CARETAKER_NAME)));
+                        caretakerContactTextView.setText(Utils.getFormattedPhoneNumber(contactDetails.get(DBConstants.KEY.CARETAKER_PHONE)));
+                        //update common object to enable updated edit contacts content
+                        commonPersonObjectClient.getColumnmaps().put(DBConstants.KEY.CARETAKER_NAME, contactDetails.get(DBConstants.KEY.CARETAKER_NAME));
+                        commonPersonObjectClient.getColumnmaps().put(DBConstants.KEY.CARETAKER_PHONE, contactDetails.get(DBConstants.KEY.CARETAKER_PHONE));
+
+                        if (contactDetails.containsKey(DBConstants.KEY.VHT_PHONE) && contactDetails.get(DBConstants.KEY.VHT_PHONE) != null) {
+
+                            vhtNameTextView.setText(WordUtils.capitalizeFully(contactDetails.get(DBConstants.KEY.VHT_NAME)));
+                            vhtContactTextView.setText(Utils.getFormattedPhoneNumber(contactDetails.get(DBConstants.KEY.VHT_PHONE)));
+                            commonPersonObjectClient.getColumnmaps().put(DBConstants.KEY.VHT_NAME, contactDetails.get(DBConstants.KEY.VHT_NAME));
+                            commonPersonObjectClient.getColumnmaps().put(DBConstants.KEY.VHT_PHONE, contactDetails.get(DBConstants.KEY.VHT_PHONE));
+                            vhtContactWrapperView.setVisibility(View.VISIBLE);
+                            vhtTitleTextView.setVisibility(View.VISIBLE);
+
+                        }
+
+                    }
+                });
+            }
+        }).start();
+
+
     }
 }

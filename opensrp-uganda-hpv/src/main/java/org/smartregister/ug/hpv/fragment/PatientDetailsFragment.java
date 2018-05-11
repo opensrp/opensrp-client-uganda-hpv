@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.util.Constants;
+import org.smartregister.ug.hpv.view.LocationPickerView;
 
 /**
  * Created by ndegwamartin on 24/11/2017.
@@ -18,6 +19,8 @@ import org.smartregister.ug.hpv.util.Constants;
 
 
 public class PatientDetailsFragment extends BasePatientDetailsFragment implements View.OnClickListener {
+
+    private LocationPickerView locationPickerView;
 
     @Nullable
     @Override
@@ -29,6 +32,8 @@ public class PatientDetailsFragment extends BasePatientDetailsFragment implement
         activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         activity.getSupportActionBar().setTitle(activity.getIntent().getStringExtra(Constants.INTENT_KEY.REGISTER_TITLE));
         setupViews(rootView);
+
+        locationPickerView = (LocationPickerView) rootView.findViewById(R.id.facility_selection);
         return rootView;
     }
 
@@ -53,4 +58,7 @@ public class PatientDetailsFragment extends BasePatientDetailsFragment implement
         //Overrides
     }
 
+    public LocationPickerView getLocationPickerView() {
+        return locationPickerView;
+    }
 }

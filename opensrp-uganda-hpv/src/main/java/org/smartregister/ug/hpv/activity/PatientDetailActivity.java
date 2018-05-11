@@ -7,9 +7,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONObject;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.repository.AllSharedPreferences;
@@ -79,32 +76,14 @@ public class PatientDetailActivity extends BasePatientDetailActivity {
                 String imageLocation = currentfile.getAbsolutePath();
 
                 JsonFormUtils.saveImage(this, allSharedPreferences.fetchRegisteredANM(), commonPersonObjectClient.entityId(), imageLocation);
-                Utils.postEvent(new PictureUpdatedEvent());
+
+                Utils.postStickyEvent(new PictureUpdatedEvent());
+
             } catch (Exception e) {
                 Utils.showToast(this, "Error occurred saving image...");
                 Log.e(TAG, e.getMessage());
             }
 
         }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    public void onPause() {
-        EventBus.getDefault().unregister(this);
-        super.onPause();
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void refreshView(PictureUpdatedEvent event) {
-        if (event != null) {
-            Utils.showToast(this, "Updating pic");
-        }
-
     }
 }

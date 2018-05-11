@@ -104,7 +104,7 @@
         "openmrs_entity": "person",
         "openmrs_entity_id": "last_name",
         "type": "edit_text",
-        "hint": "Family Name *",
+        "hint": "Family name *",
         "edit_type": "name",
         "v_required": {
           "value": "true",
@@ -134,8 +134,8 @@
         "duration": {
           "label": "Age"
         },
-        "min_date": "today-30y",
-        "max_date": "today",
+        "min_date": "today-16y",
+        "max_date": "today-9y",
         "v_required": {
           "value": "true",
           "err": "Please enter the date of birth"
@@ -148,7 +148,7 @@
         "openmrs_entity_id": "address5",
         "openmrs_data_type": "text",
         "type": "tree",
-        "hint": "Girl's School *",
+        "hint": "Girl's school *",
         "tree": [],
         "v_required": {
           "value": true,
@@ -170,7 +170,7 @@
         "openmrs_entity_id": "school_class",
         "openmrs_data_type": "select one",
         "type": "spinner",
-        "hint": "Girl's Class *",
+        "hint": "Girl's class *",
         "values": [
           "P3",
           "P4",
