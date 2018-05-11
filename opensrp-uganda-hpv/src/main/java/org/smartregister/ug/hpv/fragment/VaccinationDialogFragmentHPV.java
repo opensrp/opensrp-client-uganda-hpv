@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import org.smartregister.immunization.domain.Vaccine;
 import org.smartregister.immunization.domain.VaccineWrapper;
@@ -57,10 +56,10 @@ public class VaccinationDialogFragmentHPV extends VaccinationDialogFragment {
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
 
-        ViewGroup dialogView = (ViewGroup) super.onCreateView(inflater, container, savedInstanceState);
+        setDefaultImageResourceID(R.drawable.ic_african_girl);
+        setDefaultErrorImageResourceID(R.drawable.ic_african_girl);
 
-        ImageView girlProfilePic = (ImageView) dialogView.findViewById(org.smartregister.immunization.R.id.child_profilepic);
-        girlProfilePic.setImageResource(R.drawable.ic_african_girl);
+        ViewGroup dialogView = (ViewGroup) super.onCreateView(inflater, container, savedInstanceState);
 
         return dialogView;
     }
