@@ -355,7 +355,7 @@ public class LoginActivity extends AppCompatActivity {
             }
 
         } catch (Exception e) {
-            android.util.Log.d(TAG, e.getMessage());
+            Log.d(TAG, e.getMessage());
         }
     }
 

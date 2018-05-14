@@ -24,7 +24,6 @@ import org.smartregister.repository.DetailsRepository;
 import org.smartregister.sync.ClientProcessorForJava;
 import org.smartregister.ug.hpv.application.HpvApplication;
 import org.smartregister.ug.hpv.helper.ECSyncHelper;
-import org.smartregister.ug.hpv.repository.PatientRepository;
 import org.smartregister.ug.hpv.util.Constants;
 import org.smartregister.ug.hpv.util.DBConstants;
 import org.smartregister.ug.hpv.util.Utils;

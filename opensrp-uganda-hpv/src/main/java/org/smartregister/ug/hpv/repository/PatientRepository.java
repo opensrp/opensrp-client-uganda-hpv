@@ -12,7 +12,6 @@ import org.smartregister.ug.hpv.application.HpvApplication;
 import org.smartregister.ug.hpv.util.DBConstants;
 import org.smartregister.ug.hpv.util.Utils;
 
-import java.util.Date;
 import java.util.Map;
 
 /**
