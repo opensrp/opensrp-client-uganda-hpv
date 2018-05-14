@@ -12,7 +12,6 @@ import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
-
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
@@ -41,7 +40,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import util.UgandaHpvConstants;
@@ -61,7 +59,9 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
 
     @Bind(R.id.view_pager)
     protected OpenSRPViewPager mPager;
+
     private CommonPersonObjectClient commonPersonObjectClient;
+
     private Fragment mBaseFragment;
 
     @Override
