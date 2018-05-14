@@ -222,7 +222,11 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
         vaccine.setAnmId(getOpenSRPContext().allSharedPreferences().fetchRegisteredANM());
 
         LocationPickerView locationPickerView = ((PatientDetailsFragment) mBaseFragment).getLocationPickerView();
-        vaccine.setLocationId(LocationHelper.getInstance().getOpenMrsLocationId(locationPickerView.getSelectedItem()));
+        LocationHelper locationHelper = LocationHelper.getInstance();
+        vaccine.setLocationId(locationHelper.getOpenMrsLocationId(locationPickerView.getSelectedItem()));
+
+        locationHelper.setParentAndChildLocationIds(locationPickerView.getSelectedItem());
+        vaccine.setChildLocationId(locationHelper.getChildId());
 
         AllSharedPreferences sharedPreferences = getOpenSRPContext().allSharedPreferences();
         vaccine.setTeam(sharedPreferences.fetchDefaultTeam(sharedPreferences.fetchRegisteredANM()));
