@@ -36,7 +36,6 @@ import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.activity.BaseRegisterActivity;
 import org.smartregister.ug.hpv.activity.HomeRegisterActivity;
 import org.smartregister.ug.hpv.activity.PatientDetailActivity;
-import org.smartregister.ug.hpv.domain.DoseStatus;
 import org.smartregister.ug.hpv.event.SyncEvent;
 import org.smartregister.ug.hpv.helper.LocationHelper;
 import org.smartregister.ug.hpv.provider.HomeRegisterProvider;
@@ -84,6 +83,8 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
     private static final String TAG = BaseRegisterFragment.class.getCanonicalName();
     private Snackbar syncStatusSnackbar;
     private View rootView;
+    public static final String CLICK_VIEW_NORMAL = "click_view_normal";
+    public static final String CLICK_VIEW_DOSAGE_STATUS = "click_view_dosage_status";
 
     @Override
     protected SecuredNativeSmartRegisterActivity.DefaultOptionsProvider getDefaultOptionsProvider() {
@@ -387,7 +388,7 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
         return viewConfigurationIdentifier;
     }
 
-    private void goToPatientDetailActivity(CommonPersonObjectClient patient) {
+    private void goToPatientDetailActivity(CommonPersonObjectClient patient, boolean launchDialog) {
         Map<String, String> patientDetails = patient.getDetails();
         Intent intent = null;
         String registerToken = "";
@@ -399,6 +400,7 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
         intent.putExtra(Constants.INTENT_KEY.PATIENT_DETAIL_MAP, (HashMap) patientDetails);
         intent.putExtra(Constants.INTENT_KEY.CLIENT_OBJECT, patient);
         intent.putExtra(Constants.INTENT_KEY.OPENSRP_ID, patientDetails.get(Constants.INTENT_KEY.OPENSRP_ID));
+        intent.putExtra(Constants.INTENT_KEY.LAUNCH_VACCINE_DIALOG, launchDialog);
         startActivity(intent);
     }
 
@@ -406,24 +408,17 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
 
         @Override
         public void onClick(View view) {
-            if (view.getTag() != null && view.getTag() instanceof CommonPersonObjectClient) {
-                patient = (CommonPersonObjectClient) view.getTag();
-                goToPatientDetailActivity(patient);
-            } else if (view.getTag() != null && view.getTag() instanceof DoseStatus) {
-                DoseStatus doseStatus = (DoseStatus) view.getTag();
-
-                if (StringUtils.isNotBlank(doseStatus.getDateDoseTwoGiven())) {
-                    Utils.showToast(getActivity(), "Dosage Complete");
-                } else if (doseStatus.isDoseTwoDue()) {
-                    Utils.showToast(getActivity(), "Dose 2 Due");
-                } else if (StringUtils.isNotBlank(doseStatus.getDateDoseOneGiven())) {
-                    Utils.showToast(getActivity(), "Dose 1 Given");
-                } else {
-                    Utils.showToast(getActivity(), "Dosage Button Clicked");
-                }
-
-            } else if (view.getId() == R.id.scan_qr_code)
+            if (view.getId() == R.id.scan_qr_code) {
                 ((HomeRegisterActivity) getActivity()).startQrCodeScanner();
+            } else if (view.getTag() != null && view.getTag(R.id.VIEW_ID) == CLICK_VIEW_NORMAL) {
+                patient = (CommonPersonObjectClient) view.getTag();
+                goToPatientDetailActivity(patient, false);
+            } else if (view.getTag() != null && view.getTag(R.id.VIEW_ID) == CLICK_VIEW_DOSAGE_STATUS) {
+
+                patient = (CommonPersonObjectClient) view.getTag();
+                goToPatientDetailActivity(patient, true);
+
+            }
 
         }
     }
@@ -491,8 +486,8 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
                 } else if (fetchStatus.equals(FetchStatus.fetched)
                         || fetchStatus.equals(FetchStatus.nothingFetched)) {
 
-                        setRefreshList(true);
-                        renderView();
+                    setRefreshList(true);
+                    renderView();
 
                     syncStatusSnackbar = Snackbar.make(rootView, R.string.sync_complete, Snackbar.LENGTH_LONG);
                 } else if (fetchStatus.equals(FetchStatus.noConnection)) {

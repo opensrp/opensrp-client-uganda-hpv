@@ -35,6 +35,7 @@ public class Constants {
         public static final String HOME_REGISTER = "home_register";
         public static final String COMMON_REGISTER_HEADER = "common_register_header";
         public static final String COMMON_REGISTER_ROW = "common_register_row";
+        public static final String HOME_REGISTER_ROW = "home_register_row";
 
 
     }
@@ -72,6 +73,7 @@ public class Constants {
         public static final String CLIENT_OBJECT = "client_object";
         public static final String LAST_SYNC_TIME_STRING = "last_manual_sync_time_string";
         public static final String OPENSRP_ID = "opensrp_id";
+        public static final String LAUNCH_VACCINE_DIALOG = "launch_vaccine_dialog";
     }
 
     public static class CONFIGURATION {

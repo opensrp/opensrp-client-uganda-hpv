@@ -23,6 +23,7 @@ import org.smartregister.immunization.domain.VaccineSchedule;
 import org.smartregister.immunization.domain.jsonmapping.VaccineGroup;
 import org.smartregister.immunization.repository.VaccineRepository;
 import org.smartregister.immunization.util.VaccinatorUtils;
+import org.smartregister.repository.DetailsRepository;
 import org.smartregister.repository.EventClientRepository;
 import org.smartregister.repository.Repository;
 import org.smartregister.sync.DrishtiSyncScheduler;
@@ -62,6 +63,7 @@ public class HpvApplication extends DrishtiApplication implements TimeChangedBro
     private static CommonFtsObject commonFtsObject;
     private ConfigurableViewsHelper configurableViewsHelper;
     private UniqueIdRepository uniqueIdRepository;
+    private DetailsRepository detailsRepository;
 
     private static final String TAG = HpvApplication.class.getCanonicalName();
     private String password;
@@ -98,7 +100,6 @@ public class HpvApplication extends DrishtiApplication implements TimeChangedBro
 
         setUpEventHandling();
         initOfflineSchedules();
-        setAlarms(this);
     }
 
     public static synchronized HpvApplication getInstance() {
@@ -220,11 +221,18 @@ public class HpvApplication extends DrishtiApplication implements TimeChangedBro
         return eventClientRepository;
     }
 
-    public UniqueIdRepository uniqueIdRepository() {
+    public UniqueIdRepository getUniqueIdRepository() {
         if (uniqueIdRepository == null) {
             uniqueIdRepository = new UniqueIdRepository((HpvRepository) getRepository());
         }
         return uniqueIdRepository;
+    }
+
+    public DetailsRepository getDetailsRepository() {
+        if (detailsRepository == null) {
+            detailsRepository = new DetailsRepository();
+        }
+        return detailsRepository;
     }
 
 

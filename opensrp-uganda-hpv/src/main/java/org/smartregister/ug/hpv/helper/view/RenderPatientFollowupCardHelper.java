@@ -17,6 +17,7 @@ import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.activity.BasePatientDetailActivity;
 import org.smartregister.ug.hpv.domain.DoseStatus;
 import org.smartregister.ug.hpv.helper.VaccinationHelper;
+import org.smartregister.ug.hpv.util.Constants;
 import org.smartregister.ug.hpv.util.DBConstants;
 import org.smartregister.ug.hpv.util.ImageUtils;
 import org.smartregister.ug.hpv.util.Utils;
@@ -62,7 +63,7 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
 
                     if (followUpView != null) {
                         followUpView.setOnClickListener(helperContext);
-                        followUpView.setText(String.format(context.getString(R.string.vaccine_dose_due_on_date),  StringUtils.isBlank(dateDoseOneGiven) ? "1" : "2",Utils.formatDate(nextVisitDate)));
+                        followUpView.setText(String.format(context.getString(R.string.vaccine_dose_due_on_date), StringUtils.isBlank(dateDoseOneGiven) ? "1" : "2", Utils.formatDate(nextVisitDate)));
 
                         UgandaHpvConstants.State doseState = Utils.getRegisterViewButtonStatus(doseStatus);
                         followUpView.setBackground(Utils.getDoseButtonBackground(context, doseState));
@@ -89,6 +90,13 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
                 } catch (Exception e) {
                     Log.e(TAG, Log.getStackTraceString(e));
                 }
+
+
+//launch vaccination dialog
+                boolean launchDialog = ((BasePatientDetailActivity) context).getIntent().getBooleanExtra(Constants.INTENT_KEY.LAUNCH_VACCINE_DIALOG, false);
+                if (launchDialog) {
+                    showVaccinationDialog(context, commonPersonObjectClient, vaccinationHelper);
+                }
             }
 
         });
@@ -96,6 +104,10 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
 
     @Override
     public void onClick(View view) {
+        showVaccinationDialog(context, commonPersonObjectClient, vaccinationHelper);
+    }
+
+    private void showVaccinationDialog(Context context, CommonPersonObjectClient commonPersonObjectClient, VaccinationHelper vaccinationHelper) {
         String dateDoseOneGiven = commonPersonObjectClient.getDetails().get(DBConstants.KEY.DATE_DOSE_ONE_GIVEN);
 
         ArrayList<VaccineWrapper> vaccineWrappers = new ArrayList<>();

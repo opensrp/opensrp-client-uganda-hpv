@@ -576,7 +576,7 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
 
             if (Constants.JSON_FORM.PATIENT_REGISTRATION.equals(formName)) {
                 if (StringUtils.isBlank(entityId)) {
-                    UniqueIdRepository uniqueIdRepo = HpvApplication.getInstance().uniqueIdRepository();
+                    UniqueIdRepository uniqueIdRepo = HpvApplication.getInstance().getUniqueIdRepository();
                     entityId = uniqueIdRepo.getNextUniqueId() != null ? uniqueIdRepo.getNextUniqueId().getOpenmrsId() : "";
                     if (entityId.isEmpty()) {
                         Toast.makeText(context, context.getString(R.string.no_openmrs_id), Toast.LENGTH_SHORT).show();
@@ -929,7 +929,7 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
                         String currentOpenSRPId = getString(jsonForm, CURRENT_OPENSRP_ID).replace("-", "");
                         if (!newOpenSRPId.equals(currentOpenSRPId)) {
                             //OPENSRP ID was changed
-                            HpvApplication.getInstance().uniqueIdRepository().open(currentOpenSRPId);
+                            HpvApplication.getInstance().getUniqueIdRepository().open(currentOpenSRPId);
                         }
                     }
 
@@ -937,7 +937,7 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
 
                     String opensrpId = baseClient.getIdentifier(DBConstants.KEY.OPENSRP_ID);
                     //mark OPENSRP ID as used
-                    HpvApplication.getInstance().uniqueIdRepository().close(opensrpId);
+                    HpvApplication.getInstance().getUniqueIdRepository().close(opensrpId);
 
                     String imageLocation = getFieldValue(fields, imageKey);
                     saveImage(context, providerId, entityId, imageLocation);

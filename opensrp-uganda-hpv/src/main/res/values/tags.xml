@@ -9,4 +9,5 @@
     <item name="VIEW_CONFIGURATION_ID" type="id" />
     <item name="CONTACT" type="id" />
     <item name="PATIENT_PROFILE_FRAGMENT" type="id" />
+    <item name="VIEW_ID" type="id" />
 </resources>

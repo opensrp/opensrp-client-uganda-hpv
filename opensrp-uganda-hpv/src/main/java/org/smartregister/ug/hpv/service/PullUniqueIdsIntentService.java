@@ -128,7 +128,7 @@ public class PullUniqueIdsIntentService extends IntentService {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        uniqueIdRepo = HpvApplication.getInstance().uniqueIdRepository();
+        uniqueIdRepo = HpvApplication.getInstance().getUniqueIdRepository();
         return super.onStartCommand(intent, flags, startId);
     }
 }

@@ -236,12 +236,11 @@ public class Utils {
             doseNumber = "two";
         }
 
-        String dateString = org.smartregister.ug.hpv.util.Utils.convertDateFormat(date, new SimpleDateFormat("dd/MM/yy"));
+        String dateString = org.smartregister.ug.hpv.util.Utils.convertDateFormat(date, new SimpleDateFormat("yyyy-MM-dd"));
         PatientRepository.updateDoseDates(baseEntityId, dateString, doseNumber);
 
         Log.d(TAG, "Finish processEC_Patient table");
     }
-
 
 
     public static boolean isEmptyMap(Map map) {
@@ -390,4 +389,29 @@ public class Utils {
         return expiryDate.isBeforeNow();
     }
 
+
+    private Drawable getDoseButtonBackground(@NonNull Context context, DoseStatus doseStatus) {
+
+        int backgroundResource;
+
+        if (StringUtils.isNotBlank(doseStatus.getDateDoseTwoGiven()) || doseStatus.isDoseTwoDue()) {
+            backgroundResource = R.color.transparent;
+        } else if (doseStatus.isDoseTwoDue()) {
+            backgroundResource = R.drawable.due_vaccine_grey_bg_no_radius;
+        } else {
+
+            backgroundResource = isDoseExpired(doseStatus) ? R.drawable.due_vaccine_red_bg_no_radius : R.drawable.due_vaccine_blue_bg_no_radius;
+
+        }
+
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? context.getDrawable(backgroundResource) : ContextCompat.getDrawable(context, backgroundResource);
+    }
+
+    private boolean isDoseExpired(DoseStatus doseStatus) {
+        Boolean isDoseTwo = StringUtils.isNotBlank(doseStatus.getDoseTwoDate());
+        DateTime doseDate = new DateTime(org.smartregister.util.Utils.toDate(isDoseTwo ? doseStatus.getDoseTwoDate() : doseStatus.getDoseOneDate(), true));
+        DateTime expiryDate = doseDate.plusDays(DOSE_EXPIRY_WINDOW_DAYS);
+
+        return expiryDate.isBeforeNow();
+    }
 }
