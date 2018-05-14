@@ -50,9 +50,7 @@ public class Utils {
 
     private static final String TAG = Utils.class.getCanonicalName();
     private static final SimpleDateFormat DB_DF = new SimpleDateFormat("yyyy-MM-dd");
-    private static BaseEvent myEvent;
     public static final int DOSE_EXPIRY_WINDOW_DAYS = 10;
-    public static final int DOSE_TWO_WINDOW_MONTHS = 6;
 
     public static void addVaccine(VaccineRepository vaccineRepository, Vaccine vaccine) {
         try {
