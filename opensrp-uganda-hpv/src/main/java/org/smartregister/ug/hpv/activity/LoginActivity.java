@@ -182,7 +182,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void login(final View view, boolean localLogin) {
-        android.util.Log.i(getClass().getName(), "Hiding Keyboard " + DateTime.now().toString());
+
+        Log.i(getClass().getName(), "Hiding Keyboard " + DateTime.now().toString());
         hideKeyboard();
         view.setClickable(false);
 
@@ -198,7 +199,7 @@ public class LoginActivity extends AppCompatActivity {
             showErrorDialog(getResources().getString(R.string.unauthorized));
             view.setClickable(true);
         }
-        android.util.Log.i(getClass().getName(), "Login result finished " + DateTime.now().toString());
+        Log.i(getClass().getName(), "Login result finished " + DateTime.now().toString());
     }
 
     private void localLogin(View view, String userName, String password) {
@@ -355,7 +356,7 @@ public class LoginActivity extends AppCompatActivity {
             }
 
         } catch (Exception e) {
-            android.util.Log.d(TAG, e.getMessage());
+            Log.d(TAG, e.getMessage());
         }
     }
 

@@ -38,6 +38,7 @@ import static org.smartregister.ug.hpv.util.Constants.REGISTER_COLUMNS.DOSE;
 import static org.smartregister.ug.hpv.util.Constants.REGISTER_COLUMNS.ID;
 import static org.smartregister.ug.hpv.util.Constants.REGISTER_COLUMNS.NAME;
 import static org.smartregister.ug.hpv.util.Constants.VIEW_CONFIGS.COMMON_REGISTER_ROW;
+import static org.smartregister.ug.hpv.util.Utils.DOSE_EXPIRY_WINDOW_DAYS;
 import static org.smartregister.util.Utils.getName;
 
 /**
@@ -49,8 +50,6 @@ public class HomeRegisterProvider implements SmartRegisterCLientsProviderForCurs
     private Set<org.smartregister.configurableviews.model.View> visibleColumns;
     private View.OnClickListener onClickListener;
     private Context context;
-    private static final int DOSE_EXPIRY_WINDOW_DAYS = 10;
-    private static final int DOSE_TWO_WINDOW_MONTHS = 6;
 
 
     public HomeRegisterProvider(Context context, Set visibleColumns, View.OnClickListener onClickListener) {
@@ -117,43 +116,14 @@ public class HomeRegisterProvider implements SmartRegisterCLientsProviderForCurs
 
 
     private void populateDoseColumn(CommonPersonObjectClient pc, View view) {
-
         Button patient = (Button) view.findViewById(R.id.dose_button);
 
-        DoseStatus doseStatus = getCurrentDoseStatus(pc);
+        DoseStatus doseStatus = Utils.getCurrentDoseStatus(pc);
 
         patient.setText(getDoseButtonText(doseStatus));
-        patient.setBackground(getDoseButtonBackground(doseStatus));
-        patient.setTextColor((StringUtils.isNotBlank(doseStatus.getDateDoseTwoGiven()) || doseStatus.isDoseTwoDue()) ? context.getResources().getColor(R.color.lighter_grey_text) : patient.getCurrentTextColor());
+        patient.setBackground(Utils.getDoseButtonBackground(context, Utils.getRegisterViewButtonStatus(doseStatus)));
+        patient.setTextColor(Utils.getDoseButtonTextColor(context, Utils.getRegisterViewButtonStatus(doseStatus)));
         attachDosageOnclickListener(patient, doseStatus);
-    }
-
-    private DoseStatus getCurrentDoseStatus(CommonPersonObjectClient pc) {
-
-        DoseStatus doseStatus = new DoseStatus();
-
-        doseStatus.setDoseOneDate(org.smartregister.util.Utils.getValue(pc.getColumnmaps(), DBConstants.KEY.DOSE_ONE_DATE, false));
-
-        doseStatus.setDoseTwoDate(org.smartregister.util.Utils.getValue(pc.getColumnmaps(), DBConstants.KEY.DOSE_TWO_DATE, false));
-
-        doseStatus.setDateDoseOneGiven(org.smartregister.util.Utils.getValue(pc.getColumnmaps(), DBConstants.KEY.DATE_DOSE_ONE_GIVEN, false));
-
-        doseStatus.setDateDoseOneGiven(org.smartregister.util.Utils.getValue(pc.getColumnmaps(), DBConstants.KEY.DATE_DOSE_TWO_GIVEN, false));
-
-        doseStatus.setDoseTwoDue(StringUtils.isBlank(doseStatus.getDateDoseOneGiven()) && isDoseTwoDue(doseStatus.getDoseTwoDate()));
-
-        return doseStatus;
-    }
-
-    private boolean isDoseTwoDue(String date) {
-        if (StringUtils.isNotBlank(date)) {
-
-            DateTime doseDate = new DateTime(org.smartregister.util.Utils.toDate(date, true));
-            DateTime dueDate = doseDate.plusMonths(DOSE_TWO_WINDOW_MONTHS);
-            return dueDate.isBeforeNow();
-        } else {
-            return false;
-        }
     }
 
     private String getDoseButtonText(DoseStatus doseStatus) {

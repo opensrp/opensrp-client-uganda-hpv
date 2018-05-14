@@ -28,4 +28,13 @@ public class UgandaHpvConstants extends AllConstants {
     public static final class KEY {
         public static final String CHILD = "child";
     }
+
+
+    public enum State {
+        DUE,
+        OVERDUE,
+        EXPIRED,
+        INACTIVE,
+        FULLY_IMMUNIZED
+    }
 }

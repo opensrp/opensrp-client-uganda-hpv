@@ -73,9 +73,9 @@
         <service android:name=".service.intent.ValidateIntentService" />
         <service android:name=".service.intent.ExtendedSyncIntentService" />
         <service android:name=".service.PullUniqueIdsIntentService" />
-        <service android:name=".service.HpvImageUploadSyncService" />
-
+        <service android:name="org.smartregister.ug.hpv.service.HpvVaccineIntentService" />
         <receiver android:name=".receiver.AlarmReceiver" />
+        <service android:name=".service.HpvImageUploadSyncService" />
         <receiver android:name=".receiver.OnBootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />

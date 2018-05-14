@@ -7,10 +7,10 @@ import android.content.Intent;
 import android.support.v4.content.WakefulBroadcastReceiver;
 
 import org.smartregister.configurableviews.service.PullConfigurableViewsIntentService;
-import org.smartregister.immunization.service.intent.VaccineIntentService;
 import org.smartregister.ug.hpv.application.HpvApplication;
 import org.smartregister.ug.hpv.exception.MissingApplicationContextException;
 import org.smartregister.ug.hpv.service.HpvImageUploadSyncService;
+import org.smartregister.ug.hpv.service.HpvVaccineIntentService;
 import org.smartregister.ug.hpv.service.PullUniqueIdsIntentService;
 import org.smartregister.ug.hpv.service.intent.SyncIntentService;
 import org.smartregister.ug.hpv.util.Constants;
@@ -47,7 +47,7 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
                     android.util.Log.i(TAG, "Started PULL_UNIQUE_IDS service at: " + dateFormatter.format(new Date()));
                     break;
                 case Constants.ServiceType.VACCINE_SYNC_PROCESSING:
-                    serviceIntent = new Intent(context, VaccineIntentService.class);
+                    serviceIntent = new Intent(context, HpvVaccineIntentService.class);
                     android.util.Log.i(TAG, "Started VACCINE_SYNC_PROCESSING service at: " + dateFormatter.format(new Date()));
                     break;
                 case Constants.ServiceType.IMAGE_UPLOAD:

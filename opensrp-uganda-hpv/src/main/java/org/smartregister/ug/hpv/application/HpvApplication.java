@@ -20,10 +20,8 @@ import org.smartregister.configurableviews.repository.ConfigurableViewsRepositor
 import org.smartregister.configurableviews.service.PullConfigurableViewsIntentService;
 import org.smartregister.immunization.ImmunizationLibrary;
 import org.smartregister.immunization.domain.VaccineSchedule;
-import org.smartregister.immunization.domain.jsonmapping.Vaccine;
 import org.smartregister.immunization.domain.jsonmapping.VaccineGroup;
 import org.smartregister.immunization.repository.VaccineRepository;
-import org.smartregister.immunization.service.intent.VaccineIntentService;
 import org.smartregister.immunization.util.VaccinatorUtils;
 import org.smartregister.repository.EventClientRepository;
 import org.smartregister.repository.Repository;
@@ -100,8 +98,7 @@ public class HpvApplication extends DrishtiApplication implements TimeChangedBro
 
         setUpEventHandling();
         initOfflineSchedules();
-        Intent serviceIntent = new Intent(getInstance().getApplicationContext(), VaccineIntentService.class);
-        this.startService(serviceIntent);
+        setAlarms(this);
     }
 
     public static synchronized HpvApplication getInstance() {
@@ -308,11 +305,12 @@ public class HpvApplication extends DrishtiApplication implements TimeChangedBro
     }
 
     public static void setAlarms(android.content.Context context) {
+
         AlarmReceiver.setAlarm(context, BuildConfig.VACCINE_SYNC_PROCESSING_MINUTES, Constants.ServiceType.VACCINE_SYNC_PROCESSING);
         AlarmReceiver.setAlarm(context, BuildConfig.IMAGE_UPLOAD_MINUTES, Constants.ServiceType.IMAGE_UPLOAD);
         AlarmReceiver.setAlarm(context, BuildConfig.PULL_UNIQUE_IDS_MINUTES, Constants.ServiceType.PULL_UNIQUE_IDS);
+        AlarmReceiver.setAlarm(context, BuildConfig.AUTO_SYNC_DURATION, Constants.ServiceType.AUTO_SYNC);
         AlarmReceiver.setAlarm(context, BuildConfig.SYNC_VIEW_CONFIGURATIONS_MINUTES, Constants.ServiceType.PULL_VIEW_CONFIGURATIONS);
-
     }
 
     @Override
