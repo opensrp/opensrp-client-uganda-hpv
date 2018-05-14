@@ -234,7 +234,7 @@ public class Utils {
         Log.d(TAG, "Starting processEC_Patient table");
 
         String doseNumber = "one";
-        if (vaccineName.equals("hpv_2")) {
+        if ("hpv_2".equals(vaccineName)) {
             doseNumber = "two";
         }
 

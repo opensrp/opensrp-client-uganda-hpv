@@ -16,13 +16,11 @@ import android.view.View;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
-import org.smartregister.domain.Alert;
 import org.smartregister.immunization.domain.Vaccine;
 import org.smartregister.immunization.domain.VaccineSchedule;
 import org.smartregister.immunization.domain.VaccineWrapper;
 import org.smartregister.immunization.listener.VaccinationActionListener;
 import org.smartregister.immunization.repository.VaccineRepository;
-import org.smartregister.immunization.util.VaccinatorUtils;
 import org.smartregister.immunization.view.VaccineGroup;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.ug.hpv.R;
@@ -49,6 +47,7 @@ import butterknife.ButterKnife;
 import util.UgandaHpvConstants;
 
 import static org.smartregister.ug.hpv.util.Utils.updateEcPatient;
+import static org.smartregister.util.Utils.startAsyncTask;
 
 /**
  * Created by ndegwamartin on 17/11/2017.
@@ -59,12 +58,10 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
     protected File currentfile;
     private static final int REQUEST_TAKE_PHOTO = 1;
     private ArrayList<VaccineGroup> vaccineGroups;
-    private boolean isChildActive = false;
 
     @Bind(R.id.view_pager)
     protected OpenSRPViewPager mPager;
     private CommonPersonObjectClient commonPersonObjectClient;
-    private LocationPickerView locationPickerView;
     private Fragment mBaseFragment;
 
     @Override
@@ -191,7 +188,7 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
 
     @Override
     public void onUndoVaccination(VaccineWrapper tag, View v) {
-        org.smartregister.util.Utils.startAsyncTask(new UndoVaccineTask(tag, v), null);
+        startAsyncTask(new UndoVaccineTask(tag, v), null);
     }
 
     private void saveVaccine(ArrayList<VaccineWrapper> tags, final View view) {
@@ -205,7 +202,7 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
         SaveVaccinesTask backgroundTask = new SaveVaccinesTask();
         backgroundTask.setVaccineRepository(vaccineRepository);
         backgroundTask.setView(view);
-        org.smartregister.util.Utils.startAsyncTask(backgroundTask, arrayTags);
+        startAsyncTask(backgroundTask, arrayTags);
 
     }
 
@@ -224,7 +221,7 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
         vaccine.setDate(tag.getUpdatedVaccineDate().toDate());
         vaccine.setAnmId(getOpenSRPContext().allSharedPreferences().fetchRegisteredANM());
 
-        locationPickerView = ((PatientDetailsFragment) mBaseFragment).getLocationPickerView();
+        LocationPickerView locationPickerView = ((PatientDetailsFragment) mBaseFragment).getLocationPickerView();
         vaccine.setLocationId(LocationHelper.getInstance().getOpenMrsLocationId(locationPickerView.getSelectedItem()));
 
         AllSharedPreferences sharedPreferences = getOpenSRPContext().allSharedPreferences();
@@ -241,28 +238,6 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
         tag.setDbKey(vaccine.getId());
 
         updateEcPatient(vaccine.getBaseEntityId(), vaccine.getName(), vaccine.getDate());
-    }
-
-
-    private void addVaccineGroup(int canvasId, org.smartregister.immunization.domain.jsonmapping.VaccineGroup vaccineGroupData, List<Vaccine> vaccineList, List<Alert> alerts) {
-        // TODO: Add logic to add vaccine group to view (similar to Zeir)
-        VaccineGroup curGroup = new VaccineGroup(this);
-        vaccineGroups.add(curGroup);
-    }
-
-    private void updateVaccinationViews(List<Vaccine> vaccineList, List<Alert> alerts) {
-        if (vaccineGroups == null) {
-            vaccineGroups = new ArrayList<>();
-            List<org.smartregister.immunization.domain.jsonmapping.VaccineGroup> supportedVaccines = VaccinatorUtils.getSupportedVaccines(this);
-            for (org.smartregister.immunization.domain.jsonmapping.VaccineGroup vaccineGroup : supportedVaccines) {
-                addVaccineGroup(-1, vaccineGroup, vaccineList, alerts);
-            }
-        } else {
-            for (VaccineGroup vaccineGroup : vaccineGroups) {
-                vaccineGroup.setChildActive(isChildActive);
-                vaccineGroup.updateChildsActiveStatus();
-            }
-        }
     }
 
 
@@ -407,13 +382,8 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
             }
 
             Pair<ArrayList<VaccineWrapper>, List<Vaccine>> pair = new Pair<>(list, vaccineList);
-            String dobString = org.smartregister.util.Utils.getValue(commonPersonObjectClient.getColumnmaps(), UgandaHpvConstants.DOB, false);
-            DateTime dateTime = org.smartregister.ug.hpv.util.Utils.dobStringToDateTime(dobString);
-            if (dateTime != null) {
-//                affectedVaccines = VaccineSchedule.updateOfflineAlerts(commonPersonObjectClient.entityId(), dateTime, UgandaHpvConstants.KEY.CHILD);
-            }
-
             vaccineList = vaccineRepository.findByEntityId(commonPersonObjectClient.entityId());
+
             return pair;
         }
     }

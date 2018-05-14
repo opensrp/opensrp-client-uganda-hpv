@@ -20,10 +20,8 @@ import org.smartregister.configurableviews.repository.ConfigurableViewsRepositor
 import org.smartregister.configurableviews.service.PullConfigurableViewsIntentService;
 import org.smartregister.immunization.ImmunizationLibrary;
 import org.smartregister.immunization.domain.VaccineSchedule;
-import org.smartregister.immunization.domain.jsonmapping.Vaccine;
 import org.smartregister.immunization.domain.jsonmapping.VaccineGroup;
 import org.smartregister.immunization.repository.VaccineRepository;
-import org.smartregister.immunization.service.intent.VaccineIntentService;
 import org.smartregister.immunization.util.VaccinatorUtils;
 import org.smartregister.repository.EventClientRepository;
 import org.smartregister.repository.Repository;
