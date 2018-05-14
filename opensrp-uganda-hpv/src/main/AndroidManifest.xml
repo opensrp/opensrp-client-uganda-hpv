@@ -14,7 +14,6 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
-
     <application
         android:name=".application.HpvApplication"
         android:allowBackup="true"
@@ -22,7 +21,6 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <activity
             android:name=".activity.LoginActivity"
             android:screenOrientation="portrait"
@@ -30,27 +28,24 @@
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".activity.HomeRegisterActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity
             android:name=".activity.SettingsActivity"
             android:screenOrientation="portrait" />
         <activity
-
             android:name="com.vijay.jsonwizard.activities.JsonFormActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-
         <activity
             android:name=".activity.HpvJsonFormActivity"
             android:screenOrientation="portrait"
@@ -78,9 +73,9 @@
         <service android:name=".service.intent.ValidateIntentService" />
         <service android:name=".service.intent.ExtendedSyncIntentService" />
         <service android:name=".service.PullUniqueIdsIntentService" />
-        <service android:name=".service.HpvImageUploadSyncService" />
-
+        <service android:name="org.smartregister.ug.hpv.service.HpvVaccineIntentService" />
         <receiver android:name=".receiver.AlarmReceiver" />
+        <service android:name=".service.HpvImageUploadSyncService" />
         <receiver android:name=".receiver.OnBootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />

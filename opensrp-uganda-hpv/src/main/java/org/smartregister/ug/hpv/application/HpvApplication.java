@@ -18,6 +18,11 @@ import org.smartregister.configurableviews.helper.JsonSpecHelper;
 import org.smartregister.configurableviews.model.MainConfig;
 import org.smartregister.configurableviews.repository.ConfigurableViewsRepository;
 import org.smartregister.configurableviews.service.PullConfigurableViewsIntentService;
+import org.smartregister.immunization.ImmunizationLibrary;
+import org.smartregister.immunization.domain.VaccineSchedule;
+import org.smartregister.immunization.domain.jsonmapping.VaccineGroup;
+import org.smartregister.immunization.repository.VaccineRepository;
+import org.smartregister.immunization.util.VaccinatorUtils;
 import org.smartregister.repository.EventClientRepository;
 import org.smartregister.repository.Repository;
 import org.smartregister.sync.DrishtiSyncScheduler;
@@ -40,6 +45,8 @@ import org.smartregister.ug.hpv.util.Utils;
 import org.smartregister.view.activity.DrishtiApplication;
 import org.smartregister.view.receiver.TimeChangedBroadcastReceiver;
 
+import java.util.List;
+
 import static org.smartregister.util.Log.logError;
 import static org.smartregister.util.Log.logInfo;
 
@@ -61,6 +68,7 @@ public class HpvApplication extends DrishtiApplication implements TimeChangedBro
 
     @Override
     public void onCreate() {
+
         super.onCreate();
 
         mInstance = this;
@@ -72,6 +80,7 @@ public class HpvApplication extends DrishtiApplication implements TimeChangedBro
         //Initialize Modules
         CoreLibrary.init(context);
         ConfigurableViewsLibrary.init(context, getRepository());
+        ImmunizationLibrary.init(context, getRepository(), createCommonFtsObject());
 
         SyncStatusBroadcastReceiver.init(this);
         TimeChangedBroadcastReceiver.init(this);
@@ -88,7 +97,8 @@ public class HpvApplication extends DrishtiApplication implements TimeChangedBro
         this.jsonSpecHelper = new JsonSpecHelper(this);
 
         setUpEventHandling();
-
+        initOfflineSchedules();
+        setAlarms(this);
     }
 
     public static synchronized HpvApplication getInstance() {
@@ -107,6 +117,10 @@ public class HpvApplication extends DrishtiApplication implements TimeChangedBro
 
         }
         return repository;
+    }
+
+    public VaccineRepository vaccineRepository() {
+        return ImmunizationLibrary.getInstance().vaccineRepository();
     }
 
     public String getPassword() {
@@ -168,6 +182,15 @@ public class HpvApplication extends DrishtiApplication implements TimeChangedBro
             }
         }
         return commonFtsObject;
+    }
+
+    private void initOfflineSchedules() {
+        try {
+            List<VaccineGroup> childVaccines = VaccinatorUtils.getSupportedVaccines(this);
+            VaccineSchedule.init(childVaccines, null, "child");
+        } catch (Exception e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        }
     }
 
     private static String[] getFtsTables() {
@@ -282,11 +305,12 @@ public class HpvApplication extends DrishtiApplication implements TimeChangedBro
     }
 
     public static void setAlarms(android.content.Context context) {
+
         AlarmReceiver.setAlarm(context, BuildConfig.VACCINE_SYNC_PROCESSING_MINUTES, Constants.ServiceType.VACCINE_SYNC_PROCESSING);
         AlarmReceiver.setAlarm(context, BuildConfig.IMAGE_UPLOAD_MINUTES, Constants.ServiceType.IMAGE_UPLOAD);
         AlarmReceiver.setAlarm(context, BuildConfig.PULL_UNIQUE_IDS_MINUTES, Constants.ServiceType.PULL_UNIQUE_IDS);
+        AlarmReceiver.setAlarm(context, BuildConfig.AUTO_SYNC_DURATION, Constants.ServiceType.AUTO_SYNC);
         AlarmReceiver.setAlarm(context, BuildConfig.SYNC_VIEW_CONFIGURATIONS_MINUTES, Constants.ServiceType.PULL_VIEW_CONFIGURATIONS);
-
     }
 
     @Override
