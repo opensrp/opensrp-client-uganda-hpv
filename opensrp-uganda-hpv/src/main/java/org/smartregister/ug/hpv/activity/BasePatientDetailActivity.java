@@ -16,13 +16,11 @@ import android.view.View;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
-import org.smartregister.domain.Alert;
 import org.smartregister.immunization.domain.Vaccine;
 import org.smartregister.immunization.domain.VaccineSchedule;
 import org.smartregister.immunization.domain.VaccineWrapper;
 import org.smartregister.immunization.listener.VaccinationActionListener;
 import org.smartregister.immunization.repository.VaccineRepository;
-import org.smartregister.immunization.util.VaccinatorUtils;
 import org.smartregister.immunization.view.VaccineGroup;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.ug.hpv.R;
@@ -60,7 +58,6 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
     protected File currentfile;
     private static final int REQUEST_TAKE_PHOTO = 1;
     private ArrayList<VaccineGroup> vaccineGroups;
-    private boolean isChildActive = false;
 
     @Bind(R.id.view_pager)
     protected OpenSRPViewPager mPager;
