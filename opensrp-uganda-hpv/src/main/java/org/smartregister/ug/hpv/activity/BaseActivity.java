@@ -15,8 +15,6 @@ import android.widget.TextView;
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.Context;
 import org.smartregister.configurableviews.ConfigurableViewsLibrary;
-import org.smartregister.immunization.domain.VaccineWrapper;
-import org.smartregister.immunization.listener.VaccinationActionListener;
 import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.event.LanguageConfigurationEvent;
 import org.smartregister.ug.hpv.util.Utils;
@@ -24,7 +22,6 @@ import org.smartregister.util.Log;
 import org.smartregister.view.activity.DrishtiApplication;
 import org.smartregister.view.activity.SecuredActivity;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -32,11 +29,11 @@ import java.util.Map;
  * Created by ndegwamartin on 09/10/2017.
  */
 
-public abstract class BaseActivity extends SecuredActivity{
+public abstract class BaseActivity extends SecuredActivity {
+
     private static final int MINIUM_LANG_COUNT = 2;
     protected Toolbar toolbar;
     private ProgressDialog progressDialog;
-
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -141,7 +138,6 @@ public abstract class BaseActivity extends SecuredActivity{
         progressDialog.setMessage(getString(R.string.please_wait_message));
     }
 
-
     public void showProgressDialog(String title, String message) {
         if (progressDialog != null) {
             if (StringUtils.isNotBlank(title)) {
@@ -165,9 +161,4 @@ public abstract class BaseActivity extends SecuredActivity{
         }
     }
 
-    @Override
-    public void onPause() {
-        hideProgressDialog();
-        super.onPause();
-    }
 }

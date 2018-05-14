@@ -48,6 +48,18 @@
       }
     },
     {
+      "column_name": "team",
+      "json_mapping": {
+        "field": "team"
+      }
+    },
+    {
+      "column_name": "team_id",
+      "json_mapping": {
+        "field": "teamId"
+      }
+    },
+    {
       "column_name": "created_at",
       "json_mapping": {
         "field": "dateCreated"

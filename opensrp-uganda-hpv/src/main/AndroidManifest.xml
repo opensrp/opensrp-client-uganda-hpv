@@ -11,6 +11,8 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:name=".application.HpvApplication"
@@ -23,7 +25,7 @@
             android:name=".activity.LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Login"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize">
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -67,11 +69,18 @@
                 android:resource="@xml/captured_images_path" />
         </provider>
 
-        <service android:name=".service.SyncService" />
+        <service android:name=".service.intent.SyncIntentService" />
+        <service android:name=".service.intent.ValidateIntentService" />
+        <service android:name=".service.intent.ExtendedSyncIntentService" />
         <service android:name=".service.PullUniqueIdsIntentService" />
-
-        <receiver android:name=".receiver.OnBootReceiver" />
-        <receiver android:name=".receiver.HpvSyncBroadcastReceiver" />
+        <service android:name="org.smartregister.ug.hpv.service.HpvVaccineIntentService" />
+        <receiver android:name=".receiver.AlarmReceiver" />
+        <service android:name=".service.HpvImageUploadSyncService" />
+        <receiver android:name=".receiver.OnBootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
 
     </application>
 

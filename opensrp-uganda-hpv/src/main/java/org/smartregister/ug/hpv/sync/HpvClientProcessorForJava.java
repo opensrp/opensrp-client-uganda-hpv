@@ -35,6 +35,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static org.smartregister.ug.hpv.util.Utils.updateEcPatient;
+
 /**
  * Created by ndegwamartin on 15/03/2018.
  */
@@ -43,6 +45,7 @@ public class HpvClientProcessorForJava extends ClientProcessorForJava {
 
     private static final String TAG = HpvClientProcessorForJava.class.getCanonicalName();
     private static HpvClientProcessorForJava instance;
+    private final String  HPV_VACCINATION = "HPV Vaccination";
 
     public HpvClientProcessorForJava(Context context) {
         super(context);
@@ -76,7 +79,7 @@ public class HpvClientProcessorForJava extends ClientProcessorForJava {
                     continue;
                 }
 
-                if (eventType.equals(VaccineIntentService.EVENT_TYPE) || eventType.equals(VaccineIntentService.EVENT_TYPE_OUT_OF_CATCHMENT)) {
+                if (eventType.equals(HPV_VACCINATION) || eventType.equals(VaccineIntentService.EVENT_TYPE_OUT_OF_CATCHMENT)) {
                     if (vaccineTable == null) {
                         continue;
                     }
@@ -137,6 +140,8 @@ public class HpvClientProcessorForJava extends ClientProcessorForJava {
                 vaccineObj.setDate(date);
                 vaccineObj.setAnmId(contentValues.getAsString(VaccineRepository.ANMID));
                 vaccineObj.setLocationId(contentValues.getAsString(VaccineRepository.LOCATIONID));
+                vaccineObj.setTeamId(contentValues.getAsString(VaccineRepository.TEAM_ID));
+                vaccineObj.setTeam(contentValues.getAsString(VaccineRepository.TEAM));
                 vaccineObj.setSyncStatus(VaccineRepository.TYPE_Synced);
                 vaccineObj.setFormSubmissionId(vaccine.getEvent().getFormSubmissionId());
                 vaccineObj.setEventId(vaccine.getEvent().getEventId());
@@ -147,11 +152,12 @@ public class HpvClientProcessorForJava extends ClientProcessorForJava {
                 vaccineObj.setCreatedAt(createdAt);
 
                 Utils.addVaccine(vaccineRepository, vaccineObj);
-
                 Log.d(TAG, "Ending processVaccine table: " + vaccineTable.name);
-            }
-            return true;
 
+                updateEcPatient(vaccineObj.getBaseEntityId(), vaccineObj.getName(), vaccineObj.getDate());
+            }
+
+            return true;
         } catch (Exception e) {
             Log.e(TAG, "Process Vaccine Error", e);
             return null;

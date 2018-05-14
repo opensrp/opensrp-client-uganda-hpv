@@ -3,10 +3,10 @@
     android:id="@+id/clientDetailsCardView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="5dp"
+    android:layout_marginBottom="10dp"
     android:background="@drawable/border"
     android:baselineAligned="false"
-    android:orientation="horizontal" >
+    android:orientation="horizontal">
 
 
     <FrameLayout
@@ -15,16 +15,16 @@
 
         <ImageView
             android:id="@+id/patientImageView"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:adjustViewBounds="true"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_african_girl" />
 
         <ImageView
             android:id="@+id/imageView2"
-            android:layout_width="18dp"
-            android:layout_height="18dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:layout_gravity="left|top"
             android:src="@drawable/ic_icon_edit" />
     </FrameLayout>
@@ -34,14 +34,15 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_weight="1"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingLeft="10dp">
 
         <org.smartregister.view.customcontrols.CustomFontTextView
             android:id="@+id/clientNameTextView"
             style="@style/CustomFontTextViewStyle.ClientList"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingBottom="3dp"
+            android:paddingBottom="2dp"
             android:text="Martin Ndegwa"
             android:textColor="#000000"
             android:textSize="22sp" />
@@ -52,6 +53,7 @@
             style="@style/CustomFontTextViewStyle.ClientList.Light"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingBottom="2dp"
             android:text="Age 33"
             android:textColor="@color/dark_grey_text"
             android:textSize="18sp" />
@@ -62,6 +64,7 @@
             style="@style/CustomFontTextViewStyle.ClientList.Light"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingBottom="2dp"
             android:text="#5425428"
             android:textColor="@color/dark_grey_text"
             android:textSize="18sp" />

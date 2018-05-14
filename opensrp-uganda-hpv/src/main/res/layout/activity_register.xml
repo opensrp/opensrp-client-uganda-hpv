@@ -20,7 +20,7 @@
     <include
         layout="@layout/register_search_bar"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/ec_main_header_nav_layout_height" />
+        android:layout_height="?attr/actionBarSize" />
 
     <LinearLayout
         android:id="@+id/clients_header_layout"

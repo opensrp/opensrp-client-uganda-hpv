@@ -23,6 +23,8 @@
     <string name="dose_d">DOSE (D)</string>
     <string name="id">ID</string>
     <string name="service_location">Service Location</string>
+    <string name="patient_location">Location: %1$s</string>
+    <string name="dose_given_date">Dose %1$s given %2$s</string>
 
 
     <string name="unauthorized">Please check the credentials</string>
@@ -35,6 +37,7 @@
     <string name="title_activity_vaccine_base">VaccineBaseActivity</string>
     <string name="updating_dialog_title">Updating…</string>
     <string name="hpv_vaccine_due">HPV Vaccine Due</string>
+    <string name="vaccine_dose_due_on_date">Dose %1$s due %2$s</string>
     <string name="remove_from_register">REMOVE FROM REGISTER</string>
     <string name="contact">Contact</string>
     <string name="contacts">Contacts</string>
@@ -46,5 +49,17 @@
     <string name="events_key">events</string>
     <string name="manual_sync">Manual Sync</string>
     <string name="sync_round_complete">Sync round complete&#8230;</string>
+    <string name="device_timezone_changed">"The device's timezone changed. Please login again."</string>
+    <string name="device_time_changed">"The device's time has changed. Please login again."</string>
+
+    <!-- sync -->
+    <string name="sync_failed_no_internet">Sync failed. Check your internet connection.</string>
+    <string name="syncing">Syncing...</string>
+    <string name="sync_failed">Sync failed</string>
+    <string name="retry">Retry</string>
+    <string name="sync_complete">Sync complete</string>
+    <string name="sync_">Sync%1$s</string>
+    <string name="last_sync">(last %1$s)</string>
+    <string name="manual_sync_triggered">Manual Sync triggered&#8230;</string>
 
 </resources>

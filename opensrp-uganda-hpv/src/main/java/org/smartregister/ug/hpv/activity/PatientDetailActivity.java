@@ -26,7 +26,6 @@ public class PatientDetailActivity extends BasePatientDetailActivity {
     private static final int REQUEST_CODE_GET_JSON = 3432;
     private CommonPersonObjectClient commonPersonObjectClient;
     private static final int REQUEST_TAKE_PHOTO = 1;
-    PatientDetailsFragment mBaseFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +35,7 @@ public class PatientDetailActivity extends BasePatientDetailActivity {
 
     @Override
     protected Fragment getDetailFragment() {
-        mBaseFragment = new PatientDetailsFragment();
+        PatientDetailsFragment mBaseFragment = new PatientDetailsFragment();
         commonPersonObjectClient = (CommonPersonObjectClient) getIntent().getSerializableExtra(Constants.INTENT_KEY.CLIENT_OBJECT);
         mBaseFragment.setClient(commonPersonObjectClient);
         return mBaseFragment;
@@ -78,7 +77,7 @@ public class PatientDetailActivity extends BasePatientDetailActivity {
 
                 JsonFormUtils.saveImage(this, allSharedPreferences.fetchRegisteredANM(), commonPersonObjectClient.entityId(), imageLocation);
 
-                mBaseFragment.refreshView(new PictureUpdatedEvent());
+                Utils.postStickyEvent(new PictureUpdatedEvent());
 
             } catch (Exception e) {
                 Utils.showToast(this, "Error occurred saving image...");

@@ -87,10 +87,7 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
     public static final String encounterType = "Update Birth Registration";
     private static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
-    private static final String LOCATION_HIERARCHY = "locationsHierarchy";
     public static final String ENCOUNTER_LOCATION = "encounter_location";
-    private static final String MAP = "map";
-
 
     public static final Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").registerTypeAdapter(DateTime.class, new DateTimeTypeConverter()).create();
 
@@ -532,11 +529,10 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
             List<FormLocation> upToFacilities = LocationHelper.getInstance().generateLocationHierarchyTree(false, healthFacilities);
 
             String defaultFacilityString = AssetHandler.javaToJsonString(defaultFacility,
-                    new com.google.common.reflect.TypeToken<List<String>>() {
-                    }.getType());
+                    new TypeToken<List<String>>() {}.getType());
 
             String upToFacilitiesString = AssetHandler.javaToJsonString(upToFacilities,
-                    new com.google.common.reflect.TypeToken<List<FormLocation>>() {
+                    new TypeToken<List<FormLocation>>() {
                     }.getType());
 
             for (int i = 0; i < questions.length(); i++) {
@@ -822,7 +818,7 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
                 childSmartRegisterActivity.hideProgressDialog();
             }
 
-            HpvApplication.getInstance().postEvent(new JsonFormSaveCompleteEvent());
+            Utils.postStickyEvent(new JsonFormSaveCompleteEvent());
         }
 
         @Override

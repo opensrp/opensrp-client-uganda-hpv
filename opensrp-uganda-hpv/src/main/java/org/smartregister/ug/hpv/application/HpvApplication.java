@@ -20,26 +20,24 @@ import org.smartregister.configurableviews.repository.ConfigurableViewsRepositor
 import org.smartregister.configurableviews.service.PullConfigurableViewsIntentService;
 import org.smartregister.immunization.ImmunizationLibrary;
 import org.smartregister.immunization.domain.VaccineSchedule;
-import org.smartregister.immunization.domain.jsonmapping.Vaccine;
 import org.smartregister.immunization.domain.jsonmapping.VaccineGroup;
 import org.smartregister.immunization.repository.VaccineRepository;
-import org.smartregister.immunization.service.intent.VaccineIntentService;
 import org.smartregister.immunization.util.VaccinatorUtils;
 import org.smartregister.repository.EventClientRepository;
 import org.smartregister.repository.Repository;
 import org.smartregister.sync.DrishtiSyncScheduler;
 import org.smartregister.ug.hpv.BuildConfig;
+import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.activity.LoginActivity;
-import org.smartregister.ug.hpv.event.BaseEvent;
 import org.smartregister.ug.hpv.event.LanguageConfigurationEvent;
 import org.smartregister.ug.hpv.event.TriggerSyncEvent;
 import org.smartregister.ug.hpv.event.ViewConfigurationSyncCompleteEvent;
 import org.smartregister.ug.hpv.receiver.AlarmReceiver;
-import org.smartregister.ug.hpv.receiver.HpvSyncBroadcastReceiver;
+import org.smartregister.ug.hpv.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.ug.hpv.repository.HpvRepository;
 import org.smartregister.ug.hpv.repository.UniqueIdRepository;
 import org.smartregister.ug.hpv.service.PullUniqueIdsIntentService;
-import org.smartregister.ug.hpv.service.SyncService;
+import org.smartregister.ug.hpv.service.intent.SyncIntentService;
 import org.smartregister.ug.hpv.util.Constants;
 import org.smartregister.ug.hpv.util.DBConstants;
 import org.smartregister.ug.hpv.util.ServiceTools;
@@ -55,7 +53,7 @@ import static org.smartregister.util.Log.logInfo;
 /**
  * Created by ndegwamartin on 15/03/2018.
  */
-public class HpvApplication extends DrishtiApplication {
+public class HpvApplication extends DrishtiApplication implements TimeChangedBroadcastReceiver.OnTimeChangedListener {
 
     private static JsonSpecHelper jsonSpecHelper;
 
@@ -84,7 +82,10 @@ public class HpvApplication extends DrishtiApplication {
         ConfigurableViewsLibrary.init(context, getRepository());
         ImmunizationLibrary.init(context, getRepository(), createCommonFtsObject());
 
-        DrishtiSyncScheduler.setReceiverClass(HpvSyncBroadcastReceiver.class);
+        SyncStatusBroadcastReceiver.init(this);
+        TimeChangedBroadcastReceiver.init(this);
+        TimeChangedBroadcastReceiver.getInstance().addOnTimeChangedListener(this);
+
         startPullConfigurableViewsIntentService(getApplicationContext());
         try {
             Utils.saveLanguage("en");
@@ -97,8 +98,7 @@ public class HpvApplication extends DrishtiApplication {
 
         setUpEventHandling();
         initOfflineSchedules();
-        Intent serviceIntent = new Intent(getInstance().getApplicationContext(), VaccineIntentService.class);
-        this.startService(serviceIntent);
+        setAlarms(this);
     }
 
     public static synchronized HpvApplication getInstance() {
@@ -164,6 +164,7 @@ public class HpvApplication extends DrishtiApplication {
         logInfo("Application is terminating. Stopping Sync scheduler and resetting isSyncInProgress setting.");
         cleanUpSyncState();
         TimeChangedBroadcastReceiver.destroy(this);
+        SyncStatusBroadcastReceiver.destroy(this);
         super.onTerminate();
     }
 
@@ -256,7 +257,7 @@ public class HpvApplication extends DrishtiApplication {
     public void triggerSync(TriggerSyncEvent event) {
         if (event != null) {
             startPullConfigurableViewsIntentService(this);
-            ServiceTools.startService(getApplicationContext(), SyncService.class);
+            startSyncService();
         }
 
     }
@@ -297,17 +298,33 @@ public class HpvApplication extends DrishtiApplication {
         getApplicationContext().startService(intent);
     }
 
-    public void postEvent(BaseEvent event) {
-        Utils.postEvent(event);
+    public void startSyncService() {
+        Intent intent = new Intent(getApplicationContext(), PullUniqueIdsIntentService.class);
+        getApplicationContext().startService(intent);
+        ServiceTools.startService(this, SyncIntentService.class, false);
     }
 
     public static void setAlarms(android.content.Context context) {
+
         AlarmReceiver.setAlarm(context, BuildConfig.VACCINE_SYNC_PROCESSING_MINUTES, Constants.ServiceType.VACCINE_SYNC_PROCESSING);
         AlarmReceiver.setAlarm(context, BuildConfig.IMAGE_UPLOAD_MINUTES, Constants.ServiceType.IMAGE_UPLOAD);
         AlarmReceiver.setAlarm(context, BuildConfig.PULL_UNIQUE_IDS_MINUTES, Constants.ServiceType.PULL_UNIQUE_IDS);
         AlarmReceiver.setAlarm(context, BuildConfig.AUTO_SYNC_DURATION, Constants.ServiceType.AUTO_SYNC);
-        AlarmReceiver.setAlarm(context, BuildConfig.AUTO_SYNC_DURATION, Constants.ServiceType.PULL_VIEW_CONFIGURATIONS);
+        AlarmReceiver.setAlarm(context, BuildConfig.SYNC_VIEW_CONFIGURATIONS_MINUTES, Constants.ServiceType.PULL_VIEW_CONFIGURATIONS);
+    }
 
+    @Override
+    public void onTimeChanged() {
+        Utils.showToast(this, this.getString(R.string.device_time_changed));
+        context.userService().forceRemoteLogin();
+        logoutCurrentUser();
+    }
+
+    @Override
+    public void onTimeZoneChanged() {
+        Utils.showToast(this, this.getString(R.string.device_timezone_changed));
+        context.userService().forceRemoteLogin();
+        logoutCurrentUser();
     }
 
 }

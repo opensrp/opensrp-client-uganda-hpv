@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v7.app.AlertDialog;
@@ -36,9 +37,7 @@ import org.smartregister.ug.hpv.application.HpvApplication;
 import org.smartregister.ug.hpv.barcode.Barcode;
 import org.smartregister.ug.hpv.barcode.BarcodeIntentIntegrator;
 import org.smartregister.ug.hpv.barcode.BarcodeIntentResult;
-import org.smartregister.ug.hpv.event.JsonFormSaveCompleteEvent;
 import org.smartregister.ug.hpv.event.ShowProgressDialogEvent;
-import org.smartregister.ug.hpv.event.SyncEvent;
 import org.smartregister.ug.hpv.event.TriggerSyncEvent;
 import org.smartregister.ug.hpv.fragment.BaseRegisterFragment;
 import org.smartregister.ug.hpv.fragment.HomeRegisterFragment;
@@ -152,7 +151,8 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
             syncEvent.setManualSync(true);
             HpvApplication.getInstance().triggerSync(syncEvent);
 
-            Utils.showToast(this, "Manual Sync triggered...");
+            Snackbar syncStatusSnackbar = Snackbar.make(this.getWindow().getDecorView(), R.string.manual_sync_triggered, Snackbar.LENGTH_LONG);
+            syncStatusSnackbar.show();
             return true;
         }
 
@@ -268,20 +268,6 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void refreshList(SyncEvent syncEvent) {
-        if (syncEvent != null && syncEvent.getFetchStatus().equals(FetchStatus.fetched)) {
-            refreshList(FetchStatus.fetched);
-        }
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void refreshList(JsonFormSaveCompleteEvent saveEvent) {
-        if (saveEvent != null) {
-            refreshList(FetchStatus.fetched);
-        }
-    }
-
     public void showProgressDialog() {
         progressDialog = new ProgressDialog(this);
         progressDialog.setCancelable(false);
@@ -369,4 +355,6 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
             } else Log.i("", "NO RESULT FOR QR CODE");
         }
     }
+
+
 }
