@@ -118,7 +118,6 @@ public class RenderContactCardHelper extends BaseRenderHelper implements View.On
 
 
                 final Map<String, String> contactDetails = PatientRepository.getPatientContacts(baseEntityId);
-                contactDetails.toString();
 
                 mHandler.post(new Runnable() {
                     @Override

@@ -45,7 +45,7 @@ public class HpvClientProcessorForJava extends ClientProcessorForJava {
 
     private static final String TAG = HpvClientProcessorForJava.class.getCanonicalName();
     private static HpvClientProcessorForJava instance;
-    private final String  HPV_VACCINATION = "HPV Vaccination";
+    private final String HPV_VACCINATION = "HPV Vaccination";
 
     public HpvClientProcessorForJava(Context context) {
         super(context);
@@ -154,7 +154,7 @@ public class HpvClientProcessorForJava extends ClientProcessorForJava {
                 Utils.addVaccine(vaccineRepository, vaccineObj);
                 Log.d(TAG, "Ending processVaccine table: " + vaccineTable.name);
 
-                updateEcPatient(vaccineObj.getBaseEntityId(), vaccineObj.getName(), vaccineObj.getDate());
+                updateEcPatient(vaccineObj.getBaseEntityId(), vaccineObj.getName(), vaccineObj.getDate(), vaccineObj.getLocationId());
             }
 
             return true;

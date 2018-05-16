@@ -57,8 +57,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import util.UgandaHpvConstants;
-
 import static android.view.View.GONE;
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
@@ -289,12 +287,15 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
                 tableName + "." + DBConstants.KEY.CLASS,
                 tableName + "." + DBConstants.KEY.SCHOOL,
                 tableName + "." + DBConstants.KEY.SCHOOL_NAME,
+                tableName + "." + DBConstants.KEY.Location,
                 tableName + "." + DBConstants.KEY.DOSE_ONE_DATE,
                 tableName + "." + DBConstants.KEY.DATE_DOSE_ONE_GIVEN,
                 tableName + "." + DBConstants.KEY.DOSE_TWO_DATE,
                 tableName + "." + DBConstants.KEY.DATE_DOSE_TWO_GIVEN,
                 tableName + "." + DBConstants.KEY.GENDER,
-                tableName + "." + DBConstants.KEY.DATE_REMOVED};
+                tableName + "." + DBConstants.KEY.DATE_REMOVED,
+                tableName + "." + DBConstants.KEY.DOSE_ONE_GIVEN_LOCATION,
+                tableName + "." + DBConstants.KEY.DOSE_TWO_GIVEN_LOCATION};
         String[] allColumns = ArrayUtils.addAll(columns, getAdditionalColumns(tableName));
         queryBUilder.SelectInitiateMainTable(tableName, allColumns);
         mainSelect = queryBUilder.mainCondition(mainCondition);
@@ -372,7 +373,7 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
     protected void onCreation() {
         Bundle extras = getActivity().getIntent().getExtras();
         if (extras != null) {
-            boolean isRemote = extras.getBoolean(UgandaHpvConstants.IS_REMOTE_LOGIN);
+            boolean isRemote = extras.getBoolean(Constants.IS_REMOTE_LOGIN);
             if (isRemote) {
                 startSync();
             }

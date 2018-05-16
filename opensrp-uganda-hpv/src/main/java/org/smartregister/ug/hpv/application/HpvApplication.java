@@ -63,7 +63,6 @@ public class HpvApplication extends DrishtiApplication implements TimeChangedBro
     private static CommonFtsObject commonFtsObject;
     private ConfigurableViewsHelper configurableViewsHelper;
     private UniqueIdRepository uniqueIdRepository;
-    private DetailsRepository detailsRepository;
 
     private static final String TAG = HpvApplication.class.getCanonicalName();
     private String password;
@@ -227,14 +226,6 @@ public class HpvApplication extends DrishtiApplication implements TimeChangedBro
         }
         return uniqueIdRepository;
     }
-
-    public DetailsRepository getDetailsRepository() {
-        if (detailsRepository == null) {
-            detailsRepository = new DetailsRepository();
-        }
-        return detailsRepository;
-    }
-
 
     public ConfigurableViewsHelper getConfigurableViewsHelper() {
         if (configurableViewsHelper == null) {

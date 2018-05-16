@@ -529,7 +529,8 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
             List<FormLocation> upToFacilities = LocationHelper.getInstance().generateLocationHierarchyTree(false, healthFacilities);
 
             String defaultFacilityString = AssetHandler.javaToJsonString(defaultFacility,
-                    new TypeToken<List<String>>() {}.getType());
+                    new TypeToken<List<String>>() {
+                    }.getType());
 
             String upToFacilitiesString = AssetHandler.javaToJsonString(upToFacilities,
                     new TypeToken<List<FormLocation>>() {
@@ -851,6 +852,7 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
                 JSONObject metadata = getJSONObject(jsonForm, METADATA);
 
                 String lastLocationName = null;
+                String lastLocationId = null;
                 // Replace values for location questions with their corresponding location IDs
                 for (int i = 0; i < fields.length(); i++) {
                     String key = fields.getJSONObject(i).getString(Constants.KEY.KEY);
@@ -860,7 +862,7 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
                             JSONArray valueArray = new JSONArray(rawValue);
                             if (valueArray.length() > 0) {
                                 lastLocationName = valueArray.getString(valueArray.length() - 1);
-                                String lastLocationId = LocationHelper.getInstance().getOpenMrsLocationId(lastLocationName);
+                                lastLocationId = LocationHelper.getInstance().getOpenMrsLocationId(lastLocationName);
                                 fields.getJSONObject(i).put(Constants.KEY.VALUE, lastLocationId);
                             }
                         } catch (Exception e) {
@@ -869,6 +871,9 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
                     } else if (DBConstants.KEY.SCHOOL_NAME.equalsIgnoreCase(key)) {
 
                         fields.getJSONObject(i).put(Constants.KEY.VALUE, lastLocationName);
+                    } else if (DBConstants.KEY.Location.equalsIgnoreCase(key)) {
+
+                        fields.getJSONObject(i).put(Constants.KEY.VALUE, lastLocationId);
                     } else if (DBConstants.KEY.DOSE_ONE_DATE.equalsIgnoreCase(key)) {
                         try {
 
@@ -887,13 +892,6 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
                     }
                 }
 
-                JSONObject lookUpJSONObject = getJSONObject(metadata, "look_up");
-                String lookUpEntityId = "";
-                String lookUpBaseEntityId = "";
-                if (lookUpJSONObject != null) {
-                    lookUpEntityId = getString(lookUpJSONObject, "entity_id");
-                    lookUpBaseEntityId = getString(lookUpJSONObject, Constants.KEY.VALUE);
-                }
                 Client baseClient = JsonFormUtils.createBaseClient(fields, entityId);
                 Event baseEvent = JsonFormUtils.createEvent(openSrpContext, fields, metadata, entityId, encounterType, providerId, bindType);
 

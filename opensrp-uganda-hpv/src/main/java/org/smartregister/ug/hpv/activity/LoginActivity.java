@@ -54,9 +54,9 @@ import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.application.HpvApplication;
 import org.smartregister.ug.hpv.event.ViewConfigurationSyncCompleteEvent;
 import org.smartregister.ug.hpv.helper.LocationHelper;
-import org.smartregister.ug.hpv.util.ImageLoaderRequest;
 import org.smartregister.ug.hpv.receiver.AlarmReceiver;
 import org.smartregister.ug.hpv.util.Constants;
+import org.smartregister.ug.hpv.util.ImageLoaderRequest;
 import org.smartregister.ug.hpv.util.NetworkUtils;
 import org.smartregister.util.Utils;
 
@@ -68,16 +68,12 @@ import java.util.TimeZone;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import util.UgandaHpvConstants;
-
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static org.smartregister.domain.LoginResponse.NO_INTERNET_CONNECTIVITY;
 import static org.smartregister.domain.LoginResponse.UNAUTHORIZED;
 import static org.smartregister.domain.LoginResponse.UNKNOWN_RESPONSE;
 import static org.smartregister.util.Log.logError;
 import static org.smartregister.util.Log.logInfo;
-import static util.UgandaHpvConstants.CONFIGURATION.LOGIN;
-import static util.UgandaHpvConstants.VIEW_CONFIGURATION_PREFIX;
 
 public class LoginActivity extends AppCompatActivity {
     private EditText userNameEditText;
@@ -106,6 +102,7 @@ public class LoginActivity extends AppCompatActivity {
         initializeProgressDialog();
         setLanguage();
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add("Settings");
@@ -205,7 +202,7 @@ public class LoginActivity extends AppCompatActivity {
     private void localLogin(View view, String userName, String password) {
         view.setClickable(true);
         if (getOpenSRPContext().userService().isUserInValidGroup(userName, password)
-                && (!UgandaHpvConstants.TIME_CHECK || TimeStatus.OK.equals(getOpenSRPContext().userService().validateStoredServerTimeZone()))) {
+                && (!Constants.TIME_CHECK || TimeStatus.OK.equals(getOpenSRPContext().userService().validateStoredServerTimeZone()))) {
             localLoginWith(userName, password);
         } else {
             login(findViewById(R.id.login_login_btn), false);
@@ -239,9 +236,9 @@ public class LoginActivity extends AppCompatActivity {
                         if (loginResponse == LoginResponse.SUCCESS) {
                             if (getOpenSRPContext().userService().isUserInPioneerGroup(userName)) {
                                 TimeStatus timeStatus = getOpenSRPContext().userService().validateDeviceTime(
-                                        loginResponse.payload(), UgandaHpvConstants.MAX_SERVER_TIME_DIFFERENCE
+                                        loginResponse.payload(), Constants.MAX_SERVER_TIME_DIFFERENCE
                                 );
-                                if (!UgandaHpvConstants.TIME_CHECK || timeStatus.equals(TimeStatus.OK)) {
+                                if (!Constants.TIME_CHECK || timeStatus.equals(TimeStatus.OK)) {
                                     remoteLoginWith(userName, password, loginResponse.payload());
                                     HpvApplication.getInstance().startPullUniqueIdsService();
                                 } else {
@@ -307,15 +304,15 @@ public class LoginActivity extends AppCompatActivity {
             Utils.startAsyncTask(new SaveTeamLocationsTask(), null);
         }
         Intent intent = new Intent(this, HomeRegisterActivity.class);
-        intent.putExtra(UgandaHpvConstants.IS_REMOTE_LOGIN, remote);
+        intent.putExtra(Constants.IS_REMOTE_LOGIN, remote);
         startActivity(intent);
 
         finish();
     }
 
-    private void  processViewCustomizations() {
+    private void processViewCustomizations() {
         try {
-            String jsonString = Utils.getPreference(this, VIEW_CONFIGURATION_PREFIX + LOGIN, null);
+            String jsonString = Utils.getPreference(this, Constants.VIEW_CONFIGURATION_PREFIX + Constants.CONFIGURATION.LOGIN, null);
             if (jsonString == null) {
                 return;
             }
@@ -410,24 +407,24 @@ public class LoginActivity extends AppCompatActivity {
         AllSharedPreferences allSharedPreferences = new AllSharedPreferences(getDefaultSharedPreferences(getOpenSRPContext().applicationContext()));
 
         String preferredLocal = allSharedPreferences.fetchLanguagePreference();
-        if (UgandaHpvConstants.URDU_LOCALE.equals(preferredLocal)) {
-            allSharedPreferences.saveLanguagePreference(UgandaHpvConstants.URDU_LOCALE);
+        if (Constants.URDU_LOCALE.equals(preferredLocal)) {
+            allSharedPreferences.saveLanguagePreference(Constants.URDU_LOCALE);
             Resources resources = getOpenSRPContext().applicationContext().getResources();
             // Change locale settings in app
             DisplayMetrics displayMetrics = resources.getDisplayMetrics();
             Configuration configuration = resources.getConfiguration();
-            configuration.locale = new Locale(UgandaHpvConstants.URDU_LOCALE);
+            configuration.locale = new Locale(Constants.URDU_LOCALE);
             resources.updateConfiguration(configuration, displayMetrics);
-            return UgandaHpvConstants.URDU_LANGUAGE;
+            return Constants.URDU_LANGUAGE;
         } else {
-            allSharedPreferences.saveLanguagePreference(UgandaHpvConstants.ENGLISH_LANGUAGE);
+            allSharedPreferences.saveLanguagePreference(Constants.ENGLISH_LANGUAGE);
             Resources resources = getOpenSRPContext().applicationContext().getResources();
             // change locale settings in the app
             DisplayMetrics displayMetrics = resources.getDisplayMetrics();
             Configuration configuration = resources.getConfiguration();
-            configuration.locale = new Locale(UgandaHpvConstants.ENGLISH_LOCALE);
+            configuration.locale = new Locale(Constants.ENGLISH_LOCALE);
             resources.updateConfiguration(configuration, displayMetrics);
-            return UgandaHpvConstants.ENGLISH_LANGUAGE;
+            return Constants.ENGLISH_LANGUAGE;
         }
     }
 

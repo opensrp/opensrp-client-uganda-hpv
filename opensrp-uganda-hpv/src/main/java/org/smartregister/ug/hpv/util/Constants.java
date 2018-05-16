@@ -11,7 +11,15 @@ public class Constants {
     public static final int OPENMRS_UNIQUE_ID_BATCH_SIZE = BuildConfig.OPENMRS_UNIQUE_ID_BATCH_SIZE;
     public static final int OPENMRS_UNIQUE_ID_SOURCE = BuildConfig.OPENMRS_UNIQUE_ID_SOURCE;
 
+    public static final String IS_REMOTE_LOGIN = "is_remote_login";
     public static final long MAX_SERVER_TIME_DIFFERENCE = BuildConfig.MAX_SERVER_TIME_DIFFERENCE;
+    public static final String ENGLISH_LOCALE = "en";
+    public static final String URDU_LOCALE = "ur";
+    public static final String ENGLISH_LANGUAGE = "English";
+    public static final String URDU_LANGUAGE = "Urdu";
+    public static final String VIEW_CONFIGURATION_PREFIX = "ViewConfiguration_";
+    public static final String DOB = "dob";
+
     public static final boolean TIME_CHECK = BuildConfig.TIME_CHECK;
     public static final String LAST_SYNC_TIMESTAMP = "LAST_SYNC_TIMESTAMP";
     public static final String LAST_CHECK_TIMESTAMP = "LAST_SYNC_CHECK_TIMESTAMP";
@@ -62,6 +70,7 @@ public class Constants {
         public static final String TAGS = "tags";
         public static final String MAP = "map";
         public static final String PHOTO = "photo";
+        public static final String CHILD = "child";
 
     }
 
@@ -108,6 +117,21 @@ public class Constants {
     public static final class SyncFilters {
 
         public static final String FILTER_TEAM_ID = "teamId";
+    }
+
+    public static final class HPV_DOSE {
+
+        public static final String NUMBER_1 = "1";
+        public static final String NUMBER_2 = "2";
+    }
+
+
+    public enum State {
+        DUE,
+        OVERDUE,
+        EXPIRED,
+        INACTIVE,
+        FULLY_IMMUNIZED
     }
 
 

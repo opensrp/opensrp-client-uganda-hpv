@@ -23,6 +23,7 @@ import org.smartregister.ug.hpv.event.JsonFormSaveCompleteEvent;
 import org.smartregister.ug.hpv.event.PatientRemovedEvent;
 import org.smartregister.ug.hpv.event.PictureUpdatedEvent;
 import org.smartregister.ug.hpv.event.SyncEvent;
+import org.smartregister.ug.hpv.event.VaccineGivenEvent;
 import org.smartregister.ug.hpv.helper.LocationHelper;
 import org.smartregister.ug.hpv.helper.view.RenderContactCardHelper;
 import org.smartregister.ug.hpv.helper.view.RenderPatientDemographicCardHelper;
@@ -40,9 +41,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import util.UgandaHpvConstants;
-
-
 /**
  * Created by ndegwamartin on 06/12/2017.
  */
@@ -58,6 +56,7 @@ public abstract class BasePatientDetailsFragment extends SecuredFragment impleme
     private RenderContactCardHelper renderContactHelper;
     private Snackbar syncStatusSnackbar;
     private View rootView;
+    private RenderPatientFollowupCardHelper renderPatientFollowupCardHelper;
 
 
     protected abstract void setClient(CommonPersonObjectClient commonPersonObjectClient);
@@ -75,7 +74,7 @@ public abstract class BasePatientDetailsFragment extends SecuredFragment impleme
     protected void renderFollowUpView(View view) {
         CommonPersonObjectClient client = (CommonPersonObjectClient) view.getTag();
 
-        RenderPatientFollowupCardHelper renderPatientFollowupCardHelper = new RenderPatientFollowupCardHelper(getActivity(), client);
+        renderPatientFollowupCardHelper = new RenderPatientFollowupCardHelper(getActivity(), client);
         renderPatientFollowupCardHelper.renderView(view);
 
     }
@@ -121,7 +120,7 @@ public abstract class BasePatientDetailsFragment extends SecuredFragment impleme
     protected void onCreation() {
         Bundle extras = getActivity().getIntent().getExtras();
         if (extras != null) {
-            boolean isRemote = extras.getBoolean(UgandaHpvConstants.IS_REMOTE_LOGIN);
+            boolean isRemote = extras.getBoolean(Constants.IS_REMOTE_LOGIN);
             if (isRemote) {
                 startSync();
             }
@@ -154,6 +153,15 @@ public abstract class BasePatientDetailsFragment extends SecuredFragment impleme
         if (jsonFormSaveCompleteEvent != null) {
             Utils.removeStickyEvent(jsonFormSaveCompleteEvent);
             renderContactHelper.refreshContacts(commonPersonObjectClient.getCaseId());
+        }
+
+    }
+
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void refreshVaccineDueView(VaccineGivenEvent event) {
+        if (event != null) {
+            Utils.removeStickyEvent(event);
+            renderPatientFollowupCardHelper.refreshVaccinesDueView(commonPersonObjectClient.getCaseId());
         }
 
     }

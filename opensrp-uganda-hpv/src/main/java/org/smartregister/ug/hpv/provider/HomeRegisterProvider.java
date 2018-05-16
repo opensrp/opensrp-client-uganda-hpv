@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.apache.commons.lang3.StringUtils;
@@ -113,14 +114,26 @@ public class HomeRegisterProvider implements SmartRegisterCLientsProviderForCurs
 
 
     private void populateDoseColumn(CommonPersonObjectClient pc, View view) {
-        Button patient = (Button) view.findViewById(R.id.dose_button);
+
 
         DoseStatus doseStatus = Utils.getCurrentDoseStatus(pc);
 
-        patient.setText(getDoseButtonText(doseStatus));
-        patient.setBackground(Utils.getDoseButtonBackground(context, Utils.getRegisterViewButtonStatus(doseStatus)));
-        patient.setTextColor(Utils.getDoseButtonTextColor(context, Utils.getRegisterViewButtonStatus(doseStatus)));
-        attachDosageOnclickListener(patient, pc);
+        Button patient = (Button) view.findViewById(R.id.dose_button);
+
+        LinearLayout completeView = (LinearLayout) view.findViewById(R.id.completedView);
+
+        if (StringUtils.isNotBlank(doseStatus.getDateDoseTwoGiven())) {
+            patient.setVisibility(View.GONE);
+            completeView.setVisibility(View.VISIBLE);
+        } else {
+
+            patient.setVisibility(View.VISIBLE);
+            completeView.setVisibility(View.GONE);
+            patient.setText(getDoseButtonText(doseStatus));
+            patient.setBackground(Utils.getDoseButtonBackground(context, Utils.getRegisterViewButtonStatus(doseStatus)));
+            patient.setTextColor(Utils.getDoseButtonTextColor(context, Utils.getRegisterViewButtonStatus(doseStatus)));
+            attachDosageOnclickListener(patient, pc);
+        }
     }
 
     private String getDoseButtonText(DoseStatus doseStatus) {
@@ -132,7 +145,7 @@ public class HomeRegisterProvider implements SmartRegisterCLientsProviderForCurs
         } else {
 
             if (StringUtils.isNotBlank(doseStatus.getDoseTwoDate())) {
-                doseText = "D2 Due \n" + Utils.formatDate(doseStatus.getDoseTwoDate()) + " \n D1: " + Utils.formatDate(doseStatus.getDoseOneDate());
+                doseText = "D2 Due \n" + Utils.formatDate(doseStatus.getDoseTwoDate()) + " \n D1: " + Utils.formatDate(doseStatus.getDateDoseOneGiven());
 
             } else {
                 doseText = "D1 Due \n" + Utils.formatDate(doseStatus.getDoseOneDate());
