@@ -86,30 +86,9 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
 
         updateCommonPersonObjectClient(patientDetails);
 
-        DoseStatus doseStatus = Utils.getCurrentDoseStatus(commonPersonObjectClient);
-
         String dateDoseTwoGiven = patientDetails.get(DBConstants.KEY.DATE_DOSE_TWO_GIVEN);
 
-        if (followUpView != null) {
-
-            if (StringUtils.isNotBlank(dateDoseTwoGiven)) {
-                followUpView.setVisibility(View.GONE);
-
-            } else {
-
-                followUpView.setOnClickListener(helperContext);
-                followUpView.setText(String.format(context.getString(R.string.vaccine_dose_due_on_date), StringUtils.isBlank(dateDoseOneGiven) ? Constants.HPV_DOSE.NUMBER_1 : Constants.HPV_DOSE.NUMBER_2, Utils.formatDate(nextVisitDate)));
-
-                Constants.State doseState = Utils.getRegisterViewButtonStatus(doseStatus);
-                followUpView.setBackground(Utils.getDoseButtonBackground(context, doseState));
-                followUpView.setTextColor(Utils.getDoseButtonTextColor(context, doseState));
-
-                if (doseState.equals(Constants.State.INACTIVE) || doseState.equals(Constants.State.FULLY_IMMUNIZED)) {
-                    followUpView.setOnClickListener(null);
-                    followUpView.setEnabled(false);
-                }
-            }
-        }
+        renderFollowupButton(followUpView, StringUtils.isBlank(dateDoseOneGiven), StringUtils.isNotBlank(dateDoseTwoGiven), nextVisitDate);
 
         if (StringUtils.isNotBlank(dateDoseOneGiven)) {
             TextView doseOneGivenTextView = (TextView) view.findViewById(R.id.dateDoseOneGivenTextView);
@@ -133,6 +112,27 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
                 TextView locationTextView = (TextView) view.findViewById(R.id.locationVaccineTwoGivenTextView);
                 locationTextView.setVisibility(View.VISIBLE);
                 locationTextView.setText(String.format(context.getString(R.string.patient_location), StringUtils.capitalize(LocationHelper.getInstance().getOpenMrsLocationName(locationDoseTwo))));
+            }
+        }
+    }
+
+    private void renderFollowupButton(Button followUpView, boolean isDoseOneGiven, boolean isDoseTwoGiven, String nextVisitDate) {
+        DoseStatus doseStatus = Utils.getCurrentDoseStatus(commonPersonObjectClient);
+        if (isDoseTwoGiven) {
+            followUpView.setVisibility(View.GONE);
+
+        } else {
+
+            followUpView.setOnClickListener(helperContext);
+            followUpView.setText(String.format(context.getString(R.string.vaccine_dose_due_on_date), isDoseOneGiven ? Constants.HPV_DOSE.NUMBER_1 : Constants.HPV_DOSE.NUMBER_2, Utils.formatDate(nextVisitDate)));
+
+            Constants.State doseState = Utils.getRegisterViewButtonStatus(doseStatus);
+            followUpView.setBackground(Utils.getDoseButtonBackground(context, doseState));
+            followUpView.setTextColor(Utils.getDoseButtonTextColor(context, doseState));
+
+            if (doseState.equals(Constants.State.INACTIVE) || doseState.equals(Constants.State.FULLY_IMMUNIZED)) {
+                followUpView.setOnClickListener(null);
+                followUpView.setEnabled(false);
             }
         }
     }
