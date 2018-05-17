@@ -1,4 +1,4 @@
-package org.smartregister.ug.hpv;
+package org.smartregister.ug.hpv.activity;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -16,6 +16,8 @@ import org.robolectric.Robolectric;
 import org.robolectric.android.controller.ActivityController;
 import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowApplication;
+import org.smartregister.ug.hpv.BaseUnitTest;
+import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.activity.HomeRegisterActivity;
 import org.smartregister.ug.hpv.activity.LoginActivity;
 

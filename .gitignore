@@ -8,7 +8,7 @@
 /build
 /captures
 .externalNativeBuild
-
+*jacoco.exec
 
 # Ignore Gradle GUI config
 gradle-app.setting

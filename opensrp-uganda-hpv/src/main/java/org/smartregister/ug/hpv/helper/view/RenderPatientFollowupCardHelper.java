@@ -88,7 +88,7 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
 
         String dateDoseTwoGiven = patientDetails.get(DBConstants.KEY.DATE_DOSE_TWO_GIVEN);
 
-        renderFollowupButton(followUpView, StringUtils.isBlank(dateDoseOneGiven), StringUtils.isNotBlank(dateDoseTwoGiven), nextVisitDate);
+        renderFollowupButton(helperContext, followUpView, StringUtils.isBlank(dateDoseOneGiven), StringUtils.isNotBlank(dateDoseTwoGiven), nextVisitDate);
 
         if (StringUtils.isNotBlank(dateDoseOneGiven)) {
             TextView doseOneGivenTextView = (TextView) view.findViewById(R.id.dateDoseOneGivenTextView);
@@ -116,7 +116,7 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
         }
     }
 
-    private void renderFollowupButton(Button followUpView, boolean isDoseOneGiven, boolean isDoseTwoGiven, String nextVisitDate) {
+    private void renderFollowupButton( RenderPatientFollowupCardHelper helperContext, Button followUpView, boolean isDoseOneGiven, boolean isDoseTwoGiven, String nextVisitDate) {
         DoseStatus doseStatus = Utils.getCurrentDoseStatus(commonPersonObjectClient);
         if (isDoseTwoGiven) {
             followUpView.setVisibility(View.GONE);
