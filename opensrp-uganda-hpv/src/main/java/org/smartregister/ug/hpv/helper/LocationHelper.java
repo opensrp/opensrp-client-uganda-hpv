@@ -531,17 +531,21 @@ public class LocationHelper {
         }
 
         String currLocationId = getOpenMrsLocationId(currLocation);
-        locationNameHierarchy = getOpenMrsLocationHierarchy(currLocationId);
+        Pair<String, String> result;
+        if (currLocationId == null) {
+            result = new Pair<>(getDefaultLocation(), getDefaultLocation());
+        } else {
+            locationNameHierarchy = getOpenMrsLocationHierarchy(currLocationId);
 
-        String childLocationName = locationNameHierarchy.get(locationNameHierarchy.size() - 1);
-        String parentLocationName = locationNameHierarchy.get(0);
+            String childLocationName = locationNameHierarchy.get(locationNameHierarchy.size() - 1);
+            String parentLocationName = locationNameHierarchy.get(0);
 
-        childLocationId = getOpenMrsLocationId(childLocationName);
-        parentLocationId = getOpenMrsLocationId(parentLocationName);
+            childLocationId = getOpenMrsLocationId(childLocationName);
+            parentLocationId = getOpenMrsLocationId(parentLocationName);
 
-        Pair<String, String> result = new Pair<>(parentLocationId, childLocationId);
-        childAndParentLocationIds.put(currLocation, result);
-
+            result = new Pair<>(parentLocationId, childLocationId);
+            childAndParentLocationIds.put(currLocation, result);
+        }
         return result;
     }
 
