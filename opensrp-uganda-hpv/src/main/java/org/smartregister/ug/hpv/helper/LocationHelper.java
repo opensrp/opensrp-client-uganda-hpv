@@ -530,7 +530,8 @@ public class LocationHelper {
             return childAndParentLocationIds.get(currLocation);
         }
 
-        locationNameHierarchy = getOpenMrsLocationHierarchy(currLocation);
+        String currLocationId = getOpenMrsLocationId(currLocation);
+        locationNameHierarchy = getOpenMrsLocationHierarchy(currLocationId);
 
         String childLocationName = locationNameHierarchy.get(locationNameHierarchy.size() - 1);
         String parentLocationName = locationNameHierarchy.get(0);
