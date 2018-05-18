@@ -33,9 +33,6 @@ public class HpvJsonFormActivityTest extends BaseUnitTest {
     @Mock
     private String openMrsEntityId;
 
-    @Mock
-    private MenuItem menuItem;
-
     @Before
     public void setUp() {
         activity = Mockito.mock(HpvJsonFormActivity.class);

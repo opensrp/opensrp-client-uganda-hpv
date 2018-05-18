@@ -36,9 +36,6 @@ public class PatientDetailActivityTest extends BaseUnitTest {
     private Menu menu;
 
     @Mock
-    private AllSharedPreferences sharedPreferences;
-
-    @Mock
     private Intent intent;
 
     @Before
