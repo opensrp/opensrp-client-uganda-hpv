@@ -57,33 +57,41 @@ public class PatientDetailActivity extends BasePatientDetailActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         AllSharedPreferences allSharedPreferences = getOpenSRPContext().allSharedPreferences();
         if (requestCode == REQUEST_CODE_GET_JSON && resultCode == RESULT_OK) {
-            try {
-                String jsonString = data.getStringExtra("json");
-                Log.d("JSONResult", jsonString);
-
-                JSONObject form = new JSONObject(jsonString);
-                if (form.getString(JsonFormUtils.ENCOUNTER_TYPE).equals(Constants.EventType.REMOVE) || form.getString(JsonFormUtils.ENCOUNTER_TYPE).equals(Constants.EventType.UPDATE_REGISTRATION)) {
-
-                    JsonFormUtils.saveForm(this, HpvApplication.getInstance().getContext(), jsonString, allSharedPreferences.fetchRegisteredANM());
-                }
-            } catch (Exception e) {
-                Log.e(TAG, Log.getStackTraceString(e));
-            }
+            processFormDetailsSave(data, allSharedPreferences);
 
         } else if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
 
-            try {
-                String imageLocation = currentfile.getAbsolutePath();
+            processPhotoUpload(allSharedPreferences);
 
-                JsonFormUtils.saveImage(this, allSharedPreferences.fetchRegisteredANM(), commonPersonObjectClient.entityId(), imageLocation);
+        }
+    }
 
-                Utils.postStickyEvent(new PictureUpdatedEvent());
+    protected void processFormDetailsSave(Intent data, AllSharedPreferences allSharedPreferences) {
+        try {
+            String jsonString = data.getStringExtra("json");
+            Log.d("JSONResult", jsonString);
 
-            } catch (Exception e) {
-                Utils.showToast(this, "Error occurred saving image...");
-                Log.e(TAG, e.getMessage());
+            JSONObject form = new JSONObject(jsonString);
+            if (form.getString(JsonFormUtils.ENCOUNTER_TYPE).equals(Constants.EventType.REMOVE) || form.getString(JsonFormUtils.ENCOUNTER_TYPE).equals(Constants.EventType.UPDATE_REGISTRATION)) {
+
+                JsonFormUtils.saveForm(this, HpvApplication.getInstance().getContext(), jsonString, allSharedPreferences.fetchRegisteredANM());
             }
+        } catch (Exception e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        }
+    }
 
+    protected void processPhotoUpload(AllSharedPreferences allSharedPreferences) {
+        try {
+            String imageLocation = currentfile.getAbsolutePath();
+
+            JsonFormUtils.saveImage(this, allSharedPreferences.fetchRegisteredANM(), commonPersonObjectClient.entityId(), imageLocation);
+
+            Utils.postStickyEvent(new PictureUpdatedEvent());
+
+        } catch (Exception e) {
+            Utils.showToast(this, "Error occurred saving image...");
+            Log.e(TAG, e.getMessage());
         }
     }
 }

@@ -13,6 +13,9 @@ import org.robolectric.Robolectric;
 import org.robolectric.android.controller.ActivityController;
 import org.smartregister.ug.hpv.BaseUnitTest;
 import org.smartregister.ug.hpv.fragment.HomeRegisterFragment;
+import org.smartregister.ug.hpv.util.Constants;
+
+import java.util.List;
 
 import static org.mockito.Mockito.times;
 
@@ -25,7 +28,7 @@ public class HomeRegisterActivityTest extends BaseUnitTest {
     private ActivityController<HomeRegisterActivity> controller;
 
     @Mock
-    MenuItem menuItem;
+    private MenuItem menuItem;
 
     @Before
     public void setUp() {
@@ -71,6 +74,13 @@ public class HomeRegisterActivityTest extends BaseUnitTest {
         Fragment fragment = activity.getRegisterFragment();
         Assert.assertNotNull(fragment);
         Assert.assertTrue(fragment instanceof HomeRegisterFragment);
+    }
+
+    @Test
+    public void getViewIdentifierReturnsTheCorrectItemsList() {
+        List<String> identifiers = activity.getViewIdentifiers();
+        Assert.assertEquals(identifiers.size(), 1);
+        Assert.assertEquals(identifiers.get(0), Constants.VIEW_CONFIGS.HOME_REGISTER);
     }
 
 }

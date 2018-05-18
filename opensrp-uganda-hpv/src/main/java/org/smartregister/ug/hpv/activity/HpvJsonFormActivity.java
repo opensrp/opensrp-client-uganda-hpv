@@ -21,26 +21,32 @@ public class HpvJsonFormActivity extends JsonFormActivity {
 
     @Override
     public void initializeFormFragment() {
-        HpvJsonFormFragment hpvJsonFormFragment = HpvJsonFormFragment.getFormFragment(JsonFormConstants.FIRST_STEP_NAME);
-        getSupportFragmentManager().beginTransaction()
-                .add(com.vijay.jsonwizard.R.id.container, hpvJsonFormFragment).commit();
+        initializeFormFragmentCore();
     }
 
     @Override
     public void writeValue(String stepName, String key, String value, String openMrsEntityParent, String openMrsEntity, String openMrsEntityId) throws JSONException {
-        super.writeValue(stepName, key, value, openMrsEntityParent, openMrsEntity, openMrsEntityId);
-        refreshCalculateLogic(key, value);
+        callSuperWriteValue(stepName, key, value, openMrsEntityParent, openMrsEntity, openMrsEntityId);
 
     }
 
     @Override
     public void onFormFinish() {
+        callSuperFinish();
+    }
+
+    protected void callSuperFinish() {
         super.onFormFinish();
     }
 
+    protected void callSuperWriteValue(String stepName, String key, String value, String openMrsEntityParent, String openMrsEntity, String openMrsEntityId) throws JSONException {
+        super.writeValue(stepName, key, value, openMrsEntityParent, openMrsEntity, openMrsEntityId);
+    }
 
-    private void refreshCalculateLogic(String key, String value) {
-        //Refresh birthdate ?
+    protected void initializeFormFragmentCore() {
+        HpvJsonFormFragment hpvJsonFormFragment = HpvJsonFormFragment.getFormFragment(JsonFormConstants.FIRST_STEP_NAME);
+        getSupportFragmentManager().beginTransaction()
+                .add(com.vijay.jsonwizard.R.id.container, hpvJsonFormFragment).commit();
     }
 }
 

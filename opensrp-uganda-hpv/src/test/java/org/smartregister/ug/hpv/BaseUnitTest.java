@@ -7,7 +7,6 @@ import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 import org.smartregister.ug.hpv.application.TestHpvApplication;
-import org.smartregister.ug.hpv.runner.CustomRobolectricRunner;
 
 /**
  * Created by ndegwamartin on 12/03/2018.

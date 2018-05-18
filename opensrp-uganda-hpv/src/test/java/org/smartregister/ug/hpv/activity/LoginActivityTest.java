@@ -18,8 +18,6 @@ import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowApplication;
 import org.smartregister.ug.hpv.BaseUnitTest;
 import org.smartregister.ug.hpv.R;
-import org.smartregister.ug.hpv.activity.HomeRegisterActivity;
-import org.smartregister.ug.hpv.activity.LoginActivity;
 
 import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -82,28 +80,28 @@ public class LoginActivityTest extends BaseUnitTest {
     }
 
     @Test
-    public void testUnauthorizedUserDialogIsDisplayed_missingCredentials() {
+    public void testUnauthorizedUserDialogIsDisplayedWithMissingCredentials() {
 
         attemptInvalidLogin("", "");
         assertNotNull(ShadowAlertDialog.getLatestAlertDialog());
     }
 
     @Test
-    public void testUnauthorizedUserDialogIsDisplayed_missingUserName() {
+    public void testUnauthorizedUserDialogIsDisplayedWithMissingUserName() {
 
         attemptInvalidLogin("", "password");
         assertNotNull(ShadowAlertDialog.getLatestAlertDialog());
     }
 
     @Test
-    public void testUnauthorizedUserDialogIsDisplayed_missingPassword() {
+    public void testUnauthorizedUserDialogIsDisplayedWithMissingPassword() {
 
         attemptInvalidLogin("username", "");
         assertNotNull(ShadowAlertDialog.getLatestAlertDialog());
     }
 
     @Test
-    public void testUnauthorizedUserDialogIsDisplayed_invalidCredentials() {
+    public void testUnauthorizedUserDialogIsDisplayedWithInvalidCredentials() {
 
         attemptInvalidLogin("username", "password");
         assertNotNull(ShadowAlertDialog.getLatestAlertDialog());
