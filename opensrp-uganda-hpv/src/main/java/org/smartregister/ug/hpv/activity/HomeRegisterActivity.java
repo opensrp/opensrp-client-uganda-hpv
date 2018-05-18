@@ -35,8 +35,8 @@ public class HomeRegisterActivity extends BaseRegisterActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
-        return super.onOptionsItemSelected(item);
+boolean res = superOnOptionsItemsSelected(item);
+        return res;
 
     }
 
@@ -48,6 +48,10 @@ public class HomeRegisterActivity extends BaseRegisterActivity {
     @Override
     public List<String> getViewIdentifiers() {
         return Arrays.asList(HOME_REGISTER);
+    }
+
+    public boolean superOnOptionsItemsSelected(MenuItem item) {
+        return super.onOptionsItemSelected(item);
     }
 
 

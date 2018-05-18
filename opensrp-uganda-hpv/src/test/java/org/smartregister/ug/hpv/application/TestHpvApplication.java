@@ -10,6 +10,6 @@ public class TestHpvApplication extends HpvApplication {
     @Override
     public void onCreate() {
         super.onCreate();
-        setTheme(R.style.AppTheme); //or just R.style.Theme_AppCompat
+        setTheme(R.style.Theme_AppCompat); //or just R.style.Theme_AppCompat
     }
 }

@@ -18,7 +18,7 @@ import org.smartregister.ug.hpv.fragment.PatientDetailsFragment;
  */
 
 public class PatientDetailActivityTest extends BaseUnitTest {
-    private PatientDetailActivity activity = new PatientDetailActivity();
+    private PatientDetailActivity activity;
     private ActivityController<PatientDetailActivity> controller;
 
     @Mock

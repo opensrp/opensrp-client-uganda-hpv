@@ -1,28 +1,31 @@
 package org.smartregister.ug.hpv.activity;
 
 import android.support.v4.app.Fragment;
-import android.view.Menu;
+import android.view.MenuItem;
 
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.robolectric.Robolectric;
 import org.robolectric.android.controller.ActivityController;
 import org.smartregister.ug.hpv.BaseUnitTest;
 import org.smartregister.ug.hpv.fragment.HomeRegisterFragment;
+
+import static org.mockito.Mockito.times;
 
 /**
  * Created by ndegwamartin on 17/05/2018.
  */
 
 public class HomeRegisterActivityTest extends BaseUnitTest {
-    private HomeRegisterActivity activity = new HomeRegisterActivity();
+    private HomeRegisterActivity activity;
     private ActivityController<HomeRegisterActivity> controller;
 
     @Mock
-    Menu menu;
+    MenuItem menuItem;
 
     @Before
     public void setUp() {
@@ -49,8 +52,18 @@ public class HomeRegisterActivityTest extends BaseUnitTest {
 
     @Test
     public void assertActivityStartsUpCorrectly() throws Exception {
+        HomeRegisterActivity activity = Mockito.spy(HomeRegisterActivity.class);
         Assert.assertNotNull(activity);
-        Assert.assertTrue(activity.onCreateOptionsMenu(menu));
+
+        Mockito.doReturn(true).when(activity).superOnOptionsItemsSelected(menuItem);
+
+        activity.onOptionsItemSelected(menuItem);
+        Mockito.verify(activity, times(1)).superOnOptionsItemsSelected(menuItem);
+
+        Mockito.doReturn(false).when(activity).superOnOptionsItemsSelected(menuItem);
+
+        boolean result = activity.onOptionsItemSelected(menuItem);
+        Assert.assertFalse(result);
     }
 
     @Test
