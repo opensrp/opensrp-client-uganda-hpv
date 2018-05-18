@@ -1,5 +1,6 @@
 package org.smartregister.ug.hpv.util;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -18,6 +19,8 @@ import android.widget.Toast;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
+
+import net.sqlcipher.database.SQLiteDatabase;
 
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
@@ -41,6 +44,9 @@ import java.util.Locale;
 import java.util.Map;
 
 import util.UgandaHpvConstants;
+
+import static org.smartregister.immunization.repository.VaccineRepository.ID_COLUMN;
+import static org.smartregister.immunization.repository.VaccineRepository.VACCINE_TABLE_NAME;
 
 /**
  * Created by ndegwamartin on 14/03/2018.
@@ -388,6 +394,26 @@ public class Utils {
         DateTime expiryDate = doseDate.plusDays(DOSE_EXPIRY_WINDOW_DAYS + 1);
 
         return expiryDate.isBeforeNow();
+    }
+
+
+    public static void updateVaccineTable(SQLiteDatabase database, Vaccine vaccine, Map<String, String> contentVals) {
+
+        if (vaccine == null || vaccine.getId() == null) {
+            return;
+        }
+
+        ContentValues contentValues = new ContentValues();
+        for (Map.Entry<String, String> entry : contentVals.entrySet()) {
+            contentValues.put(entry.getKey(), entry.getValue());
+        }
+
+        try {
+            String idSelection = ID_COLUMN + " = ?";
+            database.update(VACCINE_TABLE_NAME, contentValues, idSelection, new String[]{vaccine.getId().toString()});
+        } catch (Exception e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        }
     }
 
 }

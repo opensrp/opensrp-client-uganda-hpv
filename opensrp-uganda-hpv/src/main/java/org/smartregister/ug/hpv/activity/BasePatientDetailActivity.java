@@ -12,6 +12,9 @@ import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
+
+import net.sqlcipher.database.SQLiteDatabase;
+
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
@@ -39,12 +42,16 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import util.UgandaHpvConstants;
 
 import static org.smartregister.ug.hpv.util.Utils.updateEcPatient;
+import static org.smartregister.ug.hpv.util.Utils.updateVaccineTable;
 import static org.smartregister.util.Utils.startAsyncTask;
 
 /**
@@ -239,11 +246,19 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
             vaccine.setCalculation(-1);
         }
         org.smartregister.ug.hpv.util.Utils.addVaccine(vaccineRepository, vaccine);
+
+        String CHILD_LOCATION_ID = "child_location_id";
+
         tag.setDbKey(vaccine.getId());
 
         updateEcPatient(vaccine.getBaseEntityId(), vaccine.getName(), vaccine.getDate());
-    }
 
+        // update childLocationId
+        SQLiteDatabase db = vaccineRepository.getWritableDatabase();
+        Map<String, String> contentValues = new HashMap<>();
+        contentValues.put(CHILD_LOCATION_ID, vaccine.getChildLocationId());
+        updateVaccineTable(db, vaccine, contentValues);
+    }
 
     private void updateVaccineGroupViews(View view, final ArrayList<VaccineWrapper> wrappers, List<Vaccine> vaccineList) {
         updateVaccineGroupViews(view, wrappers, vaccineList, false);
