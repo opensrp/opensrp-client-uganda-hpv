@@ -103,7 +103,7 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
 
             @Override
             public SortOption sortOption() {
-                return new CursorCommonObjectSort(getResources().getString(R.string.alphabetical_sort), "last_interacted_with desc");
+                return new CursorCommonObjectSort(getResources().getString(R.string.alphabetical_sort), DBConstants.KEY.LAST_INTERACTED_WITH + " DESC");
             }
 
             @Override

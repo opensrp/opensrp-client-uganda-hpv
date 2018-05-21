@@ -240,6 +240,8 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
         tag.setDbKey(vaccine.getId());
 
         updateEcPatient(vaccine.getBaseEntityId(), vaccine.getName(), vaccine.getDate(), vaccine.getLocationId());
+
+        org.smartregister.ug.hpv.util.Utils.postStickyEvent(new VaccineGivenEvent());
     }
 
 
@@ -369,7 +371,6 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
         protected void onPostExecute(Pair<ArrayList<VaccineWrapper>, List<Vaccine>> pair) {
             hideProgressDialog();
             updateVaccineGroupViews(view, pair.first, pair.second);
-            org.smartregister.ug.hpv.util.Utils.postStickyEvent(new VaccineGivenEvent());
         }
 
         @Override

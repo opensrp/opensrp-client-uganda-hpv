@@ -143,20 +143,20 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
     }
 
     private void showVaccinationDialog(Context context, CommonPersonObjectClient commonPersonObjectClient, VaccinationHelper vaccinationHelper) {
-        String dateDoseOneGiven = commonPersonObjectClient.getDetails().get(DBConstants.KEY.DATE_DOSE_ONE_GIVEN);
+        String dateDoseOneGiven = this.commonPersonObjectClient.getColumnmaps().get(DBConstants.KEY.DATE_DOSE_ONE_GIVEN);
 
         ArrayList<VaccineWrapper> vaccineWrappers = new ArrayList<>();
         VaccineWrapper vaccineWrapper = new VaccineWrapper();
 
         vaccineWrapper.setId(commonPersonObjectClient.entityId());
-        vaccineWrapper.setGender(commonPersonObjectClient.getDetails().get(DBConstants.KEY.GENDER));
+        vaccineWrapper.setGender(commonPersonObjectClient.getColumnmaps().get(DBConstants.KEY.GENDER));
 
         DoseStatus doseStatus = Utils.getCurrentDoseStatus(commonPersonObjectClient);
         DateTime vaccineDateTime = null;
 
         if (dateDoseOneGiven == null) {
-            vaccineWrapper.setName("HPV 1");
-            vaccineWrapper.setDefaultName("HPV 1");
+            vaccineWrapper.setName(Constants.HPV_DOSE_NAME.HPV_1);
+            vaccineWrapper.setDefaultName(Constants.HPV_DOSE_NAME.HPV_1);
             vaccineDateTime = (new DateTime(doseStatus.getDoseOneDate())).toDateTime();
             vaccineWrapper.setVaccineDate(vaccineDateTime);
         } else {

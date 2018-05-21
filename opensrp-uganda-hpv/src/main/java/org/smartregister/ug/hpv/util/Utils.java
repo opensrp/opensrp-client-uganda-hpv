@@ -230,7 +230,7 @@ public class Utils {
         Log.d(TAG, "Starting processEC_Patient table");
 
         String doseNumber = "one";
-        if ("hpv_2".equals(vaccineName)) {
+        if (vaccineName.equals(Constants.HPV_DOSE_NAME.HPV_2)) {
             doseNumber = "two";
         }
 

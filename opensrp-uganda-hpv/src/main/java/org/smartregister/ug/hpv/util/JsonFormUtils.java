@@ -892,6 +892,11 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
                     }
                 }
 
+                JSONObject lastInteractedWith = new JSONObject();
+                lastInteractedWith.put(Constants.KEY.KEY, DBConstants.KEY.LAST_INTERACTED_WITH);
+                lastInteractedWith.put(Constants.KEY.VALUE, Calendar.getInstance().getTimeInMillis());
+                fields.put(lastInteractedWith);
+
                 Client baseClient = JsonFormUtils.createBaseClient(fields, entityId);
                 Event baseEvent = JsonFormUtils.createEvent(openSrpContext, fields, metadata, entityId, encounterType, providerId, bindType);
 
