@@ -1,7 +1,5 @@
 package org.smartregister.ug.hpv.activity;
 
-import android.view.MenuItem;
-
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
