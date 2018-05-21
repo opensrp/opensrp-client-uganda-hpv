@@ -6,11 +6,10 @@ import android.util.Log;
 import android.view.MenuItem;
 
 import org.smartregister.ug.hpv.fragment.HomeRegisterFragment;
+import org.smartregister.ug.hpv.util.Constants;
 
 import java.util.Arrays;
 import java.util.List;
-
-import static org.smartregister.ug.hpv.util.Constants.VIEW_CONFIGS.HOME_REGISTER;
 
 /**
  * Created by ndegwamartin on 14/03/2018.
@@ -35,8 +34,7 @@ public class HomeRegisterActivity extends BaseRegisterActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
-        return super.onOptionsItemSelected(item);
+        return superOnOptionsItemsSelected(item);
 
     }
 
@@ -47,7 +45,11 @@ public class HomeRegisterActivity extends BaseRegisterActivity {
 
     @Override
     public List<String> getViewIdentifiers() {
-        return Arrays.asList(HOME_REGISTER);
+        return Arrays.asList(Constants.VIEW_CONFIGS.HOME_REGISTER);
+    }
+
+    protected boolean superOnOptionsItemsSelected(MenuItem item) {
+        return super.onOptionsItemSelected(item);
     }
 
 

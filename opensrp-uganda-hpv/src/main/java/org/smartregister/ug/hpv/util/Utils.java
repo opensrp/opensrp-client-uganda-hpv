@@ -40,8 +40,6 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 
-import util.UgandaHpvConstants;
-
 /**
  * Created by ndegwamartin on 14/03/2018.
  */
@@ -228,7 +226,7 @@ public class Utils {
 
     }
 
-    public static void updateEcPatient(String baseEntityId, String vaccineName, Date date) {
+    public static void updateEcPatient(String baseEntityId, String vaccineName, Date date, String locationId) {
         Log.d(TAG, "Starting processEC_Patient table");
 
         String doseNumber = "one";
@@ -236,12 +234,11 @@ public class Utils {
             doseNumber = "two";
         }
 
-        String dateString = org.smartregister.ug.hpv.util.Utils.convertDateFormat(date, new SimpleDateFormat("dd/MM/yy"));
-        PatientRepository.updateDoseDates(baseEntityId, dateString, doseNumber);
+        String dateString = org.smartregister.ug.hpv.util.Utils.convertDateFormat(date, new SimpleDateFormat("yyyy-MM-dd"));
+        PatientRepository.updateDoseDates(baseEntityId, dateString, doseNumber, locationId);
 
         Log.d(TAG, "Finish processEC_Patient table");
     }
-
 
 
     public static boolean isEmptyMap(Map map) {
@@ -265,6 +262,10 @@ public class Utils {
         doseStatus.setDateDoseTwoGiven(org.smartregister.util.Utils.getValue(pc.getColumnmaps(), DBConstants.KEY.DATE_DOSE_TWO_GIVEN, false));
 
         doseStatus.setDoseTwoDue(StringUtils.isBlank(doseStatus.getDateDoseOneGiven()) && isDoseTwoDue(doseStatus.getDoseTwoDate()));
+
+        doseStatus.setDoseOneGivenLocation(org.smartregister.util.Utils.getValue(pc.getColumnmaps(), DBConstants.KEY.DOSE_ONE_GIVEN_LOCATION, false));
+
+        doseStatus.setDoseTwoGivenLocation(org.smartregister.util.Utils.getValue(pc.getColumnmaps(), DBConstants.KEY.DOSE_TWO_GIVEN_LOCATION, false));
 
         return doseStatus;
     }
@@ -307,15 +308,15 @@ public class Utils {
         return false;
     }
 
-    public static Drawable getDoseButtonBackground(@Nullable Context context, UgandaHpvConstants.State state) {
+    public static Drawable getDoseButtonBackground(@Nullable Context context, Constants.State state) {
 
         int backgroundResource;
 
-        if (state.equals(UgandaHpvConstants.State.INACTIVE) || state.equals(UgandaHpvConstants.State.FULLY_IMMUNIZED)) {
+        if (state.equals(Constants.State.INACTIVE) || state.equals(Constants.State.FULLY_IMMUNIZED)) {
             backgroundResource = R.drawable.due_vaccine_grey_bg;
-        } else if (state.equals(UgandaHpvConstants.State.DUE)) {
+        } else if (state.equals(Constants.State.DUE)) {
             backgroundResource = R.drawable.due_vaccine_blue_bg;
-        } else if (state.equals(UgandaHpvConstants.State.OVERDUE)) {
+        } else if (state.equals(Constants.State.OVERDUE)) {
             backgroundResource = R.drawable.due_vaccine_red_bg;
         } else {
             backgroundResource = R.color.transparent;
@@ -324,55 +325,55 @@ public class Utils {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? context.getDrawable(backgroundResource) : ContextCompat.getDrawable(context, backgroundResource);
     }
 
-    public static int getDoseButtonTextColor(@NonNull Context context, UgandaHpvConstants.State doseState) {
-        if (doseState.equals(UgandaHpvConstants.State.FULLY_IMMUNIZED) || doseState.equals(UgandaHpvConstants.State.INACTIVE)) {
+    public static int getDoseButtonTextColor(@NonNull Context context, Constants.State doseState) {
+        if (doseState.equals(Constants.State.FULLY_IMMUNIZED) || doseState.equals(Constants.State.INACTIVE)) {
             return context.getResources().getColor(R.color.lighter_grey_text);
         }
 
         return context.getResources().getColor(R.color.white);
     }
 
-    public static UgandaHpvConstants.State getRegisterViewButtonStatus(DoseStatus doseStatus) {
-        UgandaHpvConstants.State doseOneStatus = getDoseOneStatus(doseStatus);
-        if (doseOneStatus.equals(UgandaHpvConstants.State.FULLY_IMMUNIZED)) {
+    public static Constants.State getRegisterViewButtonStatus(DoseStatus doseStatus) {
+        Constants.State doseOneStatus = getDoseOneStatus(doseStatus);
+        if (doseOneStatus.equals(Constants.State.FULLY_IMMUNIZED)) {
             return getDoseTwoStatus(doseStatus);
         }
 
         return doseOneStatus;
     }
 
-    public static UgandaHpvConstants.State getDoseOneStatus(DoseStatus doseStatus) {
+    public static Constants.State getDoseOneStatus(DoseStatus doseStatus) {
         if (StringUtils.isNotBlank(doseStatus.getDateDoseOneGiven())) {
-            return UgandaHpvConstants.State.FULLY_IMMUNIZED;
+            return Constants.State.FULLY_IMMUNIZED;
         }
 
         if (isDoseDue(doseStatus.getDoseOneDate())) {
-            return UgandaHpvConstants.State.DUE;
+            return Constants.State.DUE;
         }
 
         if (isDoseOverdue(doseStatus.getDoseOneDate())) {
-            return UgandaHpvConstants.State.OVERDUE;
+            return Constants.State.OVERDUE;
         }
 
         // Probably inactive
-        return UgandaHpvConstants.State.INACTIVE;
+        return Constants.State.INACTIVE;
     }
 
-    public static UgandaHpvConstants.State getDoseTwoStatus(DoseStatus doseStatus) {
+    public static Constants.State getDoseTwoStatus(DoseStatus doseStatus) {
         if (StringUtils.isNotBlank(doseStatus.getDateDoseTwoGiven())) {
-            return UgandaHpvConstants.State.FULLY_IMMUNIZED;
+            return Constants.State.FULLY_IMMUNIZED;
         }
 
         if (isDoseDue(doseStatus.getDoseTwoDate())) {
-            return UgandaHpvConstants.State.DUE;
+            return Constants.State.DUE;
         }
 
         if (isDoseOverdue(doseStatus.getDoseTwoDate())) {
-            return UgandaHpvConstants.State.OVERDUE;
+            return Constants.State.OVERDUE;
         }
 
         // Probably inactive
-        return UgandaHpvConstants.State.INACTIVE;
+        return Constants.State.INACTIVE;
     }
 
     public static boolean isDoseOverdue(DoseStatus doseStatus) {
@@ -390,4 +391,29 @@ public class Utils {
         return expiryDate.isBeforeNow();
     }
 
+
+    private Drawable getDoseButtonBackground(@NonNull Context context, DoseStatus doseStatus) {
+
+        int backgroundResource;
+
+        if (StringUtils.isNotBlank(doseStatus.getDateDoseTwoGiven()) || doseStatus.isDoseTwoDue()) {
+            backgroundResource = R.color.transparent;
+        } else if (doseStatus.isDoseTwoDue()) {
+            backgroundResource = R.drawable.due_vaccine_grey_bg_no_radius;
+        } else {
+
+            backgroundResource = isDoseExpired(doseStatus) ? R.drawable.due_vaccine_red_bg_no_radius : R.drawable.due_vaccine_blue_bg_no_radius;
+
+        }
+
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? context.getDrawable(backgroundResource) : ContextCompat.getDrawable(context, backgroundResource);
+    }
+
+    private boolean isDoseExpired(DoseStatus doseStatus) {
+        Boolean isDoseTwo = StringUtils.isNotBlank(doseStatus.getDoseTwoDate());
+        DateTime doseDate = new DateTime(org.smartregister.util.Utils.toDate(isDoseTwo ? doseStatus.getDoseTwoDate() : doseStatus.getDoseOneDate(), true));
+        DateTime expiryDate = doseDate.plusDays(DOSE_EXPIRY_WINDOW_DAYS);
+
+        return expiryDate.isBeforeNow();
+    }
 }

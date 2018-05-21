@@ -36,6 +36,9 @@ public class DBConstants {
         public static final String DATE_DOSE_ONE_GIVEN = "date_dose_one_given";
         public static final String DATE_DOSE_TWO_GIVEN = "date_dose_two_given";
         public static final String REMOVE_REASON = "remove_reason";
+        public static final String DOSE_ONE_GIVEN_LOCATION = "dose_one_given_location";
+        public static final String DOSE_TWO_GIVEN_LOCATION = "dose_two_given_location";
+        public static final String Location = "Location";
 
 
     }

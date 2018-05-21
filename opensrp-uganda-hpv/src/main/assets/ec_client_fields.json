@@ -142,6 +142,27 @@
           "json_mapping": {
             "field": "attributes.date_dose_two_given"
           }
+        },
+        {
+          "column_name": "dose_one_given_location",
+          "type": "Client",
+          "json_mapping": {
+            "field": "attributes.dose_one_given_location"
+          }
+        },
+        {
+          "column_name": "dose_two_given_location",
+          "type": "Client",
+          "json_mapping": {
+            "field": "attributes.dose_two_given_location"
+          }
+        },
+        {
+          "column_name": "Location",
+          "type": "Client",
+          "json_mapping": {
+            "field": "attributes.Location"
+          }
         }
       ]
     }

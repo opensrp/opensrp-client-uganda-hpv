@@ -36,7 +36,6 @@ import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.activity.BaseRegisterActivity;
 import org.smartregister.ug.hpv.activity.HomeRegisterActivity;
 import org.smartregister.ug.hpv.activity.PatientDetailActivity;
-import org.smartregister.ug.hpv.domain.DoseStatus;
 import org.smartregister.ug.hpv.event.SyncEvent;
 import org.smartregister.ug.hpv.helper.LocationHelper;
 import org.smartregister.ug.hpv.provider.HomeRegisterProvider;
@@ -57,8 +56,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-
-import util.UgandaHpvConstants;
 
 import static android.view.View.GONE;
 import static android.view.View.INVISIBLE;
@@ -84,6 +81,8 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
     private static final String TAG = BaseRegisterFragment.class.getCanonicalName();
     private Snackbar syncStatusSnackbar;
     private View rootView;
+    public static final String CLICK_VIEW_NORMAL = "click_view_normal";
+    public static final String CLICK_VIEW_DOSAGE_STATUS = "click_view_dosage_status";
 
     @Override
     protected SecuredNativeSmartRegisterActivity.DefaultOptionsProvider getDefaultOptionsProvider() {
@@ -288,12 +287,15 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
                 tableName + "." + DBConstants.KEY.CLASS,
                 tableName + "." + DBConstants.KEY.SCHOOL,
                 tableName + "." + DBConstants.KEY.SCHOOL_NAME,
+                tableName + "." + DBConstants.KEY.Location,
                 tableName + "." + DBConstants.KEY.DOSE_ONE_DATE,
                 tableName + "." + DBConstants.KEY.DATE_DOSE_ONE_GIVEN,
                 tableName + "." + DBConstants.KEY.DOSE_TWO_DATE,
                 tableName + "." + DBConstants.KEY.DATE_DOSE_TWO_GIVEN,
                 tableName + "." + DBConstants.KEY.GENDER,
-                tableName + "." + DBConstants.KEY.DATE_REMOVED};
+                tableName + "." + DBConstants.KEY.DATE_REMOVED,
+                tableName + "." + DBConstants.KEY.DOSE_ONE_GIVEN_LOCATION,
+                tableName + "." + DBConstants.KEY.DOSE_TWO_GIVEN_LOCATION};
         String[] allColumns = ArrayUtils.addAll(columns, getAdditionalColumns(tableName));
         queryBUilder.SelectInitiateMainTable(tableName, allColumns);
         mainSelect = queryBUilder.mainCondition(mainCondition);
@@ -371,7 +373,7 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
     protected void onCreation() {
         Bundle extras = getActivity().getIntent().getExtras();
         if (extras != null) {
-            boolean isRemote = extras.getBoolean(UgandaHpvConstants.IS_REMOTE_LOGIN);
+            boolean isRemote = extras.getBoolean(Constants.IS_REMOTE_LOGIN);
             if (isRemote) {
                 startSync();
             }
@@ -387,7 +389,7 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
         return viewConfigurationIdentifier;
     }
 
-    private void goToPatientDetailActivity(CommonPersonObjectClient patient) {
+    private void goToPatientDetailActivity(CommonPersonObjectClient patient, boolean launchDialog) {
         Map<String, String> patientDetails = patient.getDetails();
         Intent intent = null;
         String registerToken = "";
@@ -399,6 +401,7 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
         intent.putExtra(Constants.INTENT_KEY.PATIENT_DETAIL_MAP, (HashMap) patientDetails);
         intent.putExtra(Constants.INTENT_KEY.CLIENT_OBJECT, patient);
         intent.putExtra(Constants.INTENT_KEY.OPENSRP_ID, patientDetails.get(Constants.INTENT_KEY.OPENSRP_ID));
+        intent.putExtra(Constants.INTENT_KEY.LAUNCH_VACCINE_DIALOG, launchDialog);
         startActivity(intent);
     }
 
@@ -406,24 +409,17 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
 
         @Override
         public void onClick(View view) {
-            if (view.getTag() != null && view.getTag() instanceof CommonPersonObjectClient) {
-                patient = (CommonPersonObjectClient) view.getTag();
-                goToPatientDetailActivity(patient);
-            } else if (view.getTag() != null && view.getTag() instanceof DoseStatus) {
-                DoseStatus doseStatus = (DoseStatus) view.getTag();
-
-                if (StringUtils.isNotBlank(doseStatus.getDateDoseTwoGiven())) {
-                    Utils.showToast(getActivity(), "Dosage Complete");
-                } else if (doseStatus.isDoseTwoDue()) {
-                    Utils.showToast(getActivity(), "Dose 2 Due");
-                } else if (StringUtils.isNotBlank(doseStatus.getDateDoseOneGiven())) {
-                    Utils.showToast(getActivity(), "Dose 1 Given");
-                } else {
-                    Utils.showToast(getActivity(), "Dosage Button Clicked");
-                }
-
-            } else if (view.getId() == R.id.scan_qr_code)
+            if (view.getId() == R.id.scan_qr_code) {
                 ((HomeRegisterActivity) getActivity()).startQrCodeScanner();
+            } else if (view.getTag() != null && view.getTag(R.id.VIEW_ID) == CLICK_VIEW_NORMAL) {
+                patient = (CommonPersonObjectClient) view.getTag();
+                goToPatientDetailActivity(patient, false);
+            } else if (view.getTag() != null && view.getTag(R.id.VIEW_ID) == CLICK_VIEW_DOSAGE_STATUS) {
+
+                patient = (CommonPersonObjectClient) view.getTag();
+                goToPatientDetailActivity(patient, true);
+
+            }
 
         }
     }
@@ -491,8 +487,8 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
                 } else if (fetchStatus.equals(FetchStatus.fetched)
                         || fetchStatus.equals(FetchStatus.nothingFetched)) {
 
-                        setRefreshList(true);
-                        renderView();
+                    setRefreshList(true);
+                    renderView();
 
                     syncStatusSnackbar = Snackbar.make(rootView, R.string.sync_complete, Snackbar.LENGTH_LONG);
                 } else if (fetchStatus.equals(FetchStatus.noConnection)) {

@@ -98,7 +98,6 @@ public class HpvApplication extends DrishtiApplication implements TimeChangedBro
 
         setUpEventHandling();
         initOfflineSchedules();
-        setAlarms(this);
     }
 
     public static synchronized HpvApplication getInstance() {
@@ -220,13 +219,12 @@ public class HpvApplication extends DrishtiApplication implements TimeChangedBro
         return eventClientRepository;
     }
 
-    public UniqueIdRepository uniqueIdRepository() {
+    public UniqueIdRepository getUniqueIdRepository() {
         if (uniqueIdRepository == null) {
             uniqueIdRepository = new UniqueIdRepository((HpvRepository) getRepository());
         }
         return uniqueIdRepository;
     }
-
 
     public ConfigurableViewsHelper getConfigurableViewsHelper() {
         if (configurableViewsHelper == null) {

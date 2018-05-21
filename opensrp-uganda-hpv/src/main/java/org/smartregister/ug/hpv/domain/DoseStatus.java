@@ -11,6 +11,9 @@ public class DoseStatus {
     private String dateDoseOneGiven;
     private String dateDoseTwoGiven;
     private boolean isDoseTwoDue = false;
+    private String doseOneGivenLocation;
+
+    private String doseTwoGivenLocation;
 
     public boolean isDoseTwoDue() {
         return isDoseTwoDue;
@@ -50,5 +53,21 @@ public class DoseStatus {
 
     public void setDateDoseTwoGiven(String dateDoseTwoGiven) {
         this.dateDoseTwoGiven = dateDoseTwoGiven;
+    }
+
+    public String getDoseOneGivenLocation() {
+        return doseOneGivenLocation;
+    }
+
+    public void setDoseOneGivenLocation(String doseOneGivenLocation) {
+        this.doseOneGivenLocation = doseOneGivenLocation;
+    }
+
+    public String getDoseTwoGivenLocation() {
+        return doseTwoGivenLocation;
+    }
+
+    public void setDoseTwoGivenLocation(String doseTwoGivenLocation) {
+        this.doseTwoGivenLocation = doseTwoGivenLocation;
     }
 }

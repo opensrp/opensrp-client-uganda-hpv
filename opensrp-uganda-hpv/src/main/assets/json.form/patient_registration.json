@@ -164,6 +164,14 @@
         "type": "hidden"
       },
       {
+        "key": "location",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "person_attribute",
+        "openmrs_entity_id": "location",
+        "openmrs_data_type": "text",
+        "type": "hidden"
+      },
+      {
         "key": "class",
         "openmrs_entity_parent": "",
         "openmrs_entity": "person_attribute",

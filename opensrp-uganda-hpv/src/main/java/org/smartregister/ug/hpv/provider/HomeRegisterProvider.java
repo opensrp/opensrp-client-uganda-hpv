@@ -2,18 +2,15 @@ package org.smartregister.ug.hpv.provider;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
-import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
-import org.joda.time.DateTime;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.configurableviews.ConfigurableViewsLibrary;
 import org.smartregister.configurableviews.helper.ConfigurableViewsHelper;
@@ -21,6 +18,8 @@ import org.smartregister.configurableviews.model.ViewConfiguration;
 import org.smartregister.cursoradapter.SmartRegisterCLientsProviderForCursorAdapter;
 import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.domain.DoseStatus;
+import org.smartregister.ug.hpv.fragment.BaseRegisterFragment;
+import org.smartregister.ug.hpv.util.Constants;
 import org.smartregister.ug.hpv.util.DBConstants;
 import org.smartregister.ug.hpv.util.Utils;
 import org.smartregister.view.contract.SmartRegisterClient;
@@ -38,7 +37,6 @@ import static org.smartregister.ug.hpv.util.Constants.REGISTER_COLUMNS.DOSE;
 import static org.smartregister.ug.hpv.util.Constants.REGISTER_COLUMNS.ID;
 import static org.smartregister.ug.hpv.util.Constants.REGISTER_COLUMNS.NAME;
 import static org.smartregister.ug.hpv.util.Constants.VIEW_CONFIGS.COMMON_REGISTER_ROW;
-import static org.smartregister.ug.hpv.util.Utils.DOSE_EXPIRY_WINDOW_DAYS;
 import static org.smartregister.util.Utils.getName;
 
 /**
@@ -116,14 +114,26 @@ public class HomeRegisterProvider implements SmartRegisterCLientsProviderForCurs
 
 
     private void populateDoseColumn(CommonPersonObjectClient pc, View view) {
-        Button patient = (Button) view.findViewById(R.id.dose_button);
+
 
         DoseStatus doseStatus = Utils.getCurrentDoseStatus(pc);
 
-        patient.setText(getDoseButtonText(doseStatus));
-        patient.setBackground(Utils.getDoseButtonBackground(context, Utils.getRegisterViewButtonStatus(doseStatus)));
-        patient.setTextColor(Utils.getDoseButtonTextColor(context, Utils.getRegisterViewButtonStatus(doseStatus)));
-        attachDosageOnclickListener(patient, doseStatus);
+        Button patient = (Button) view.findViewById(R.id.dose_button);
+
+        LinearLayout completeView = (LinearLayout) view.findViewById(R.id.completedView);
+
+        if (StringUtils.isNotBlank(doseStatus.getDateDoseTwoGiven())) {
+            patient.setVisibility(View.GONE);
+            completeView.setVisibility(View.VISIBLE);
+        } else {
+
+            patient.setVisibility(View.VISIBLE);
+            completeView.setVisibility(View.GONE);
+            patient.setText(getDoseButtonText(doseStatus));
+            patient.setBackground(Utils.getDoseButtonBackground(context, Utils.getRegisterViewButtonStatus(doseStatus)));
+            patient.setTextColor(Utils.getDoseButtonTextColor(context, Utils.getRegisterViewButtonStatus(doseStatus)));
+            attachDosageOnclickListener(patient, pc);
+        }
     }
 
     private String getDoseButtonText(DoseStatus doseStatus) {
@@ -135,7 +145,7 @@ public class HomeRegisterProvider implements SmartRegisterCLientsProviderForCurs
         } else {
 
             if (StringUtils.isNotBlank(doseStatus.getDoseTwoDate())) {
-                doseText = "D2 Due \n" + Utils.formatDate(doseStatus.getDoseTwoDate()) + " \n D1: " + Utils.formatDate(doseStatus.getDoseOneDate());
+                doseText = "D2 Due \n" + Utils.formatDate(doseStatus.getDoseTwoDate()) + " \n D1: " + Utils.formatDate(doseStatus.getDateDoseOneGiven());
 
             } else {
                 doseText = "D1 Due \n" + Utils.formatDate(doseStatus.getDoseOneDate());
@@ -144,31 +154,6 @@ public class HomeRegisterProvider implements SmartRegisterCLientsProviderForCurs
         }
 
         return doseText;
-    }
-
-    private Drawable getDoseButtonBackground(DoseStatus doseStatus) {
-
-        int backgroundResource;
-
-        if (StringUtils.isNotBlank(doseStatus.getDateDoseTwoGiven()) || doseStatus.isDoseTwoDue()) {
-            backgroundResource = R.color.transparent;
-        } else if (doseStatus.isDoseTwoDue()) {
-            backgroundResource = R.drawable.due_vaccine_grey_bg_no_radius;
-        } else {
-
-            backgroundResource = isDoseExpired(doseStatus) ? R.drawable.due_vaccine_red_bg_no_radius : R.drawable.due_vaccine_blue_bg_no_radius;
-
-        }
-
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? context.getDrawable(backgroundResource) : ContextCompat.getDrawable(context, backgroundResource);
-    }
-
-    private boolean isDoseExpired(DoseStatus doseStatus) {
-        Boolean isDoseTwo = StringUtils.isNotBlank(doseStatus.getDoseTwoDate());
-        DateTime doseDate = new DateTime(org.smartregister.util.Utils.toDate(isDoseTwo ? doseStatus.getDoseTwoDate() : doseStatus.getDoseOneDate(), true));
-        DateTime expiryDate = doseDate.plusDays(DOSE_EXPIRY_WINDOW_DAYS);
-
-        return expiryDate.isBeforeNow();
     }
 
     private void adjustLayoutParams(View view, TextView details) {
@@ -184,11 +169,13 @@ public class HomeRegisterProvider implements SmartRegisterCLientsProviderForCurs
     private void attachPatientOnclickListener(View view, SmartRegisterClient client) {
         view.setOnClickListener(onClickListener);
         view.setTag(client);
+        view.setTag(R.id.VIEW_ID, BaseRegisterFragment.CLICK_VIEW_NORMAL);
     }
 
-    private void attachDosageOnclickListener(View view, DoseStatus doseStatus) {
+    private void attachDosageOnclickListener(View view, SmartRegisterClient client) {
         view.setOnClickListener(onClickListener);
-        view.setTag(doseStatus);
+        view.setTag(client);
+        view.setTag(R.id.VIEW_ID, BaseRegisterFragment.CLICK_VIEW_DOSAGE_STATUS);
     }
 
     @Override
@@ -212,15 +199,12 @@ public class HomeRegisterProvider implements SmartRegisterCLientsProviderForCurs
 
     @Override
     public View inflatelayoutForCursorAdapter() {
-        String viewIdentifier;
-        String HOME_REGISTER_ROW = "home_register_row";
         View view;
-        viewIdentifier = HOME_REGISTER_ROW;
         view = inflater.inflate(R.layout.register_home_list_row, null);
         ConfigurableViewsHelper helper = ConfigurableViewsLibrary.getInstance().getConfigurableViewsHelper();
         if (helper.isJsonViewsEnabled()) {
 
-            ViewConfiguration viewConfiguration = helper.getViewConfiguration(viewIdentifier);
+            ViewConfiguration viewConfiguration = helper.getViewConfiguration(Constants.VIEW_CONFIGS.HOME_REGISTER_ROW);
             ViewConfiguration commonConfiguration = helper.getViewConfiguration(COMMON_REGISTER_ROW);
 
             if (viewConfiguration != null) {

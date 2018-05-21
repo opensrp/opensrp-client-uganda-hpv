@@ -12,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
+
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
@@ -25,6 +26,7 @@ import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.adapter.HPVRegisterActivityPagerAdapter;
 import org.smartregister.ug.hpv.application.HpvApplication;
+import org.smartregister.ug.hpv.event.VaccineGivenEvent;
 import org.smartregister.ug.hpv.fragment.BasePatientDetailsFragment;
 import org.smartregister.ug.hpv.fragment.PatientDetailsFragment;
 import org.smartregister.ug.hpv.helper.LocationHelper;
@@ -40,9 +42,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import util.UgandaHpvConstants;
 
 import static org.smartregister.ug.hpv.util.Utils.updateEcPatient;
 import static org.smartregister.util.Utils.startAsyncTask;
@@ -237,7 +239,7 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
         org.smartregister.ug.hpv.util.Utils.addVaccine(vaccineRepository, vaccine);
         tag.setDbKey(vaccine.getId());
 
-        updateEcPatient(vaccine.getBaseEntityId(), vaccine.getName(), vaccine.getDate());
+        updateEcPatient(vaccine.getBaseEntityId(), vaccine.getName(), vaccine.getDate(), vaccine.getLocationId());
     }
 
 
@@ -255,7 +257,7 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
         if (Looper.myLooper() == Looper.getMainLooper()) {
             if (undo) {
                 vaccineGroup.setVaccineList(vaccineList);
-                vaccineGroup.updateWrapperStatus(wrappers, UgandaHpvConstants.KEY.CHILD);
+                vaccineGroup.updateWrapperStatus(wrappers, Constants.KEY.CHILD);
             }
             vaccineGroup.updateViews(wrappers);
 
@@ -266,7 +268,7 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
                 public void run() {
                     if (undo) {
                         vaccineGroup.setVaccineList(vaccineList);
-                        vaccineGroup.updateWrapperStatus(wrappers, UgandaHpvConstants.KEY.CHILD);
+                        vaccineGroup.updateWrapperStatus(wrappers, Constants.KEY.CHILD);
                     }
                     vaccineGroup.updateViews(wrappers);
                 }
@@ -315,10 +317,10 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
                 Long dbKey = tag.getDbKey();
                 vaccineRepository.deleteVaccine(dbKey);
 
-                String dobString = Utils.getValue(commonPersonObjectClient.getColumnmaps(), UgandaHpvConstants.DOB, false);
+                String dobString = Utils.getValue(commonPersonObjectClient.getColumnmaps(), Constants.DOB, false);
                 DateTime dateTime = org.smartregister.ug.hpv.util.Utils.dobStringToDateTime(dobString);
                 if (dateTime != null) {
-                    affectedVaccines = VaccineSchedule.updateOfflineAlerts(commonPersonObjectClient.entityId(), dateTime, UgandaHpvConstants.KEY.CHILD);
+                    affectedVaccines = VaccineSchedule.updateOfflineAlerts(commonPersonObjectClient.entityId(), dateTime, Constants.KEY.CHILD);
                 }
                 vaccineList = vaccineRepository.findByEntityId(commonPersonObjectClient.entityId());
             }
@@ -367,7 +369,7 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
         protected void onPostExecute(Pair<ArrayList<VaccineWrapper>, List<Vaccine>> pair) {
             hideProgressDialog();
             updateVaccineGroupViews(view, pair.first, pair.second);
-            // TODO: maybe add the show weight logic as in zeir
+            org.smartregister.ug.hpv.util.Utils.postStickyEvent(new VaccineGivenEvent());
         }
 
         @Override

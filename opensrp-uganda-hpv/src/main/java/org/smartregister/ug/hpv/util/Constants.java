@@ -11,17 +11,21 @@ public class Constants {
     public static final int OPENMRS_UNIQUE_ID_BATCH_SIZE = BuildConfig.OPENMRS_UNIQUE_ID_BATCH_SIZE;
     public static final int OPENMRS_UNIQUE_ID_SOURCE = BuildConfig.OPENMRS_UNIQUE_ID_SOURCE;
 
+    public static final String IS_REMOTE_LOGIN = "is_remote_login";
     public static final long MAX_SERVER_TIME_DIFFERENCE = BuildConfig.MAX_SERVER_TIME_DIFFERENCE;
+    public static final String ENGLISH_LOCALE = "en";
+    public static final String URDU_LOCALE = "ur";
+    public static final String ENGLISH_LANGUAGE = "English";
+    public static final String URDU_LANGUAGE = "Urdu";
+    public static final String VIEW_CONFIGURATION_PREFIX = "ViewConfiguration_";
+    public static final String DOB = "dob";
+
     public static final boolean TIME_CHECK = BuildConfig.TIME_CHECK;
     public static final String LAST_SYNC_TIMESTAMP = "LAST_SYNC_TIMESTAMP";
     public static final String LAST_CHECK_TIMESTAMP = "LAST_SYNC_CHECK_TIMESTAMP";
-    public static final String LAST_VIEWS_SYNC_TIMESTAMP = "LAST_VIEWS_SYNC_TIMESTAMP";
 
-    public static final String PATIENT_TABLE_NAME = "ec_patient";
-    public static final String CONTACT_TABLE_NAME = "ec_contact";
     public static final String CURRENT_LOCATION_ID = "CURRENT_LOCATION_ID";
     public static final String ADD_CONTACT = "add_contact";
-    public static final String OTHER = "other";
 
     public static final class REGISTER_COLUMNS {
         public static final String ID = "id";
@@ -35,6 +39,7 @@ public class Constants {
         public static final String HOME_REGISTER = "home_register";
         public static final String COMMON_REGISTER_HEADER = "common_register_header";
         public static final String COMMON_REGISTER_ROW = "common_register_row";
+        public static final String HOME_REGISTER_ROW = "home_register_row";
 
 
     }
@@ -50,28 +55,19 @@ public class Constants {
         public static final String _ID = "_id";
         public static final String KEY = "key";
         public static final String VALUE = "value";
-        public static final String NAME = "name";
-        public static final String LEVEL = "level";
-        public static final String NODE = "node";
-        public static final String NODES = "nodes";
-        public static final String CHILDREN = "children";
-        public static final String LOCATIONID = "locationId";
         public static final String TREE = "tree";
         public static final String DEFAULT = "default";
-        public static final String TAGS = "tags";
-        public static final String MAP = "map";
         public static final String PHOTO = "photo";
+        public static final String CHILD = "child";
 
     }
 
     public static class INTENT_KEY {
-        public static final String FULL_NAME = "full_name";
-        public static final String IS_REMOTE_LOGIN = "is_remote_login";
         public static final String REGISTER_TITLE = "register_title";
         public static final String PATIENT_DETAIL_MAP = "patient_detail_map";
         public static final String CLIENT_OBJECT = "client_object";
-        public static final String LAST_SYNC_TIME_STRING = "last_manual_sync_time_string";
         public static final String OPENSRP_ID = "opensrp_id";
+        public static final String LAUNCH_VACCINE_DIALOG = "launch_vaccine_dialog";
     }
 
     public static class CONFIGURATION {
@@ -106,6 +102,21 @@ public class Constants {
     public static final class SyncFilters {
 
         public static final String FILTER_TEAM_ID = "teamId";
+    }
+
+    public static final class HPV_DOSE {
+
+        public static final String NUMBER_1 = "1";
+        public static final String NUMBER_2 = "2";
+    }
+
+
+    public enum State {
+        DUE,
+        OVERDUE,
+        EXPIRED,
+        INACTIVE,
+        FULLY_IMMUNIZED
     }
 
 
