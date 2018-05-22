@@ -239,7 +239,7 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
         org.smartregister.ug.hpv.util.Utils.addVaccine(vaccineRepository, vaccine);
         tag.setDbKey(vaccine.getId());
 
-        updateEcPatient(vaccine.getBaseEntityId(), vaccine.getName(), vaccine.getDate(), vaccine.getLocationId());
+        updateEcPatient(vaccine);
 
         org.smartregister.ug.hpv.util.Utils.postStickyEvent(new VaccineGivenEvent());
     }

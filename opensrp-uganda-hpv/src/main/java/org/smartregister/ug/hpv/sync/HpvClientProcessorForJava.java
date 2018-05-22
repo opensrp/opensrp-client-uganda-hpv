@@ -154,7 +154,7 @@ public class HpvClientProcessorForJava extends ClientProcessorForJava {
                 Utils.addVaccine(vaccineRepository, vaccineObj);
                 Log.d(TAG, "Ending processVaccine table: " + vaccineTable.name);
 
-                updateEcPatient(vaccineObj.getBaseEntityId(), vaccineObj.getName(), vaccineObj.getDate(), vaccineObj.getLocationId());
+                updateEcPatient(vaccineObj);
             }
 
             return true;

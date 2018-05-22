@@ -8,7 +8,6 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -26,7 +25,6 @@ import org.smartregister.clientandeventmodel.Address;
 import org.smartregister.clientandeventmodel.Client;
 import org.smartregister.clientandeventmodel.Event;
 import org.smartregister.clientandeventmodel.FormEntityConstants;
-import org.smartregister.clientandeventmodel.Obs;
 import org.smartregister.commonregistry.AllCommonsRepository;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.domain.FetchStatus;
@@ -252,7 +250,7 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
                         .withEntityType(bindType)
                         .withFormSubmissionId(generateRandomUUIDString())
                         .withDateCreated(new Date());
-                JsonFormUtils.addMetaData(context, updateChildDetailsEvent, new Date());
+                JsonFormUtils.tagSyncMetadata(updateChildDetailsEvent);
                 JSONObject eventJsonUpdateChildEvent = new JSONObject(JsonFormUtils.gson.toJson(updateChildDetailsEvent));
 
                 db.addEvent(entityId, eventJsonUpdateChildEvent); //Add event to flag server update
@@ -626,42 +624,6 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
 
     }
 
-    public static Event addMetaData(Context context, Event event, Date start) throws JSONException {
-        Map<String, String> metaFields = new HashMap<>();
-        metaFields.put("deviceid", "163149AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-        metaFields.put("end", "163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-        metaFields.put("start", "163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-        Calendar calendar = Calendar.getInstance();
-
-        String end = DATE_TIME_FORMAT.format(calendar.getTime());
-
-        Obs obs = new Obs();
-        obs.setFieldCode("163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-        obs.setValue(DATE_TIME_FORMAT.format(start));
-        obs.setFieldType("concept");
-        obs.setFieldDataType("start");
-        event.addObs(obs);
-
-
-        obs.setFieldCode("163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-        obs.setValue(end);
-        obs.setFieldDataType("end");
-        event.addObs(obs);
-
-        TelephonyManager mTelephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-
-        String deviceId = mTelephonyManager.getSimSerialNumber();
-
-        obs.setFieldCode("163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-        obs.setValue(deviceId);
-        obs.setFieldDataType("deviceid");
-        event.addObs(obs);
-
-        tagSyncMetadata(event);
-
-        return event;
-    }
-
     public static String getAutoPopulatedJsonEditFormString(Context context, CommonPersonObjectClient commonPersonObjectClient) {
         try {
             JSONObject form = FormUtils.getInstance(context).getFormJson(Constants.JSON_FORM.PATIENT_REGISTRATION);
@@ -901,7 +863,7 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
                 Event baseEvent = JsonFormUtils.createEvent(openSrpContext, fields, metadata, entityId, encounterType, providerId, bindType);
 
 
-                JsonFormUtils.addMetaData(context, baseEvent, new Date());
+                JsonFormUtils.tagSyncMetadata(baseEvent);
 
                 if (baseClient != null) {
                     JSONObject clientJson = new JSONObject(gson.toJson(baseClient));
