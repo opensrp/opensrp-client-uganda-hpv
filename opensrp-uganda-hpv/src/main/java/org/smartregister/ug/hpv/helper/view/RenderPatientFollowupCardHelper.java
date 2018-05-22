@@ -175,8 +175,10 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
         String firstName = getValue(commonPersonObjectClient.getColumnmaps(), DBConstants.KEY.FIRST_NAME, true);
         String lastName = getValue(commonPersonObjectClient.getColumnmaps(), DBConstants.KEY.LAST_NAME, true);
         String childName = getName(firstName, lastName);
+        String patientNumber = getValue(commonPersonObjectClient.getColumnmaps(), DBConstants.KEY.OPENSRP_ID, true);
 
         vaccineWrapper.setPatientName(childName.trim());
+        vaccineWrapper.setPatientNumber(patientNumber);
         vaccineWrappers.add(vaccineWrapper);
         vaccinationHelper.addVaccinationDialogFragment(vaccineWrappers, new VaccineGroup(context));
     }
