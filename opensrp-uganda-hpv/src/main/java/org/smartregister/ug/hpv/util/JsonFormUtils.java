@@ -903,10 +903,11 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
                     String opensrpId = baseClient.getIdentifier(DBConstants.KEY.OPENSRP_ID);
                     //mark OPENSRP ID as used
                     HpvApplication.getInstance().getUniqueIdRepository().close(opensrpId);
-
-                    String imageLocation = getFieldValue(fields, imageKey);
-                    saveImage(context, providerId, entityId, imageLocation);
                 }
+
+
+                String imageLocation = getFieldValue(fields, imageKey);
+                saveImage(context, providerId, entityId, imageLocation);
 
                 HpvClientProcessorForJava.getInstance(context).processClient(ecUpdater.getEvents(lastSyncDate, BaseRepository.TYPE_Unsynced));
                 allSharedPreferences.saveLastUpdatedAtDate(lastSyncDate.getTime());

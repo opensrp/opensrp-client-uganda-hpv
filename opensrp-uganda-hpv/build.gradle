@@ -82,7 +82,7 @@ android {
             buildConfigField "long", "MAX_SERVER_TIME_DIFFERENCE", "1800000l"
             buildConfigField "boolean", "TIME_CHECK", "false"
             buildConfigField "int", "AUTO_SYNC_DURATION", '2'
-            buildConfigField "int", "VACCINE_SYNC_PROCESSING_MINUTES", '3'
+            buildConfigField "int", "VACCINE_SYNC_PROCESSING_MINUTES", '2'
             buildConfigField "int", "IMAGE_UPLOAD_MINUTES", '7'
             buildConfigField "int", "PULL_UNIQUE_IDS_MINUTES", '10'
             buildConfigField "int", "SYNC_VIEW_CONFIGURATIONS_MINUTES", '2'
