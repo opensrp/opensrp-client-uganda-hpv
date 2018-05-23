@@ -64,7 +64,7 @@ public class PatientRepository {
                 doseNumber = "two";
             }
 
-            String date = org.smartregister.ug.hpv.util.Utils.convertDateFormat(vaccine.getDate(), new SimpleDateFormat("yyyy-MM-dd"));
+            String date = Utils.convertDateFormat(vaccine.getDate(), new SimpleDateFormat("yyyy-MM-dd"));
 
             SQLiteDatabase db = HpvApplication.getInstance().getRepository().getWritableDatabase();
             ContentValues values = new ContentValues();

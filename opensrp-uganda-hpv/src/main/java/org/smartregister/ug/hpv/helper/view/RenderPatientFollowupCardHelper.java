@@ -201,9 +201,9 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
     private class ShowVaccineDialogTask extends AsyncTask<Void, Void, Void> {
 
 
-        String dateDoseOneGiven;
+        private String dateDoseOneGiven;
 
-        ArrayList<VaccineWrapper> vaccineWrappers = new ArrayList<>();
+        private ArrayList<VaccineWrapper> vaccineWrappers = new ArrayList<>();
 
         protected Void doInBackground(Void... urls) {
 
@@ -254,9 +254,6 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
             vaccineWrappers.add(vaccineWrapper);
 
             return null;
-        }
-
-        protected void onProgressUpdate(Void... progress) {
         }
 
         protected void onPostExecute(Void result) {

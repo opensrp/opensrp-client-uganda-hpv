@@ -12,7 +12,6 @@ import org.smartregister.commonregistry.CommonPersonObject;
 import org.smartregister.event.Listener;
 import org.smartregister.ug.hpv.domain.EntityLookUp;
 import org.smartregister.ug.hpv.fragment.HpvJsonFormFragment;
-import org.smartregister.ug.hpv.util.CaretakerLookUpUtils;
 
 import java.util.HashMap;
 import java.util.List;
