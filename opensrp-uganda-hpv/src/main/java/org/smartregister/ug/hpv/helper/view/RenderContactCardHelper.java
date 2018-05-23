@@ -1,5 +1,7 @@
 package org.smartregister.ug.hpv.helper.view;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -106,11 +108,15 @@ public class RenderContactCardHelper extends BaseRenderHelper implements View.On
 
     private void launchPhoneDialer(String phoneNumber) {
         try {
-            Intent intent = new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", phoneNumber, null));
+            Intent intent = new Intent(Intent.ACTION_DIAL, Uri.fromParts("telt", phoneNumber, null));
             context.startActivity(intent);
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
-            Utils.showToast(context, context.getString(R.string.phone_dialer_error));
+            //Utils.showToast(context, context.getString(R.string.phone_dialer_error));
+            ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clip = ClipData.newPlainText("Copy to clipboard", phoneNumber);
+            clipboard.setPrimaryClip(clip);
+
         }
     }
 

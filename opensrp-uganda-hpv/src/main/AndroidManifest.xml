@@ -40,15 +40,13 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.SettingsActivity"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait" />
-        <activity
-            android:name="com.vijay.jsonwizard.activities.JsonFormActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
+
         <activity
             android:name=".activity.HpvJsonFormActivity"
             android:screenOrientation="portrait"
+            android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 

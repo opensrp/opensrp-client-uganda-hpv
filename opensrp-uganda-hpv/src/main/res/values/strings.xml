@@ -61,6 +61,6 @@
     <string name="sync_">Sync%1$s</string>
     <string name="last_sync">(last %1$s)</string>
     <string name="manual_sync_triggered">Manual Sync triggered&#8230;</string>
-    <string name="phone_dialer_error">Your phone does not have an app that supports phone dialing&#8230;</string>
+    <string name="copy_to_clipboard">Copy to clipboard</string>
 
 </resources>
