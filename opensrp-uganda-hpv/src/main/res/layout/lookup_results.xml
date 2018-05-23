@@ -9,6 +9,6 @@
     android:divider="?attr/listDividerAlertDialog"
     android:fadingEdge="none"
     android:overScrollMode="ifContentScrolls"
-    android:paddingBottom="@dimen/abc_dialog_list_padding_vertical_material"
-    android:paddingTop="@dimen/abc_dialog_list_padding_vertical_material"
+    android:paddingBottom="@dimen/lookup_results_padding"
+    android:paddingTop="@dimen/lookup_results_padding"
     android:scrollbars="vertical" />
