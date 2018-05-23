@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -31,7 +32,7 @@ public class RenderContactCardHelper extends BaseRenderHelper implements View.On
     private TextView caretakerContactTextView;
     private TextView vhtNameTextView;
     private TextView vhtContactTextView;
-
+    private final String TAG = RenderContactCardHelper.class.getCanonicalName();
     private RelativeLayout vhtContactWrapperView;
     private View vhtTitleTextView;
 
@@ -104,8 +105,13 @@ public class RenderContactCardHelper extends BaseRenderHelper implements View.On
     }
 
     private void launchPhoneDialer(String phoneNumber) {
-        Intent intent = new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", phoneNumber, null));
-        context.startActivity(intent);
+        try {
+            Intent intent = new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", phoneNumber, null));
+            context.startActivity(intent);
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+            Utils.showToast(context, context.getString(R.string.phone_dialer_error));
+        }
     }
 
     public void refreshContacts(final String baseEntityId) {
