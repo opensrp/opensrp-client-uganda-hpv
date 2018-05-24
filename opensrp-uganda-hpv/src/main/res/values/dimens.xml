@@ -126,6 +126,7 @@
     <dimen name="login_logo_top_padding">35dp</dimen>
     <dimen name="searchbar_bg_layout_height">80dp</dimen>
     <dimen name="checkbox_margin_top">10dp</dimen>
+    <dimen name="undo_vaccine_btn_vertical_margin">10dp</dimen>
 
     <item name="checkbox_scale" format="float" type="dimen">1.7</item>
 </resources>

@@ -13,6 +13,7 @@
     <dimen name="login_logo_top_padding">80dp</dimen>
     <dimen name="checkbox_dimensions">60dp</dimen>
     <dimen name="checkbox_margin_top">15dp</dimen>
+    <dimen name="undo_vaccine_btn_vertical_margin">20dp</dimen>
 
     <item name="checkbox_scale" format="float" type="dimen">1.5</item>
 </resources>

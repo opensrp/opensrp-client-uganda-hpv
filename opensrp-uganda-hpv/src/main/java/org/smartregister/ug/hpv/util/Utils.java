@@ -232,15 +232,20 @@ public class Utils {
 
     }
 
-    public static void updateEcPatient(String baseEntityId, String vaccineName, Date date, String locationId) {
+    public static void updateEcPatient(String baseEntityId, String vaccineName, @Nullable Date date, @Nullable  String locationId) {
         Log.d(TAG, "Starting processEC_Patient table");
 
+        String vaccine = vaccineName;
         String doseNumber = "one";
-        if ("hpv_2".equals(vaccineName)) {
+        if ("HPV 2".equals(vaccineName)) {
             doseNumber = "two";
         }
 
-        String dateString = org.smartregister.ug.hpv.util.Utils.convertDateFormat(date, new SimpleDateFormat("yyyy-MM-dd"));
+        String dateString = null;
+        if (date != null) {
+            dateString = org.smartregister.ug.hpv.util.Utils.convertDateFormat(date, new SimpleDateFormat("yyyy-MM-dd"));
+        }
+
         PatientRepository.updateDoseDates(baseEntityId, dateString, doseNumber, locationId);
 
         Log.d(TAG, "Finish processEC_Patient table");

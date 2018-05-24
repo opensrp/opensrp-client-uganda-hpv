@@ -54,12 +54,14 @@ public class PatientRepository {
     public static void updateDoseDates(String baseEntityID, String date, String doseNumber, String locationId) {
 
         try {
+
             SQLiteDatabase db = HpvApplication.getInstance().getRepository().getWritableDatabase();
             ContentValues values = new ContentValues();
             values.put("date_dose_" + doseNumber + "_given", date);
             if ("one".equalsIgnoreCase(doseNumber)) {
-                values.put("dose_two_date", Utils.calculateVaccineDueDate(date));
+              //  values.put("dose_two_date", Utils.calculateVaccineDueDate(date)); // TODO: UNCOMMENT THIS!!!!!!!!!!!!!!! ADD CHECK FOR WHETHER THIS IS REMOVAL OR ADDITION
             }
+
             values.put("dose_" + doseNumber + "_given_location", locationId);
             values.put(DBConstants.KEY.LAST_INTERACTED_WITH, Calendar.getInstance().getTimeInMillis());
             db.update(DBConstants.PATIENT_TABLE_NAME, values, DBConstants.KEY.BASE_ENTITY_ID + " = ?", new String[]{baseEntityID});

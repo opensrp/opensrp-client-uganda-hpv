@@ -7,8 +7,10 @@ import android.app.FragmentTransaction;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.immunization.domain.Vaccine;
 import org.smartregister.immunization.domain.VaccineWrapper;
+import org.smartregister.immunization.fragment.UndoVaccinationDialogFragment;
 import org.smartregister.immunization.view.VaccineGroup;
 import org.smartregister.ug.hpv.application.HpvApplication;
+import org.smartregister.ug.hpv.fragment.UndoVaccinationDialogFragmentHPV;
 import org.smartregister.ug.hpv.fragment.VaccinationDialogFragmentHPV;
 import org.smartregister.ug.hpv.util.Constants;
 import org.smartregister.util.Utils;
@@ -34,6 +36,7 @@ public class VaccinationHelper {
     }
 
     public void addVaccinationDialogFragment(ArrayList<VaccineWrapper> vaccineWrappers, VaccineGroup vaccineGroup) {
+
         FragmentTransaction fragmentTransaction = activity.getFragmentManager().beginTransaction();
         Fragment prev = activity.getFragmentManager().findFragmentByTag(DIALOG_TAG);
         if (prev != null) {
@@ -60,8 +63,17 @@ public class VaccinationHelper {
         vaccinationDialogFragment.show(fragmentTransaction, DIALOG_TAG);
     }
 
-    public void addVaccineUndoDialogFragment(VaccineGroup vaccineGroup, VaccineWrapper vaccineWrapper) {
-        vaccineGroup.setModalOpen(true);
-    }
+    public void addUndoVaccinationDialogFragment(VaccineWrapper vaccineWrapper) {
 
+        FragmentTransaction ft = activity.getFragmentManager().beginTransaction();
+        Fragment prev = activity.getFragmentManager().findFragmentByTag(DIALOG_TAG);
+        if (prev != null) {
+            ft.remove(prev);
+        }
+
+        ft.addToBackStack(null);
+
+        UndoVaccinationDialogFragment undoVaccinationDialogFragment = UndoVaccinationDialogFragmentHPV.newInstance(vaccineWrapper);
+        undoVaccinationDialogFragment.show(ft, DIALOG_TAG);
+    }
 }

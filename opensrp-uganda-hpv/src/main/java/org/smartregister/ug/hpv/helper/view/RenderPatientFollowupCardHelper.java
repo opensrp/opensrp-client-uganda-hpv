@@ -11,10 +11,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.domain.Photo;
+import org.smartregister.immunization.domain.Vaccine;
 import org.smartregister.immunization.domain.VaccineWrapper;
+import org.smartregister.immunization.repository.VaccineRepository;
 import org.smartregister.immunization.view.VaccineGroup;
 import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.activity.BasePatientDetailActivity;
+import org.smartregister.ug.hpv.application.HpvApplication;
 import org.smartregister.ug.hpv.domain.DoseStatus;
 import org.smartregister.ug.hpv.helper.LocationHelper;
 import org.smartregister.ug.hpv.helper.VaccinationHelper;
@@ -25,6 +28,7 @@ import org.smartregister.ug.hpv.util.ImageUtils;
 import org.smartregister.ug.hpv.util.Utils;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import static org.smartregister.util.Utils.getName;
@@ -101,6 +105,10 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
                 locationTextView.setVisibility(View.VISIBLE);
                 locationTextView.setText(String.format(context.getString(R.string.patient_location), StringUtils.capitalize(LocationHelper.getInstance().getOpenMrsLocationName(locationDoseOne))));
             }
+
+            // render undo button
+            Button undoVaccineButton = (Button) view.findViewById(R.id.undo_vaccine_btn);
+            renderUndoVaccinationButton(true, undoVaccineButton);
         }
         if (StringUtils.isNotBlank(dateDoseTwoGiven)) {
             TextView doseTwoGivenTextView = (TextView) view.findViewById(R.id.dateDoseTwoGivenTextView);
@@ -113,6 +121,20 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
                 locationTextView.setVisibility(View.VISIBLE);
                 locationTextView.setText(String.format(context.getString(R.string.patient_location), StringUtils.capitalize(LocationHelper.getInstance().getOpenMrsLocationName(locationDoseTwo))));
             }
+
+            // render undo button
+            Button undoVaccineButton = (Button) view.findViewById(R.id.undo_vaccine_btn);
+            renderUndoVaccinationButton(true, undoVaccineButton);
+        }
+    }
+
+    public void renderUndoVaccinationButton(boolean activate, Button undoButton) {
+
+        if (activate) {
+            undoButton.setVisibility(View.VISIBLE);
+            undoButton.setOnClickListener(this);
+        } else {
+            undoButton.setVisibility(View.GONE);
         }
     }
 
@@ -139,7 +161,12 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
 
     @Override
     public void onClick(View view) {
-        showVaccinationDialog(context, commonPersonObjectClient, vaccinationHelper);
+
+        if (view.getId() == R.id.undo_vaccine_btn) {
+            showUndoVaccinationDialog();
+        } else {
+            showVaccinationDialog(context, commonPersonObjectClient, vaccinationHelper);
+        }
     }
 
     private void showVaccinationDialog(Context context, CommonPersonObjectClient commonPersonObjectClient, VaccinationHelper vaccinationHelper) {
@@ -181,6 +208,36 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
         vaccineWrapper.setPatientNumber(patientNumber);
         vaccineWrappers.add(vaccineWrapper);
         vaccinationHelper.addVaccinationDialogFragment(vaccineWrappers, new VaccineGroup(context));
+    }
+
+
+    public void showUndoVaccinationDialog() {
+
+        VaccineWrapper vaccineWrapper = new VaccineWrapper();
+
+        String dateDoseTwoGiven = commonPersonObjectClient.getDetails().get(DBConstants.KEY.DATE_DOSE_TWO_GIVEN);
+        dateDoseTwoGiven = null; //TODO: REMOVE THISS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        if (dateDoseTwoGiven != null) {
+            vaccineWrapper.setName("HPV 2");
+            vaccineWrapper.setDefaultName("HPV 2");
+        } else {
+            vaccineWrapper.setName("HPV 1");
+            vaccineWrapper.setDefaultName("HPV 1");
+        }
+
+        // get vaccines give (shouldn't be more than two)
+        VaccineRepository vaccineRepository = HpvApplication.getInstance().vaccineRepository();
+        List<Vaccine> vaccineList = vaccineRepository.findByEntityId(commonPersonObjectClient.entityId());
+
+        vaccineWrapper.setDbKey(129L);//TODO: REMOVE THISS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+//        if (("hpv_1".equals(vaccineList.get(0).getName()) && dateDoseTwoGiven == null) ||
+//                ("hpv_2".equals(vaccineList.get(0).getName()))) {
+//            vaccineWrapper.setDbKey(vaccineList.get(0).getId());
+//        } else {
+//            vaccineWrapper.setDbKey(vaccineList.get(1).getId());
+//        }
+        vaccinationHelper.addUndoVaccinationDialogFragment(vaccineWrapper);
     }
 
     public void refreshVaccinesDueView(final String baseEntityId) {
