@@ -9,6 +9,7 @@ import static org.junit.Assert.assertEquals;
  *
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
+
 public class ExampleUnitTest extends BaseUnitTest {
     @Test
     public void addition_isCorrect() throws Exception {

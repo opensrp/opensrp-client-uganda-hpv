@@ -208,6 +208,9 @@ dependencies {
     testImplementation "org.powermock:powermock-api-mockito2:$powerMockVersion"
     testImplementation "org.powermock:powermock-classloading-xstream:$powerMockVersion"
 
+    testImplementation('com.android.support.test:rules:1.0.2') {
+        exclude module: 'support-annotations'
+    }
 }
 
 task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {

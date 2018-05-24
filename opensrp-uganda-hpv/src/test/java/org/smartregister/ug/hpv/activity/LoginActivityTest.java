@@ -27,9 +27,10 @@ import static org.junit.Assert.assertNotNull;
  * Created by vkaruri on 24/04/2018.
  */
 
+
 public class LoginActivityTest extends BaseUnitTest {
 
-    private LoginActivity loginActivity = new LoginActivity();
+    private LoginActivity loginActivity;
     private ActivityController<LoginActivity> controller;
 
     @Before
