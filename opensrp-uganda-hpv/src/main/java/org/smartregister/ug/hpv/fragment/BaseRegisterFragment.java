@@ -9,12 +9,16 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.github.ybq.android.spinkit.style.FadingCircle;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -83,6 +87,9 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
     private View rootView;
     public static final String CLICK_VIEW_NORMAL = "click_view_normal";
     public static final String CLICK_VIEW_DOSAGE_STATUS = "click_view_dosage_status";
+
+    private TextView initialsTextView;
+    private ProgressBar syncProgressBar;
 
     @Override
     protected SecuredNativeSmartRegisterActivity.DefaultOptionsProvider getDefaultOptionsProvider() {
@@ -180,6 +187,7 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
         if (getSearchView() != null) {
             getSearchView().removeTextChangedListener(textWatcher);
             getSearchView().addTextChangedListener(textWatcher);
+            getSearchView().setOnKeyListener(hideKeyboard);
         }
     }
 
@@ -221,7 +229,7 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
         View qrCode = view.findViewById(R.id.scan_qr_code);
         qrCode.setOnClickListener(registerActionHandler);
 
-        TextView nameInitials = (TextView) view.findViewById(R.id.name_initials);
+        initialsTextView = (TextView) view.findViewById(R.id.name_initials);
 
         AllSharedPreferences allSharedPreferences = context().allSharedPreferences();
         String preferredName = allSharedPreferences.getANMPreferredName(allSharedPreferences.fetchRegisteredANM());
@@ -233,11 +241,15 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
             } else if (preferredNameArray.length == 1) {
                 initials = String.valueOf(preferredNameArray[0].charAt(0));
             }
-            nameInitials.setText(initials);
+            initialsTextView.setText(initials);
         }
 
         facilitySelection = (LocationPickerView) view.findViewById(R.id.facility_selection);
         facilitySelection.init();
+
+        syncProgressBar = (ProgressBar) view.findViewById(R.id.sync_progress_bar);
+        FadingCircle circle = new FadingCircle();
+        syncProgressBar.setIndeterminateDrawable(circle);
     }
 
     @Override
@@ -499,6 +511,7 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
 
         }
 
+        refreshSyncProgressSpinner();
     }
 
     private void startSync() {
@@ -517,6 +530,27 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
         super.onPause();
     }
 
+    protected View.OnKeyListener hideKeyboard = new View.OnKeyListener() {
+
+        @Override
+        public boolean onKey(View v, int keyCode, KeyEvent event) {
+            if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                Utils.hideKeyboard(getActivity());
+                return true;
+            }
+            return false;
+        }
+    };
+
+    private void refreshSyncProgressSpinner() {
+        if (SyncStatusBroadcastReceiver.getInstance().isSyncing()) {
+            syncProgressBar.setVisibility(View.VISIBLE);
+            initialsTextView.setVisibility(View.GONE);
+        } else {
+            syncProgressBar.setVisibility(View.GONE);
+            initialsTextView.setVisibility(View.VISIBLE);
+        }
+    }
 }
 
 

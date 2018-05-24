@@ -1,5 +1,6 @@
 package org.smartregister.ug.hpv.util;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -14,6 +15,7 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import com.google.common.base.Splitter;
@@ -39,6 +41,9 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
+
+import static android.content.Context.INPUT_METHOD_SERVICE;
+import static org.smartregister.util.Log.logError;
 
 /**
  * Created by ndegwamartin on 14/03/2018.
@@ -409,5 +414,14 @@ public class Utils {
         DateTime expiryDate = doseDate.plusDays(DOSE_EXPIRY_WINDOW_DAYS);
 
         return expiryDate.isBeforeNow();
+    }
+
+    public static void hideKeyboard(Activity activityContext) {
+        try {
+            InputMethodManager inputMethodManager = (InputMethodManager) activityContext.getSystemService(INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(activityContext.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        } catch (Exception e) {
+            logError("Error encountered while hiding keyboard " + e);
+        }
     }
 }

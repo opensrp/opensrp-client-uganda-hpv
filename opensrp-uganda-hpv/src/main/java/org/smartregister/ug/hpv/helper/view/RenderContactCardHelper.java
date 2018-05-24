@@ -1,9 +1,9 @@
 package org.smartregister.ug.hpv.helper.view;
 
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Handler;
 import android.util.Log;
@@ -20,6 +20,7 @@ import org.smartregister.ug.hpv.util.Constants;
 import org.smartregister.ug.hpv.util.DBConstants;
 import org.smartregister.ug.hpv.util.JsonFormUtils;
 import org.smartregister.ug.hpv.util.Utils;
+import org.smartregister.ug.hpv.view.CopyToClipboardDialog;
 
 import java.util.Map;
 
@@ -75,7 +76,7 @@ public class RenderContactCardHelper extends BaseRenderHelper implements View.On
                     vhtContactTextView.setText(Utils.getFormattedPhoneNumber(vhtContact));
 
                     RelativeLayout vhtContactNumberView = (RelativeLayout) view.findViewById(R.id.vhtContactNumberView);
-                    vhtContactNumberView.setTag(R.id.CONTACT, caretakerContact);
+                    vhtContactNumberView.setTag(R.id.CONTACT, vhtContact);
                     vhtContactNumberView.setOnClickListener(helperContext);
                 } else {
 
@@ -108,14 +109,15 @@ public class RenderContactCardHelper extends BaseRenderHelper implements View.On
 
     private void launchPhoneDialer(String phoneNumber) {
         try {
-            Intent intent = new Intent(Intent.ACTION_DIAL, Uri.fromParts("telt", phoneNumber, null));
+            Intent intent = new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", phoneNumber, null));
             context.startActivity(intent);
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
-            //Utils.showToast(context, context.getString(R.string.phone_dialer_error));
-            ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-            ClipData clip = ClipData.newPlainText("Copy to clipboard", phoneNumber);
-            clipboard.setPrimaryClip(clip);
+            Log.d(TAG, e.getMessage());
+
+            CopyToClipboardDialog copyToClipboardDialog = new CopyToClipboardDialog(context, R.style.copy_clipboard_dialog);
+            copyToClipboardDialog.setContent(phoneNumber);
+            copyToClipboardDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            copyToClipboardDialog.show();
 
         }
     }
@@ -137,6 +139,7 @@ public class RenderContactCardHelper extends BaseRenderHelper implements View.On
 
                         caretakerNameTextView.setText(WordUtils.capitalizeFully(contactDetails.get(DBConstants.KEY.CARETAKER_NAME)));
                         caretakerContactTextView.setText(Utils.getFormattedPhoneNumber(contactDetails.get(DBConstants.KEY.CARETAKER_PHONE)));
+                        caretakerContactTextView.setTag(R.id.CONTACT, contactDetails.get(DBConstants.KEY.CARETAKER_PHONE));
                         //update common object to enable updated edit contacts content
                         commonPersonObjectClient.getColumnmaps().put(DBConstants.KEY.CARETAKER_NAME, contactDetails.get(DBConstants.KEY.CARETAKER_NAME));
                         commonPersonObjectClient.getColumnmaps().put(DBConstants.KEY.CARETAKER_PHONE, contactDetails.get(DBConstants.KEY.CARETAKER_PHONE));
@@ -145,6 +148,7 @@ public class RenderContactCardHelper extends BaseRenderHelper implements View.On
 
                             vhtNameTextView.setText(WordUtils.capitalizeFully(contactDetails.get(DBConstants.KEY.VHT_NAME)));
                             vhtContactTextView.setText(Utils.getFormattedPhoneNumber(contactDetails.get(DBConstants.KEY.VHT_PHONE)));
+                            vhtContactTextView.setTag(R.id.CONTACT, contactDetails.get(DBConstants.KEY.VHT_PHONE));
                             commonPersonObjectClient.getColumnmaps().put(DBConstants.KEY.VHT_NAME, contactDetails.get(DBConstants.KEY.VHT_NAME));
                             commonPersonObjectClient.getColumnmaps().put(DBConstants.KEY.VHT_PHONE, contactDetails.get(DBConstants.KEY.VHT_PHONE));
                             vhtContactWrapperView.setVisibility(View.VISIBLE);

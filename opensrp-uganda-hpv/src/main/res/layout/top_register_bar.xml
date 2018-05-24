@@ -182,10 +182,11 @@
         android:drawableRight="@drawable/ic_arrow_drop_down_white"
         android:gravity="left|center_vertical"
         android:minWidth="@dimen/loc_picker_text_min_width"
+        android:maxWidth="@dimen/loc_picker_text_max_width"
         android:paddingLeft="0dp"
         android:paddingRight="8dp"
-        android:textSize="19sp"
-        android:text="Bukesa Urban"/>
+        android:textSize="@dimen/loc_picker_title_textview_size"
+        android:text="Bukesa Urban Health Center" />
 
     <org.smartregister.view.customcontrols.CustomFontTextView
         android:id="@+id/service_mode_selection"
