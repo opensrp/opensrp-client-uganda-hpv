@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -46,6 +47,7 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
     private VaccinationHelper vaccinationHelper;
     private RenderPatientFollowupCardHelper helperContext;
     private View view;
+    Map<String, String> patientDetailsTest;
 
 
     public RenderPatientFollowupCardHelper(Context context, CommonPersonObjectClient client) {
@@ -81,6 +83,7 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
     }
 
     private void renderHPVVaccineDueCore(Map<String, String> patientDetails, View view, RenderPatientFollowupCardHelper helperContext) {
+
         Button followUpView = (Button) view.findViewById(R.id.follow_up_button);
         followUpView.setAllCaps(false);
         String dateDoseOneGiven = patientDetails.get(DBConstants.KEY.DATE_DOSE_ONE_GIVEN);
@@ -92,35 +95,47 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
 
         renderFollowupButton(helperContext, followUpView, StringUtils.isBlank(dateDoseOneGiven), StringUtils.isNotBlank(dateDoseTwoGiven), nextVisitDate);
 
+        TextView doseOneGivenTextView = (TextView) view.findViewById(R.id.dateDoseOneGivenTextView);
+        TextView locationTextView = (TextView) view.findViewById(R.id.locationVaccineOneGivenTextView);
+        Button undoVaccineButton = (Button) view.findViewById(R.id.undo_vaccine_btn);
+
         if (StringUtils.isNotBlank(dateDoseOneGiven)) {
-            TextView doseOneGivenTextView = (TextView) view.findViewById(R.id.dateDoseOneGivenTextView);
             doseOneGivenTextView.setText(String.format(context.getString(R.string.dose_given_date), Constants.HPV_DOSE.NUMBER_1, Utils.formatDate(dateDoseOneGiven)));
             doseOneGivenTextView.setVisibility(View.VISIBLE);
+        } else if (StringUtils.isNotBlank(dateDoseOneGiven) && StringUtils.isBlank(dateDoseTwoGiven)) {
+            doseOneGivenTextView.setText(String.format(context.getString(R.string.dose_given_date), Constants.HPV_DOSE.NUMBER_1, Utils.formatDate(dateDoseOneGiven)));
+            doseOneGivenTextView.setVisibility(View.VISIBLE);
+            followUpView.setVisibility(View.VISIBLE);
 
             String locationDoseOne = patientDetails.get(DBConstants.KEY.DOSE_ONE_GIVEN_LOCATION);
             if (StringUtils.isNotBlank(locationDoseOne)) {
-                TextView locationTextView = (TextView) view.findViewById(R.id.locationVaccineOneGivenTextView);
                 locationTextView.setVisibility(View.VISIBLE);
                 locationTextView.setText(String.format(context.getString(R.string.patient_location), StringUtils.capitalize(LocationHelper.getInstance().getOpenMrsLocationName(locationDoseOne))));
             }
-            // render undo button
-            Button undoVaccineButton = (Button) view.findViewById(R.id.undo_vaccine_btn);
             renderUndoVaccinationButton(true, undoVaccineButton);
+        } else if (StringUtils.isBlank(dateDoseOneGiven)) {
+            doseOneGivenTextView.setVisibility(View.GONE);
+            locationTextView.setVisibility(View.GONE);
+            followUpView.setEnabled(true);
+            renderUndoVaccinationButton(false, undoVaccineButton);
         }
+
+        TextView doseTwoGivenTextView = (TextView) view.findViewById(R.id.dateDoseTwoGivenTextView);
+        TextView locationTwoTextView = (TextView) view.findViewById(R.id.locationVaccineTwoGivenTextView);
         if (StringUtils.isNotBlank(dateDoseTwoGiven)) {
-            TextView doseTwoGivenTextView = (TextView) view.findViewById(R.id.dateDoseTwoGivenTextView);
             doseTwoGivenTextView.setText(String.format(context.getString(R.string.dose_given_date), Constants.HPV_DOSE.NUMBER_2, Utils.formatDate(dateDoseTwoGiven)));
             doseTwoGivenTextView.setVisibility(View.VISIBLE);
 
             String locationDoseTwo = patientDetails.get(DBConstants.KEY.DOSE_TWO_GIVEN_LOCATION);
             if (StringUtils.isNotBlank(locationDoseTwo)) {
-                TextView locationTextView = (TextView) view.findViewById(R.id.locationVaccineTwoGivenTextView);
-                locationTextView.setVisibility(View.VISIBLE);
-                locationTextView.setText(String.format(context.getString(R.string.patient_location), StringUtils.capitalize(LocationHelper.getInstance().getOpenMrsLocationName(locationDoseTwo))));
+
+                locationTwoTextView.setVisibility(View.VISIBLE);
+                locationTwoTextView.setText(String.format(context.getString(R.string.patient_location), StringUtils.capitalize(LocationHelper.getInstance().getOpenMrsLocationName(locationDoseTwo))));
             }
-            // render undo button
-            Button undoVaccineButton = (Button) view.findViewById(R.id.undo_vaccine_btn);
             renderUndoVaccinationButton(true, undoVaccineButton);
+        } else {
+            locationTwoTextView.setVisibility(View.GONE);
+            doseTwoGivenTextView.setVisibility(View.GONE);
         }
     }
 
@@ -188,7 +203,6 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
         VaccineRepository vaccineRepository = HpvApplication.getInstance().vaccineRepository();
         List<Vaccine> vaccineList = vaccineRepository.findByEntityId(commonPersonObjectClient.entityId());
 
-        // TODO: CONFIRM THIS LOGIC MAKES SENSE
         if (("hpv 1".equalsIgnoreCase(vaccineList.get(0).getName()) && StringUtils.isBlank(dateDoseTwoGiven)) ||
                 ("hpv 2".equalsIgnoreCase(vaccineList.get(0).getName()))) {
             vaccineWrapper.setDbKey(vaccineList.get(0).getId());
@@ -223,23 +237,39 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
 
         if (patientDetails.containsKey(DBConstants.KEY.DOSE_ONE_DATE)) {
             commonPersonObjectClient.getColumnmaps().put(DBConstants.KEY.DOSE_ONE_DATE, patientDetails.get(DBConstants.KEY.DOSE_ONE_DATE));
-        }
-        if (patientDetails.containsKey(DBConstants.KEY.DATE_DOSE_ONE_GIVEN)) {
-            commonPersonObjectClient.getColumnmaps().put(DBConstants.KEY.DATE_DOSE_ONE_GIVEN, patientDetails.get(DBConstants.KEY.DATE_DOSE_ONE_GIVEN));
-        }
-        if (patientDetails.containsKey(DBConstants.KEY.DOSE_ONE_GIVEN_LOCATION)) {
-            commonPersonObjectClient.getColumnmaps().put(DBConstants.KEY.DOSE_ONE_GIVEN_LOCATION, patientDetails.get(DBConstants.KEY.DOSE_ONE_GIVEN_LOCATION));
-        }
-        if (patientDetails.containsKey(DBConstants.KEY.DOSE_TWO_DATE)) {
-            commonPersonObjectClient.getColumnmaps().put(DBConstants.KEY.DOSE_TWO_DATE, patientDetails.get(DBConstants.KEY.DOSE_TWO_DATE));
-        }
-        if (patientDetails.containsKey(DBConstants.KEY.DATE_DOSE_TWO_GIVEN)) {
-            commonPersonObjectClient.getColumnmaps().put(DBConstants.KEY.DATE_DOSE_TWO_GIVEN, patientDetails.get(DBConstants.KEY.DATE_DOSE_TWO_GIVEN));
-        }
-        if (patientDetails.containsKey(DBConstants.KEY.DOSE_TWO_GIVEN_LOCATION)) {
-            commonPersonObjectClient.getColumnmaps().put(DBConstants.KEY.DOSE_TWO_GIVEN_LOCATION, patientDetails.get(DBConstants.KEY.DOSE_TWO_GIVEN_LOCATION));
+        } else {
+            commonPersonObjectClient.getColumnmaps().put(DBConstants.KEY.DOSE_ONE_DATE, null);
         }
 
+        if (patientDetails.containsKey(DBConstants.KEY.DATE_DOSE_ONE_GIVEN)) {
+            commonPersonObjectClient.getColumnmaps().put(DBConstants.KEY.DATE_DOSE_ONE_GIVEN, patientDetails.get(DBConstants.KEY.DATE_DOSE_ONE_GIVEN));
+        } else {
+            commonPersonObjectClient.getColumnmaps().put(DBConstants.KEY.DATE_DOSE_ONE_GIVEN, null);
+        }
+
+        if (patientDetails.containsKey(DBConstants.KEY.DOSE_ONE_GIVEN_LOCATION)) {
+            commonPersonObjectClient.getColumnmaps().put(DBConstants.KEY.DOSE_ONE_GIVEN_LOCATION, patientDetails.get(DBConstants.KEY.DOSE_ONE_GIVEN_LOCATION));
+        } else {
+            commonPersonObjectClient.getColumnmaps().put(DBConstants.KEY.DOSE_ONE_GIVEN_LOCATION, null);
+        }
+
+        if (patientDetails.containsKey(DBConstants.KEY.DOSE_TWO_DATE)) {
+            commonPersonObjectClient.getColumnmaps().put(DBConstants.KEY.DOSE_TWO_DATE, patientDetails.get(DBConstants.KEY.DOSE_TWO_DATE));
+        } else {
+            commonPersonObjectClient.getColumnmaps().put(DBConstants.KEY.DOSE_TWO_DATE, null);
+        }
+
+        if (patientDetails.containsKey(DBConstants.KEY.DATE_DOSE_TWO_GIVEN)) {
+            commonPersonObjectClient.getColumnmaps().put(DBConstants.KEY.DATE_DOSE_TWO_GIVEN, patientDetails.get(DBConstants.KEY.DATE_DOSE_TWO_GIVEN));
+        } else {
+            commonPersonObjectClient.getColumnmaps().put(DBConstants.KEY.DATE_DOSE_TWO_GIVEN, null);
+        }
+
+        if (patientDetails.containsKey(DBConstants.KEY.DOSE_TWO_GIVEN_LOCATION)) {
+            commonPersonObjectClient.getColumnmaps().put(DBConstants.KEY.DOSE_TWO_GIVEN_LOCATION, patientDetails.get(DBConstants.KEY.DOSE_TWO_GIVEN_LOCATION));
+        } else {
+            commonPersonObjectClient.getColumnmaps().put(DBConstants.KEY.DOSE_TWO_GIVEN_LOCATION, null);
+        }
     }
 
     private class ShowVaccineDialogTask extends AsyncTask<Void, Void, Void> {
