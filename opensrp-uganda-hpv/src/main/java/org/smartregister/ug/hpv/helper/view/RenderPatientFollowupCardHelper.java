@@ -141,12 +141,41 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
 
     public void renderUndoVaccinationButton(boolean activate, Button undoButton) {
 
+        if (!isValidForUndo()) {
+            return;
+        }
+
         if (activate) {
-            undoButton.setVisibility(View.VISIBLE);
+            undoButton.setVisibility(View.GONE);  // TODO: REMOVE THIS TO ALLOW VISIBILITY, CHANGE TO VISIBLE
             undoButton.setOnClickListener(this);
         } else {
             undoButton.setVisibility(View.GONE);
         }
+    }
+
+    private boolean isValidForUndo() {
+
+        VaccineRepository vaccineRepository = HpvApplication.getInstance().vaccineRepository();
+        List<Vaccine> vaccines = vaccineRepository.findByEntityId(commonPersonObjectClient.entityId());
+        boolean hpv2Exists = false;
+        boolean hpv1IsUnsynced = false;
+        for (Vaccine vaccine : vaccines) {
+            if ("hpv_2".equals(vaccine.getName())) {
+                hpv2Exists = true;
+            }
+            if ("hpv_2".equals(vaccine.getName()) && "Unsynced".equals(vaccine.getSyncStatus())) {
+                return true;
+            } else if ("hpv_2".equals(vaccine.getName()) && "Synced".equals(vaccine.getSyncStatus())) {
+                return false;
+            } else if ("hpv_1".equals(vaccine.getName()) && "Unsynced".equals(vaccine.getSyncStatus())) {
+                hpv1IsUnsynced = true;
+            }
+        }
+
+        if (hpv1IsUnsynced && !hpv2Exists) {
+            return true;
+        }
+        return false;
     }
 
     private void renderFollowupButton(RenderPatientFollowupCardHelper helperContext, Button followUpView, boolean isDoseOneGiven, boolean isDoseTwoGiven, String nextVisitDate) {
