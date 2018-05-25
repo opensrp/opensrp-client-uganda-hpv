@@ -58,8 +58,11 @@ public class PatientRepository {
             SQLiteDatabase db = HpvApplication.getInstance().getRepository().getWritableDatabase();
             ContentValues values = new ContentValues();
             values.put("date_dose_" + doseNumber + "_given", date);
-            if ("one".equalsIgnoreCase(doseNumber)) {
-              //  values.put("dose_two_date", Utils.calculateVaccineDueDate(date)); // TODO: UNCOMMENT THIS!!!!!!!!!!!!!!! ADD CHECK FOR WHETHER THIS IS REMOVAL OR ADDITION
+
+            if ("one".equalsIgnoreCase(doseNumber) && date != null) {
+                values.put("dose_two_date", Utils.calculateVaccineDueDate(date));
+            } else if ("one".equalsIgnoreCase(doseNumber) && date == null){
+                values.put("dose_two_date", date);
             }
 
             values.put("dose_" + doseNumber + "_given_location", locationId);

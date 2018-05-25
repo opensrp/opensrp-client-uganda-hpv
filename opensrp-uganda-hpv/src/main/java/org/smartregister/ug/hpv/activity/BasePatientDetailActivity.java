@@ -193,11 +193,6 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
 
     @Override
     public void onUndoVaccination(VaccineWrapper tag, View v) {
-        if (tag.getName() == null) {
-            String vaccineName = tag.getName(); // TODO: REMOVE THIS!!!!!!!!!!!!!!
-        } else {
-            String vaccineName = tag.getName(); // TODO: REMOVE THIS!!!!!!!!!!!!!!
-        }
         startAsyncTask(new UndoVaccineTask(tag), null);
     }
 

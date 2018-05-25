@@ -210,14 +210,14 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
         vaccinationHelper.addVaccinationDialogFragment(vaccineWrappers, new VaccineGroup(context));
     }
 
-
+    // TODO: CONSIDER MOVING THIS SHOW VACCINATION LOGIC TO ANOTHER THREAD
     public void showUndoVaccinationDialog() {
 
         VaccineWrapper vaccineWrapper = new VaccineWrapper();
 
-        String dateDoseTwoGiven = commonPersonObjectClient.getDetails().get(DBConstants.KEY.DATE_DOSE_TWO_GIVEN);
-        dateDoseTwoGiven = null; //TODO: REMOVE THISS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        if (dateDoseTwoGiven != null) {
+        final Map<String, String> patientDetails = PatientRepository.getPatientVaccinationDetails(commonPersonObjectClient.entityId());
+        String dateDoseTwoGiven = getValue(patientDetails, DBConstants.KEY.DATE_DOSE_TWO_GIVEN, true);
+        if (!StringUtils.isBlank(dateDoseTwoGiven)) {
             vaccineWrapper.setName("HPV 2");
             vaccineWrapper.setDefaultName("HPV 2");
         } else {
@@ -229,35 +229,29 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
         VaccineRepository vaccineRepository = HpvApplication.getInstance().vaccineRepository();
         List<Vaccine> vaccineList = vaccineRepository.findByEntityId(commonPersonObjectClient.entityId());
 
-        vaccineWrapper.setDbKey(129L);//TODO: REMOVE THISS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-//        if (("hpv_1".equals(vaccineList.get(0).getName()) && dateDoseTwoGiven == null) ||
-//                ("hpv_2".equals(vaccineList.get(0).getName()))) {
-//            vaccineWrapper.setDbKey(vaccineList.get(0).getId());
-//        } else {
-//            vaccineWrapper.setDbKey(vaccineList.get(1).getId());
-//        }
+        // TODO: CONFIRM THIS LOGIC MAKES SENSE
+        if (("hpv 1".equalsIgnoreCase(vaccineList.get(0).getName()) && StringUtils.isBlank(dateDoseTwoGiven)) ||
+                ("hpv 2".equalsIgnoreCase(vaccineList.get(0).getName()))) {
+            vaccineWrapper.setDbKey(vaccineList.get(0).getId());
+        } else {
+            vaccineWrapper.setDbKey(vaccineList.get(1).getId());
+        }
         vaccinationHelper.addUndoVaccinationDialogFragment(vaccineWrapper);
     }
 
     public void refreshVaccinesDueView(final String baseEntityId) {
 
         final Handler mHandler = new Handler();
-
         new Thread(new Runnable() {
             @Override
             public void run() {
 
-
                 final Map<String, String> patientDetails = PatientRepository.getPatientVaccinationDetails(baseEntityId);
-
+                
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
-
-
                         renderHPVVaccineDueCore(patientDetails, view, helperContext);
-
                     }
                 });
             }
