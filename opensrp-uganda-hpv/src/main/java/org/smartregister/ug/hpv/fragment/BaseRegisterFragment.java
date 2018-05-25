@@ -61,9 +61,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import static android.view.View.GONE;
-import static android.view.View.INVISIBLE;
-import static android.view.View.VISIBLE;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.smartregister.ug.hpv.activity.BaseRegisterActivity.TOOLBAR_TITLE;
 import static org.smartregister.ug.hpv.util.Constants.VIEW_CONFIGS.COMMON_REGISTER_HEADER;
@@ -201,7 +198,7 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
         filters = filterString;
         joinTable = joinTableString;
         mainCondition = mainConditionString;
-        getSearchCancelView().setVisibility(isEmpty(filterString) ? INVISIBLE : VISIBLE);
+        getSearchCancelView().setVisibility(isEmpty(filterString) ? View.INVISIBLE : View.VISIBLE);
         CountExecute();
         filterandSortExecute();
     }
@@ -217,9 +214,9 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
     @Override
     public void setupViews(View view) {
         super.setupViews(view);
-        clientsView.setVisibility(VISIBLE);
-        clientsProgressView.setVisibility(INVISIBLE);
-        view.findViewById(R.id.sorted_by_bar).setVisibility(GONE);
+        clientsView.setVisibility(View.VISIBLE);
+        clientsProgressView.setVisibility(View.INVISIBLE);
+        view.findViewById(R.id.sorted_by_bar).setVisibility(View.GONE);
         processViewConfigurations();
         initializeQueries();
         updateSearchView();
@@ -326,7 +323,7 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
 
     protected void populateClientListHeaderView(View view, View headerLayout_, String viewConfigurationIdentifier) {
         LinearLayout clientsHeaderLayout = (LinearLayout) view.findViewById(org.smartregister.R.id.clients_header_layout);
-        clientsHeaderLayout.setVisibility(GONE);
+        clientsHeaderLayout.setVisibility(View.GONE);
 
         View headerLayout = headerLayout_;
 

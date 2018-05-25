@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import org.smartregister.domain.Response;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.ug.hpv.application.HpvApplication;
+import org.smartregister.ug.hpv.exception.PullUniqueIdsException;
 import org.smartregister.ug.hpv.receiver.AlarmReceiver;
 import org.smartregister.ug.hpv.repository.UniqueIdRepository;
 import org.smartregister.ug.hpv.util.Constants;
@@ -66,12 +67,12 @@ public class PullUniqueIdsIntentService extends IntentService {
         Log.i(PullUniqueIdsIntentService.class.getName(), "URL: " + url);
 
         if (httpAgent == null) {
-            throw new Exception(ID_URL + " http agent is null");
+            throw new PullUniqueIdsException(ID_URL + " http agent is null");
         }
 
         Response resp = httpAgent.fetch(url);
         if (resp.isFailure()) {
-            throw new Exception(ID_URL + " not returned data");
+            throw new PullUniqueIdsException(ID_URL + " not returned data");
         }
 
         return new JSONObject((String) resp.payload());
