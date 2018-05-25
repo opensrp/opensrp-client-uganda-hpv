@@ -8,10 +8,13 @@ import com.google.common.collect.ImmutableMap;
 
 import net.sqlcipher.database.SQLiteDatabase;
 
+import org.smartregister.immunization.domain.Vaccine;
 import org.smartregister.ug.hpv.application.HpvApplication;
+import org.smartregister.ug.hpv.util.Constants;
 import org.smartregister.ug.hpv.util.DBConstants;
 import org.smartregister.ug.hpv.util.Utils;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Map;
 
@@ -51,18 +54,28 @@ public class PatientRepository {
         return null;
     }
 
-    public static void updateDoseDates(String baseEntityID, String date, String doseNumber, String locationId) {
+    public static void updateDoseDates(Vaccine vaccine) {
 
         try {
+
+            String doseNumber = "one";
+
+            if (vaccine.getName().equals(Constants.HPV_DOSE_NAME.HPV_2) || "hpv_2".equals(vaccine.getName())) {
+                doseNumber = "two";
+            }
+
+            String date = Utils.convertDateFormat(vaccine.getDate(), new SimpleDateFormat("yyyy-MM-dd"));
+
             SQLiteDatabase db = HpvApplication.getInstance().getRepository().getWritableDatabase();
             ContentValues values = new ContentValues();
             values.put("date_dose_" + doseNumber + "_given", date);
             if ("one".equalsIgnoreCase(doseNumber)) {
                 values.put("dose_two_date", Utils.calculateVaccineDueDate(date));
             }
-            values.put("dose_" + doseNumber + "_given_location", locationId);
+            values.put("dose_" + doseNumber + "_given_location", vaccine.getLocationId());
             values.put(DBConstants.KEY.LAST_INTERACTED_WITH, Calendar.getInstance().getTimeInMillis());
-            db.update(DBConstants.PATIENT_TABLE_NAME, values, DBConstants.KEY.BASE_ENTITY_ID + " = ?", new String[]{baseEntityID});
+            db.update(DBConstants.PATIENT_TABLE_NAME, values, DBConstants.KEY.BASE_ENTITY_ID + " = ?", new String[]{vaccine.getBaseEntityId()});
+
         } catch (Exception e) {
             Log.e(TAG, Log.getStackTraceString(e));
         }

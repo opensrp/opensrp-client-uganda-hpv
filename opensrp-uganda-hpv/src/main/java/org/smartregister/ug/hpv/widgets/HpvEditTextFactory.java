@@ -18,11 +18,9 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.util.DBConstants;
-import org.smartregister.ug.hpv.watchers.LookUpTextWatcher;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -33,25 +31,6 @@ public class HpvEditTextFactory extends EditTextFactory {
     @Override
     public void attachJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, MaterialEditText editText) throws Exception {
         super.attachJson(stepName, context, formFragment, jsonObject, editText);
-        // lookup hook
-        if (jsonObject.has(DBConstants.KEY.LOOK_UP) && jsonObject.get(DBConstants.KEY.LOOK_UP).toString().equalsIgnoreCase(Boolean.TRUE.toString())) {
-
-            String entityId = jsonObject.getString(DBConstants.KEY.ENTITY_ID);
-
-            Map<String, List<View>> lookupMap = formFragment.getLookUpMap();
-            List<View> lookUpViews = new ArrayList<>();
-            if (lookupMap.containsKey(entityId)) {
-                lookUpViews = lookupMap.get(entityId);
-            }
-
-            if (!lookUpViews.contains(editText)) {
-                lookUpViews.add(editText);
-            }
-            lookupMap.put(entityId, lookUpViews);
-
-            editText.addTextChangedListener(new LookUpTextWatcher(formFragment, editText, entityId));
-            editText.setTag(com.vijay.jsonwizard.R.id.after_look_up, false);
-        }
     }
 
     @Override

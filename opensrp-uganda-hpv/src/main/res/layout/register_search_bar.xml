@@ -11,7 +11,6 @@
         android:layout_width="0dp"
         android:layout_height="@dimen/ec_main_header_search_layout_height"
         android:layout_marginLeft="@dimen/register_status_bar_margin"
-        android:layout_marginRight="@dimen/register_status_bar_margin"
         android:layout_weight="1"
         android:background="@drawable/search_edit_text_bg"
         android:paddingLeft="15dp">
@@ -21,7 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignParentLeft="true"
-            android:layout_marginRight="7dp"
+            android:layout_marginRight="0dp"
             android:background="@android:color/transparent"
             android:ellipsize="end"
             android:hint="@string/str_search_hint"
@@ -29,14 +28,14 @@
             android:minWidth="@dimen/ec_main_header_search_box_width"
             android:textColor="@color/dark_grey"
             android:textColorHint="@color/search_hint_white"
-            android:textSize="@dimen/default_font_size" />
+            android:textSize="@dimen/default_font_size_search_bar" />
 
         <ImageButton
             android:id="@+id/btn_search_cancel"
             android:layout_width="@dimen/ec_main_header_search_cancel_button_width"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="3dp"
+            android:layout_marginRight="@dimen/search_view_cancel_image_margin_right"
             android:background="@android:color/transparent"
             android:src="@drawable/ic_cross"
             android:visibility="gone" />
@@ -71,7 +70,7 @@
             android:text="@string/scan_qr_code"
             android:textAllCaps="false"
             android:textColor="@color/search_hint_white"
-            android:textSize="@dimen/default_font_size" />
+            android:textSize="@dimen/default_font_size_search_bar" />
     </FrameLayout>
 
 
