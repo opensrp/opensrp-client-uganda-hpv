@@ -26,7 +26,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -181,7 +180,7 @@ public class LoginActivity extends AppCompatActivity {
     private void login(final View view, boolean localLogin) {
 
         Log.i(getClass().getName(), "Hiding Keyboard " + DateTime.now().toString());
-        hideKeyboard();
+        org.smartregister.ug.hpv.util.Utils.hideKeyboard(this);
         view.setClickable(false);
 
         final String userName = userNameEditText.getText().toString().trim();
@@ -369,15 +368,6 @@ public class LoginActivity extends AppCompatActivity {
                 })
                 .create();
         alertDialog.show();
-    }
-
-    private void hideKeyboard() {
-        try {
-            InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-            inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-        } catch (Exception e) {
-            logError("Error encountered while hiding keyboard " + e);
-        }
     }
 
     private String getVersion() throws PackageManager.NameNotFoundException {

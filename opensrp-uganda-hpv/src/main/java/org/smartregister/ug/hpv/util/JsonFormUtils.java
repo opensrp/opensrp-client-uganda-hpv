@@ -8,7 +8,6 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -26,7 +25,6 @@ import org.smartregister.clientandeventmodel.Address;
 import org.smartregister.clientandeventmodel.Client;
 import org.smartregister.clientandeventmodel.Event;
 import org.smartregister.clientandeventmodel.FormEntityConstants;
-import org.smartregister.clientandeventmodel.Obs;
 import org.smartregister.commonregistry.AllCommonsRepository;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.domain.FetchStatus;
@@ -85,7 +83,6 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
     public static final String READ_ONLY = "read_only";
     private static final String METADATA = "metadata";
     public static final String encounterType = "Update Birth Registration";
-    private static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
     public static final String ENCOUNTER_LOCATION = "encounter_location";
 
@@ -252,7 +249,7 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
                         .withEntityType(bindType)
                         .withFormSubmissionId(generateRandomUUIDString())
                         .withDateCreated(new Date());
-                JsonFormUtils.addMetaData(context, updateChildDetailsEvent, new Date());
+                JsonFormUtils.tagSyncMetadata(updateChildDetailsEvent);
                 JSONObject eventJsonUpdateChildEvent = new JSONObject(JsonFormUtils.gson.toJson(updateChildDetailsEvent));
 
                 db.addEvent(entityId, eventJsonUpdateChildEvent); //Add event to flag server update
@@ -632,42 +629,6 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
 
     }
 
-    public static Event addMetaData(Context context, Event event, Date start) throws JSONException {
-        Map<String, String> metaFields = new HashMap<>();
-        metaFields.put("deviceid", "163149AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-        metaFields.put("end", "163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-        metaFields.put("start", "163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-        Calendar calendar = Calendar.getInstance();
-
-        String end = DATE_TIME_FORMAT.format(calendar.getTime());
-
-        Obs obs = new Obs();
-        obs.setFieldCode("163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-        obs.setValue(DATE_TIME_FORMAT.format(start));
-        obs.setFieldType("concept");
-        obs.setFieldDataType("start");
-        event.addObs(obs);
-
-
-        obs.setFieldCode("163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-        obs.setValue(end);
-        obs.setFieldDataType("end");
-        event.addObs(obs);
-
-        TelephonyManager mTelephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-
-        String deviceId = mTelephonyManager.getSimSerialNumber();
-
-        obs.setFieldCode("163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-        obs.setValue(deviceId);
-        obs.setFieldDataType("deviceid");
-        event.addObs(obs);
-
-        tagSyncMetadata(event);
-
-        return event;
-    }
-
     public static String getAutoPopulatedJsonEditFormString(Context context, CommonPersonObjectClient commonPersonObjectClient) {
         try {
             JSONObject form = FormUtils.getInstance(context).getFormJson(Constants.JSON_FORM.PATIENT_REGISTRATION);
@@ -898,11 +859,16 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
                     }
                 }
 
+                JSONObject lastInteractedWith = new JSONObject();
+                lastInteractedWith.put(Constants.KEY.KEY, DBConstants.KEY.LAST_INTERACTED_WITH);
+                lastInteractedWith.put(Constants.KEY.VALUE, Calendar.getInstance().getTimeInMillis());
+                fields.put(lastInteractedWith);
+
                 Client baseClient = JsonFormUtils.createBaseClient(fields, entityId);
                 Event baseEvent = JsonFormUtils.createEvent(openSrpContext, fields, metadata, entityId, encounterType, providerId, bindType);
 
 
-                JsonFormUtils.addMetaData(context, baseEvent, new Date());
+                JsonFormUtils.tagSyncMetadata(baseEvent);
 
                 if (baseClient != null) {
                     JSONObject clientJson = new JSONObject(gson.toJson(baseClient));
@@ -942,10 +908,11 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
                     String opensrpId = baseClient.getIdentifier(DBConstants.KEY.OPENSRP_ID);
                     //mark OPENSRP ID as used
                     HpvApplication.getInstance().getUniqueIdRepository().close(opensrpId);
-
-                    String imageLocation = getFieldValue(fields, imageKey);
-                    saveImage(context, providerId, entityId, imageLocation);
                 }
+
+
+                String imageLocation = getFieldValue(fields, imageKey);
+                saveImage(context, providerId, entityId, imageLocation);
 
                 HpvClientProcessorForJava.getInstance(context).processClient(ecUpdater.getEvents(lastSyncDate, BaseRepository.TYPE_Unsynced));
                 allSharedPreferences.saveLastUpdatedAtDate(lastSyncDate.getTime());

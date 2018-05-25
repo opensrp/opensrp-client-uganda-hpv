@@ -1,6 +1,7 @@
 package org.smartregister.ug.hpv.util;
 
 import android.content.ContentValues;
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -15,6 +16,7 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import com.google.common.base.Splitter;
@@ -45,6 +47,8 @@ import java.util.Map;
 
 import static org.smartregister.immunization.repository.VaccineRepository.ID_COLUMN;
 import static org.smartregister.immunization.repository.VaccineRepository.VACCINE_TABLE_NAME;
+import static android.content.Context.INPUT_METHOD_SERVICE;
+import static org.smartregister.util.Log.logError;
 
 /**
  * Created by ndegwamartin on 14/03/2018.
@@ -443,6 +447,15 @@ public class Utils {
             database.update(VACCINE_TABLE_NAME, contentValues, idSelection, new String[]{vaccine.getId().toString()});
         } catch (Exception e) {
             Log.e(TAG, Log.getStackTraceString(e));
+        }
+    }
+
+    public static void hideKeyboard(Activity activityContext) {
+        try {
+            InputMethodManager inputMethodManager = (InputMethodManager) activityContext.getSystemService(INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(activityContext.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        } catch (Exception e) {
+            logError("Error encountered while hiding keyboard " + e);
         }
     }
 }

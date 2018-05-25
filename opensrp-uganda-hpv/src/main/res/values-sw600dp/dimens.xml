@@ -14,6 +14,21 @@
     <dimen name="checkbox_dimensions">60dp</dimen>
     <dimen name="checkbox_margin_top">15dp</dimen>
     <dimen name="undo_vaccine_btn_vertical_margin">20dp</dimen>
+    <dimen name="copy_to_clipboard_dialog_width">500dp</dimen>
+    <dimen name="copy_to_clipboard_header_text_size">24sp</dimen>
+    <dimen name="copy_to_clipboard_message_text_size">18sp</dimen>
+    <dimen name="loc_picker_text_max_width">500dp</dimen>
+    <dimen name="loc_picker_bottom_margin">25dp</dimen>
+    <dimen name="loc_picker_service_location_title_margin">40dp</dimen>
+    <dimen name="loc_picker_service_location_title_margin_top">20dp</dimen>
+    <dimen name="loc_picker_service_location_check_image_size">40dp</dimen>
+    <dimen name="loc_picker_service_location_check_margin_left">2dp</dimen>
+    <dimen name="loc_picker_service_location_text_item_margin_left">10dp</dimen>
+    <dimen name="loc_picker_title_textview_size">21sp</dimen>
+    <dimen name="ec_main_header_search_layout_height">50dp</dimen>
+    <dimen name="register_status_bar_margin">7dp</dimen>
+    <dimen name="search_view_cancel_image_margin_right">7dp</dimen>
+    <dimen name="default_font_size_search_bar">20sp</dimen>
 
     <item name="checkbox_scale" format="float" type="dimen">1.5</item>
 </resources>

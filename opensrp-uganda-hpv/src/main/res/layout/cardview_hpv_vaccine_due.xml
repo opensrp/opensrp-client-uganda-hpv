@@ -43,12 +43,12 @@
         style="@style/CustomFontTextViewStyle.ClientList.Light"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
         android:paddingLeft="0dp"
         android:text="Dose 1 given 10/3/2017"
         android:textColor="@color/dark_grey_text"
         android:textSize="18sp"
-        android:visibility="gone"
-        android:layout_marginTop="5dp" />
+        android:visibility="gone" />
 
     <org.smartregister.view.customcontrols.CustomFontTextView
         android:id="@+id/locationVaccineOneGivenTextView"
@@ -67,6 +67,7 @@
         style="@style/CustomFontTextViewStyle.ClientList.Light"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:paddingLeft="0dp"
         android:text="Dose 2 given 10/3/2018"
         android:textColor="@color/dark_grey_text"

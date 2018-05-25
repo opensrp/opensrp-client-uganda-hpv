@@ -30,6 +30,7 @@ import org.smartregister.ug.hpv.event.VaccineUpdatedEvent;
 import org.smartregister.ug.hpv.fragment.BasePatientDetailsFragment;
 import org.smartregister.ug.hpv.fragment.PatientDetailsFragment;
 import org.smartregister.ug.hpv.helper.LocationHelper;
+import org.smartregister.ug.hpv.helper.VaccinationHelper;
 import org.smartregister.ug.hpv.util.Constants;
 import org.smartregister.ug.hpv.view.LocationPickerView;
 import org.smartregister.view.viewpager.OpenSRPViewPager;
@@ -67,7 +68,7 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
     protected OpenSRPViewPager mPager;
 
     private CommonPersonObjectClient commonPersonObjectClient;
-
+    private VaccinationHelper vaccinationHelper;
     private Fragment mBaseFragment;
 
     @Override
@@ -89,6 +90,8 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
         HPVRegisterActivityPagerAdapter mPagerAdapter = new HPVRegisterActivityPagerAdapter(getSupportFragmentManager(), mBaseFragment, otherFragments);
         mPager.setOffscreenPageLimit(otherFragments.length);
         mPager.setAdapter(mPagerAdapter);
+
+        vaccinationHelper = new VaccinationHelper(this, commonPersonObjectClient);
     }
 
     @Override
@@ -152,6 +155,7 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES);
+        storageDir.mkdirs();
         return File.createTempFile(
                 imageFileName,  /* prefix */
                 ".jpg",         /* suffix */
@@ -196,15 +200,16 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
         startAsyncTask(new UndoVaccineTask(tag), null);
     }
 
-    private void saveVaccine(ArrayList<VaccineWrapper> tags, final View view) {
+    private void saveVaccine(ArrayList<VaccineWrapper> vaccineWrappers, final View view) {
 
-        if (tags.isEmpty()) {
+
+        if (vaccineWrappers.isEmpty()) {
             return;
         }
 
         VaccineRepository vaccineRepository = HpvApplication.getInstance().vaccineRepository();
 
-        VaccineWrapper[] arrayTags = tags.toArray(new VaccineWrapper[tags.size()]);
+        VaccineWrapper[] arrayTags = vaccineWrappers.toArray(new VaccineWrapper[vaccineWrappers.size()]);
         SaveVaccinesTask backgroundTask = new SaveVaccinesTask();
         backgroundTask.setVaccineRepository(vaccineRepository);
         backgroundTask.setView(view);
@@ -212,18 +217,18 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
     }
 
 
-    private void saveVaccine(VaccineRepository vaccineRepository, VaccineWrapper tag) {
-        if (tag.getUpdatedVaccineDate() == null) {
+    private void saveVaccine(VaccineRepository vaccineRepository, VaccineWrapper vaccineWrapper) {
+        if (vaccineWrapper.getUpdatedVaccineDate() == null) {
             return;
         }
 
         Vaccine vaccine = new Vaccine();
-        if (tag.getDbKey() != null) {
-            vaccine = vaccineRepository.find(tag.getDbKey());
+        if (vaccineWrapper.getDbKey() != null) {
+            vaccine = vaccineRepository.find(vaccineWrapper.getDbKey());
         }
         vaccine.setBaseEntityId(commonPersonObjectClient.entityId());
-        vaccine.setName(tag.getName());
-        vaccine.setDate(tag.getUpdatedVaccineDate().toDate());
+        vaccine.setName(vaccineWrapper.getName());
+        vaccine.setDate(vaccineWrapper.getUpdatedVaccineDate().toDate());
         vaccine.setAnmId(getOpenSRPContext().allSharedPreferences().fetchRegisteredANM());
 
         LocationPickerView locationPickerView = ((PatientDetailsFragment) mBaseFragment).getLocationPickerView();
@@ -243,18 +248,26 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
         } else {
             vaccine.setCalculation(-1);
         }
+
         addVaccine(vaccineRepository, vaccine);
 
         String CHILD_LOCATION_ID = "child_location_id";
 
-        tag.setDbKey(vaccine.getId());
-        updateEcPatient(vaccine.getBaseEntityId(), vaccine.getName(), vaccine.getDate(), vaccine.getLocationId());
+        vaccineWrapper.setDbKey(vaccine.getId());
 
         // update childLocationId
         SQLiteDatabase db = vaccineRepository.getWritableDatabase();
         Map<String, String> contentValues = new HashMap<>();
         contentValues.put(CHILD_LOCATION_ID, vaccine.getChildLocationId());
         updateVaccineTable(db, vaccine, contentValues);
+
+        // update patient record
+        String baseEntityId = vaccine.getBaseEntityId();
+        String vaccineName = vaccine.getName();
+        Date vaccineDate = vaccine.getDate();
+        String locationId = vaccine.getLocationId();
+
+        updateEcPatient(baseEntityId, vaccineName, vaccineDate, locationId);
     }
 
     private void updateVaccineGroupViews(View view, final ArrayList<VaccineWrapper> wrappers, List<Vaccine> vaccineList) {

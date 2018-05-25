@@ -2,8 +2,8 @@ package org.smartregister.ug.hpv;
 
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.interactors.JsonFormInteractor;
+import com.vijay.jsonwizard.widgets.DatePickerFactory;
 
-import org.smartregister.ug.hpv.widgets.HpvDatePickerFactory;
 import org.smartregister.ug.hpv.widgets.HpvEditTextFactory;
 
 
@@ -22,8 +22,7 @@ public class HpvJsonFormInteractor extends JsonFormInteractor {
     protected void registerWidgets() {
         super.registerWidgets();
         map.put(JsonFormConstants.EDIT_TEXT, new HpvEditTextFactory());
-        map.put(JsonFormConstants.DATE_PICKER, new HpvDatePickerFactory());
-//        map.put(JsonFormConstants.LABEL, new PathCalculateLabelFactory());
+        map.put(JsonFormConstants.DATE_PICKER, new DatePickerFactory());
     }
 
     public static JsonFormInteractor getInstance() {
