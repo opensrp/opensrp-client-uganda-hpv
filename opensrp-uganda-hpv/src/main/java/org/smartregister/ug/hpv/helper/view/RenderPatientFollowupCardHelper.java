@@ -139,40 +139,47 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
         }
     }
 
+    // TODO: UNCOMMENT THIS TO RESTORE UNDO BUTTON VISIBILITY
     public void renderUndoVaccinationButton(boolean activate, Button undoButton) {
-
-        if (!isValidForUndo()) {
-            return;
-        }
-
-        if (activate) {
-            undoButton.setVisibility(View.GONE);  // TODO: REMOVE THIS TO ALLOW VISIBILITY, CHANGE TO VISIBLE
-            undoButton.setOnClickListener(this);
-        } else {
-            undoButton.setVisibility(View.GONE);
-        }
+//
+//        if (!isValidForUndo()) {
+//            return;
+//        }
+//
+//        if (activate) {
+//            undoButton.setVisibility(View.VISIBLE);
+//            undoButton.setOnClickListener(this);
+//        } else {
+//            undoButton.setVisibility(View.GONE);
+//        }
     }
 
     private boolean isValidForUndo() {
 
         VaccineRepository vaccineRepository = HpvApplication.getInstance().vaccineRepository();
         List<Vaccine> vaccines = vaccineRepository.findByEntityId(commonPersonObjectClient.entityId());
+        boolean hpv1Exists = false;
         boolean hpv2Exists = false;
         boolean hpv1IsUnsynced = false;
         for (Vaccine vaccine : vaccines) {
-            if ("hpv_2".equals(vaccine.getName())) {
+            if ("hpv 1".equals(vaccine.getName())) {
+                hpv1Exists = true;
+            }
+
+            if ("hpv 2".equals(vaccine.getName())) {
                 hpv2Exists = true;
             }
-            if ("hpv_2".equals(vaccine.getName()) && "Unsynced".equals(vaccine.getSyncStatus())) {
+
+            if ("hpv 2".equals(vaccine.getName()) && "Unsynced".equals(vaccine.getSyncStatus())) {
                 return true;
-            } else if ("hpv_2".equals(vaccine.getName()) && "Synced".equals(vaccine.getSyncStatus())) {
+            } else if ("hpv 2".equals(vaccine.getName()) && "Synced".equals(vaccine.getSyncStatus())) {
                 return false;
-            } else if ("hpv_1".equals(vaccine.getName()) && "Unsynced".equals(vaccine.getSyncStatus())) {
+            } else if ("hpv 1".equals(vaccine.getName()) && "Unsynced".equals(vaccine.getSyncStatus())) {
                 hpv1IsUnsynced = true;
             }
         }
 
-        if (hpv1IsUnsynced && !hpv2Exists) {
+        if ((hpv1IsUnsynced && !hpv2Exists) || (!hpv1Exists && !hpv2Exists)) {
             return true;
         }
         return false;
