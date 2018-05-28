@@ -101,6 +101,7 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
         if (StringUtils.isNotBlank(dateDoseOneGiven)) {
             doseOneGivenTextView.setText(String.format(context.getString(R.string.dose_given_date), Constants.HPV_DOSE.NUMBER_1, Utils.formatDate(dateDoseOneGiven)));
             doseOneGivenTextView.setVisibility(View.VISIBLE);
+            renderUndoVaccinationButton(true, undoVaccineButton);
         } else if (StringUtils.isNotBlank(dateDoseOneGiven) && StringUtils.isBlank(dateDoseTwoGiven)) {
             doseOneGivenTextView.setText(String.format(context.getString(R.string.dose_given_date), Constants.HPV_DOSE.NUMBER_1, Utils.formatDate(dateDoseOneGiven)));
             doseOneGivenTextView.setVisibility(View.VISIBLE);
@@ -140,31 +141,26 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
 
     // TODO: UNCOMMENT THIS TO RESTORE UNDO BUTTON VISIBILITY
     public void renderUndoVaccinationButton(boolean activate, Button undoButton) {
-//
-//        if (!isValidForUndo()) {
-//            return;
-//        }
-//
-//        if (activate) {
-//            undoButton.setVisibility(View.VISIBLE);
-//            undoButton.setOnClickListener(this);
-//        } else {
-//            undoButton.setVisibility(View.GONE);
-//        }
+
+        if (!isValidForUndo()) {
+            return;
+        }
+
+        if (activate) {
+            undoButton.setVisibility(View.VISIBLE);
+            undoButton.setOnClickListener(this);
+        } else {
+            undoButton.setVisibility(View.GONE);
+        }
     }
 
     private boolean isValidForUndo() {
 
         VaccineRepository vaccineRepository = HpvApplication.getInstance().vaccineRepository();
         List<Vaccine> vaccines = vaccineRepository.findByEntityId(commonPersonObjectClient.entityId());
-        boolean hpv1Exists = false;
         boolean hpv2Exists = false;
         boolean hpv1IsUnsynced = false;
         for (Vaccine vaccine : vaccines) {
-            if ("hpv 1".equals(vaccine.getName())) {
-                hpv1Exists = true;
-            }
-
             if ("hpv 2".equals(vaccine.getName())) {
                 hpv2Exists = true;
             }
@@ -178,7 +174,7 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
             }
         }
 
-        if ((hpv1IsUnsynced && !hpv2Exists) || (!hpv1Exists && !hpv2Exists)) {
+        if ((hpv1IsUnsynced && !hpv2Exists)) {
             return true;
         }
         return false;
@@ -191,6 +187,7 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
 
         } else {
 
+            followUpView.setVisibility(View.VISIBLE);
             followUpView.setOnClickListener(helperContext);
             followUpView.setText(String.format(context.getString(R.string.vaccine_dose_due_on_date), isDoseOneGiven ? Constants.HPV_DOSE.NUMBER_1 : Constants.HPV_DOSE.NUMBER_2, Utils.formatDate(nextVisitDate)));
 
