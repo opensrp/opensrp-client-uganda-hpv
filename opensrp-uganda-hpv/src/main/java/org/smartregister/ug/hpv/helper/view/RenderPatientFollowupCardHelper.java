@@ -5,7 +5,6 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -217,35 +216,11 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
     }
 
     private void showVaccinationDialog() {
-        new ShowVaccineDialogTask().execute();
+        new ShowVaccinationDialogTask().execute();
     }
 
-    // TODO: CONSIDER MOVING THIS SHOW VACCINATION LOGIC TO ANOTHER THREAD
     public void showUndoVaccinationDialog() {
-
-        VaccineWrapper vaccineWrapper = new VaccineWrapper();
-
-        final Map<String, String> patientDetails = PatientRepository.getPatientVaccinationDetails(commonPersonObjectClient.entityId());
-        String dateDoseTwoGiven = getValue(patientDetails, DBConstants.KEY.DATE_DOSE_TWO_GIVEN, true);
-        if (!StringUtils.isBlank(dateDoseTwoGiven)) {
-            vaccineWrapper.setName("HPV 2");
-            vaccineWrapper.setDefaultName("HPV 2");
-        } else {
-            vaccineWrapper.setName("HPV 1");
-            vaccineWrapper.setDefaultName("HPV 1");
-        }
-
-        // get vaccines give (shouldn't be more than two)
-        VaccineRepository vaccineRepository = HpvApplication.getInstance().vaccineRepository();
-        List<Vaccine> vaccineList = vaccineRepository.findByEntityId(commonPersonObjectClient.entityId());
-
-        if (("hpv 1".equalsIgnoreCase(vaccineList.get(0).getName()) && StringUtils.isBlank(dateDoseTwoGiven)) ||
-                ("hpv 2".equalsIgnoreCase(vaccineList.get(0).getName()))) {
-            vaccineWrapper.setDbKey(vaccineList.get(0).getId());
-        } else {
-            vaccineWrapper.setDbKey(vaccineList.get(1).getId());
-        }
-        vaccinationHelper.addUndoVaccinationDialogFragment(vaccineWrapper);
+        new ShowUndoVaccinationDialogTask().execute();
     }
 
     public void refreshVaccinesDueView(final String baseEntityId) {
@@ -308,7 +283,7 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
         }
     }
 
-    private class ShowVaccineDialogTask extends AsyncTask<Void, Void, Void> {
+    private class ShowVaccinationDialogTask extends AsyncTask<Void, Void, Void> {
 
 
         private String dateDoseOneGiven;
@@ -368,6 +343,39 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
 
         protected void onPostExecute(Void result) {
             vaccinationHelper.addVaccinationDialogFragment(vaccineWrappers, new VaccineGroup(context));
+        }
+    }
+
+    private class ShowUndoVaccinationDialogTask extends AsyncTask<Void, Void, Void> {
+
+        VaccineWrapper vaccineWrapper = new VaccineWrapper();
+        protected Void doInBackground(Void... urls) {
+
+            final Map<String, String> patientDetails = PatientRepository.getPatientVaccinationDetails(commonPersonObjectClient.entityId());
+            String dateDoseTwoGiven = getValue(patientDetails, DBConstants.KEY.DATE_DOSE_TWO_GIVEN, true);
+            if (!StringUtils.isBlank(dateDoseTwoGiven)) {
+                vaccineWrapper.setName("HPV 2");
+                vaccineWrapper.setDefaultName("HPV 2");
+            } else {
+                vaccineWrapper.setName("HPV 1");
+                vaccineWrapper.setDefaultName("HPV 1");
+            }
+
+            // get vaccines given (shouldn't be more than two)
+            VaccineRepository vaccineRepository = HpvApplication.getInstance().vaccineRepository();
+            List<Vaccine> vaccineList = vaccineRepository.findByEntityId(commonPersonObjectClient.entityId());
+
+            if (("hpv 1".equalsIgnoreCase(vaccineList.get(0).getName()) && StringUtils.isBlank(dateDoseTwoGiven)) ||
+                    ("hpv 2".equalsIgnoreCase(vaccineList.get(0).getName()))) {
+                vaccineWrapper.setDbKey(vaccineList.get(0).getId());
+            } else {
+                vaccineWrapper.setDbKey(vaccineList.get(1).getId());
+            }
+            return null;
+        }
+
+        protected void onPostExecute(Void result) {
+            vaccinationHelper.addUndoVaccinationDialogFragment(vaccineWrapper);
         }
     }
 }
