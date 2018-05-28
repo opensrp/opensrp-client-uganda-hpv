@@ -3,6 +3,7 @@ package org.smartregister.ug.hpv.service.intent;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import org.smartregister.service.ActionService;
 import org.smartregister.ug.hpv.application.HpvApplication;
@@ -15,6 +16,7 @@ public class ExtendedSyncIntentService extends IntentService {
 
     private Context context;
     private ActionService actionService;
+    private static final String TAG = ExtendedSyncIntentService.class.getCanonicalName();
 
     public ExtendedSyncIntentService() {
         super("ExtendedSyncIntentService");
@@ -29,16 +31,20 @@ public class ExtendedSyncIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent workIntent) {
+        try {
+            boolean wakeup = workIntent.getBooleanExtra(SyncIntentService.WAKE_UP, false);
 
-        boolean wakeup = workIntent.getBooleanExtra(SyncIntentService.WAKE_UP, false);
+            if (NetworkUtils.isNetworkAvailable()) {
+                actionService.fetchNewActions();
 
-        if (NetworkUtils.isNetworkAvailable()) {
-            actionService.fetchNewActions();
+                startSyncValidation(wakeup);
+            }
 
-            startSyncValidation(wakeup);
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage(), e);
+        } finally {
+            AlarmReceiver.completeWakefulIntent(workIntent);
         }
-
-        AlarmReceiver.completeWakefulIntent(workIntent);
     }
 
 

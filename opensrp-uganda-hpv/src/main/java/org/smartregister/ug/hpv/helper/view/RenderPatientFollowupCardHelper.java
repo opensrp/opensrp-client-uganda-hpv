@@ -1,6 +1,7 @@
 package org.smartregister.ug.hpv.helper.view;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
@@ -9,12 +10,14 @@ import android.widget.TextView;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
+import org.json.JSONObject;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.domain.Photo;
 import org.smartregister.immunization.domain.VaccineWrapper;
 import org.smartregister.immunization.view.VaccineGroup;
 import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.activity.BasePatientDetailActivity;
+import org.smartregister.ug.hpv.application.HpvApplication;
 import org.smartregister.ug.hpv.domain.DoseStatus;
 import org.smartregister.ug.hpv.helper.LocationHelper;
 import org.smartregister.ug.hpv.helper.VaccinationHelper;
@@ -71,7 +74,7 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
                 Constants.State doseState = Utils.getRegisterViewButtonStatus(doseStatus);
                 boolean launchDialog = ((BasePatientDetailActivity) context).getIntent().getBooleanExtra(Constants.INTENT_KEY.LAUNCH_VACCINE_DIALOG, false);
                 if (launchDialog && (!doseState.equals(Constants.State.INACTIVE) || StringUtils.isBlank(doseStatus.getDateDoseOneGiven()))) {
-                    showVaccinationDialog(context, commonPersonObjectClient, vaccinationHelper);
+                    showVaccinationDialog();
                 }
             }
 
@@ -116,7 +119,7 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
         }
     }
 
-    private void renderFollowupButton( RenderPatientFollowupCardHelper helperContext, Button followUpView, boolean isDoseOneGiven, boolean isDoseTwoGiven, String nextVisitDate) {
+    private void renderFollowupButton(RenderPatientFollowupCardHelper helperContext, Button followUpView, boolean isDoseOneGiven, boolean isDoseTwoGiven, String nextVisitDate) {
         DoseStatus doseStatus = Utils.getCurrentDoseStatus(commonPersonObjectClient);
         if (isDoseTwoGiven) {
             followUpView.setVisibility(View.GONE);
@@ -139,46 +142,11 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
 
     @Override
     public void onClick(View view) {
-        showVaccinationDialog(context, commonPersonObjectClient, vaccinationHelper);
+        showVaccinationDialog();
     }
 
-    private void showVaccinationDialog(Context context, CommonPersonObjectClient commonPersonObjectClient, VaccinationHelper vaccinationHelper) {
-        String dateDoseOneGiven = commonPersonObjectClient.getDetails().get(DBConstants.KEY.DATE_DOSE_ONE_GIVEN);
-
-        ArrayList<VaccineWrapper> vaccineWrappers = new ArrayList<>();
-        VaccineWrapper vaccineWrapper = new VaccineWrapper();
-
-        vaccineWrapper.setId(commonPersonObjectClient.entityId());
-        vaccineWrapper.setGender(commonPersonObjectClient.getDetails().get(DBConstants.KEY.GENDER));
-
-        DoseStatus doseStatus = Utils.getCurrentDoseStatus(commonPersonObjectClient);
-        DateTime vaccineDateTime = null;
-
-        if (dateDoseOneGiven == null) {
-            vaccineWrapper.setName("HPV 1");
-            vaccineWrapper.setDefaultName("HPV 1");
-            vaccineDateTime = (new DateTime(doseStatus.getDoseOneDate())).toDateTime();
-            vaccineWrapper.setVaccineDate(vaccineDateTime);
-        } else {
-            vaccineWrapper.setName("HPV 2");
-            vaccineWrapper.setDefaultName("HPV 2");
-            vaccineDateTime = (new DateTime(doseStatus.getDoseTwoDate())).toDateTime();
-            vaccineWrapper.setVaccineDate(vaccineDateTime);
-        }
-
-        boolean isToday = (vaccineWrapper.getVaccineDate().getMillis() - DateTime.now().withTimeAtStartOfDay().getMillis()) == 0;
-        vaccineWrapper.setUpdatedVaccineDate(vaccineDateTime, isToday);
-
-        Photo photo = ImageUtils.profilePhotoByClientID(commonPersonObjectClient.getCaseId());
-        vaccineWrapper.setPhoto(photo);
-
-        String firstName = getValue(commonPersonObjectClient.getColumnmaps(), DBConstants.KEY.FIRST_NAME, true);
-        String lastName = getValue(commonPersonObjectClient.getColumnmaps(), DBConstants.KEY.LAST_NAME, true);
-        String childName = getName(firstName, lastName);
-
-        vaccineWrapper.setPatientName(childName.trim());
-        vaccineWrappers.add(vaccineWrapper);
-        vaccinationHelper.addVaccinationDialogFragment(vaccineWrappers, new VaccineGroup(context));
+    private void showVaccinationDialog() {
+        new ShowVaccineDialogTask().execute();
     }
 
     public void refreshVaccinesDueView(final String baseEntityId) {
@@ -228,5 +196,68 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
             commonPersonObjectClient.getColumnmaps().put(DBConstants.KEY.DOSE_TWO_GIVEN_LOCATION, patientDetails.get(DBConstants.KEY.DOSE_TWO_GIVEN_LOCATION));
         }
 
+    }
+
+    private class ShowVaccineDialogTask extends AsyncTask<Void, Void, Void> {
+
+
+        private String dateDoseOneGiven;
+
+        private ArrayList<VaccineWrapper> vaccineWrappers = new ArrayList<>();
+
+        protected Void doInBackground(Void... urls) {
+
+            JSONObject object = HpvApplication.getInstance().getEventClientRepository().getClientByBaseEntityId(commonPersonObjectClient.getCaseId());
+
+            try {
+                dateDoseOneGiven = object.has(DBConstants.KEY.DATE_DOSE_ONE_GIVEN) ? object.get(DBConstants.KEY.DATE_DOSE_ONE_GIVEN).toString() : commonPersonObjectClient.getColumnmaps().get(DBConstants.KEY.DATE_DOSE_ONE_GIVEN);
+
+            } catch (Exception e) {
+                dateDoseOneGiven = commonPersonObjectClient.getColumnmaps().get(DBConstants.KEY.DATE_DOSE_ONE_GIVEN);
+
+                Log.e(TAG, e.getMessage());
+            }
+
+            VaccineWrapper vaccineWrapper = new VaccineWrapper();
+
+            vaccineWrapper.setId(commonPersonObjectClient.entityId());
+            vaccineWrapper.setGender(commonPersonObjectClient.getColumnmaps().get(DBConstants.KEY.GENDER));
+
+            DoseStatus doseStatus = Utils.getCurrentDoseStatus(commonPersonObjectClient);
+            DateTime vaccineDateTime = null;
+
+            if (dateDoseOneGiven == null) {
+                vaccineWrapper.setName(Constants.HPV_DOSE_NAME.HPV_1);
+                vaccineWrapper.setDefaultName(Constants.HPV_DOSE_NAME.HPV_1);
+                vaccineDateTime = (new DateTime(doseStatus.getDoseOneDate())).toDateTime();
+                vaccineWrapper.setVaccineDate(vaccineDateTime);
+            } else {
+                vaccineWrapper.setName(Constants.HPV_DOSE_NAME.HPV_2);
+                vaccineWrapper.setDefaultName(Constants.HPV_DOSE_NAME.HPV_2);
+                vaccineDateTime = (new DateTime(doseStatus.getDoseTwoDate())).toDateTime();
+                vaccineWrapper.setVaccineDate(vaccineDateTime);
+            }
+
+            boolean isToday = (vaccineWrapper.getVaccineDate().getMillis() - DateTime.now().withTimeAtStartOfDay().getMillis()) == 0;
+            vaccineWrapper.setUpdatedVaccineDate(vaccineDateTime, isToday);
+
+            Photo photo = ImageUtils.profilePhotoByClientID(commonPersonObjectClient.getCaseId());
+            vaccineWrapper.setPhoto(photo);
+
+            String firstName = getValue(commonPersonObjectClient.getColumnmaps(), DBConstants.KEY.FIRST_NAME, true);
+            String lastName = getValue(commonPersonObjectClient.getColumnmaps(), DBConstants.KEY.LAST_NAME, true);
+            String childName = getName(firstName, lastName);
+            String patientNumber = getValue(commonPersonObjectClient.getColumnmaps(), DBConstants.KEY.OPENSRP_ID, true);
+
+            vaccineWrapper.setPatientName(childName.trim());
+            vaccineWrapper.setPatientNumber(patientNumber);
+            vaccineWrappers.add(vaccineWrapper);
+
+            return null;
+        }
+
+        protected void onPostExecute(Void result) {
+            vaccinationHelper.addVaccinationDialogFragment(vaccineWrappers, new VaccineGroup(context));
+        }
     }
 }

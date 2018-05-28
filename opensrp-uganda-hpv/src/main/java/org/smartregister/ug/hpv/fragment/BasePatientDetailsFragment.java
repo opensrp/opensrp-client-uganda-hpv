@@ -12,6 +12,7 @@ import android.widget.TextView;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.opensrp.api.constants.Gender;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.configurableviews.ConfigurableViewsLibrary;
 import org.smartregister.configurableviews.helper.ConfigurableViewsHelper;
@@ -153,6 +154,7 @@ public abstract class BasePatientDetailsFragment extends SecuredFragment impleme
         if (jsonFormSaveCompleteEvent != null) {
             Utils.removeStickyEvent(jsonFormSaveCompleteEvent);
             renderContactHelper.refreshContacts(commonPersonObjectClient.getCaseId());
+            renderPatientDemographicCardHelper.updateProfilePicture(Gender.FEMALE);
         }
 
     }
