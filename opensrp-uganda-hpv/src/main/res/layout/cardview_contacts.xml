@@ -47,7 +47,7 @@
                 android:text="@string/edit_contact"
                 android:textAllCaps="true"
                 android:textColor="#3269D4"
-                android:textSize="20sp"
+                android:textSize="14sp"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
                 android:paddingLeft="10dp" />

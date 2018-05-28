@@ -140,6 +140,10 @@
     <dimen name="copy_to_clipboard_header_text_size">20sp</dimen>
     <dimen name="copy_to_clipboard_message_text_size">14sp</dimen>
 
+    <dimen name="header_name_layout_width">205dp</dimen>
+    <dimen name="header_id_layout_width">50dp</dimen>
+    <dimen name="header_id_margin_right">60dp</dimen>
+
     <item name="checkbox_scale" format="float" type="dimen">1.7</item>
 </resources>
 

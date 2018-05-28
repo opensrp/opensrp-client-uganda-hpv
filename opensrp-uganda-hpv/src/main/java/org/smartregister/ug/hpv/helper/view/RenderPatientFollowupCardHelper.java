@@ -63,7 +63,7 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
             @Override
             public void run() {
                 try {
-                    Map<String, String> patientDetails = commonPersonObjectClient.getDetails();
+                    final Map<String, String> patientDetails = PatientRepository.getPatientVaccinationDetails(commonPersonObjectClient.entityId());
                     renderHPVVaccineDueCore(patientDetails, view, helperContext);
                 } catch (Exception e) {
                     Log.e(TAG, Log.getStackTraceString(e));
@@ -97,12 +97,7 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
         TextView doseOneGivenTextView = (TextView) view.findViewById(R.id.dateDoseOneGivenTextView);
         TextView locationTextView = (TextView) view.findViewById(R.id.locationVaccineOneGivenTextView);
         Button undoVaccineButton = (Button) view.findViewById(R.id.undo_vaccine_btn);
-
-        if (StringUtils.isNotBlank(dateDoseOneGiven)) {
-            doseOneGivenTextView.setText(String.format(context.getString(R.string.dose_given_date), Constants.HPV_DOSE.NUMBER_1, Utils.formatDate(dateDoseOneGiven)));
-            doseOneGivenTextView.setVisibility(View.VISIBLE);
-            renderUndoVaccinationButton(true, undoVaccineButton);
-        } else if (StringUtils.isNotBlank(dateDoseOneGiven) && StringUtils.isBlank(dateDoseTwoGiven)) {
+        if (StringUtils.isNotBlank(dateDoseOneGiven) && StringUtils.isBlank(dateDoseTwoGiven)) {
             doseOneGivenTextView.setText(String.format(context.getString(R.string.dose_given_date), Constants.HPV_DOSE.NUMBER_1, Utils.formatDate(dateDoseOneGiven)));
             doseOneGivenTextView.setVisibility(View.VISIBLE);
             followUpView.setVisibility(View.VISIBLE);
@@ -112,6 +107,10 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
                 locationTextView.setVisibility(View.VISIBLE);
                 locationTextView.setText(String.format(context.getString(R.string.patient_location), StringUtils.capitalize(LocationHelper.getInstance().getOpenMrsLocationName(locationDoseOne))));
             }
+            renderUndoVaccinationButton(true, undoVaccineButton);
+        } else if (StringUtils.isNotBlank(dateDoseOneGiven)) {
+            doseOneGivenTextView.setText(String.format(context.getString(R.string.dose_given_date), Constants.HPV_DOSE.NUMBER_1, Utils.formatDate(dateDoseOneGiven)));
+            doseOneGivenTextView.setVisibility(View.VISIBLE);
             renderUndoVaccinationButton(true, undoVaccineButton);
         } else if (StringUtils.isBlank(dateDoseOneGiven)) {
             doseOneGivenTextView.setVisibility(View.GONE);
