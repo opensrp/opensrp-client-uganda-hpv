@@ -111,6 +111,12 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
         } else if (StringUtils.isNotBlank(dateDoseOneGiven)) {
             doseOneGivenTextView.setText(String.format(context.getString(R.string.dose_given_date), Constants.HPV_DOSE.NUMBER_1, Utils.formatDate(dateDoseOneGiven)));
             doseOneGivenTextView.setVisibility(View.VISIBLE);
+
+            String locationDoseOne = patientDetails.get(DBConstants.KEY.DOSE_ONE_GIVEN_LOCATION);
+            if (StringUtils.isNotBlank(locationDoseOne)) {
+                locationTextView.setVisibility(View.VISIBLE);
+                locationTextView.setText(String.format(context.getString(R.string.patient_location), StringUtils.capitalize(LocationHelper.getInstance().getOpenMrsLocationName(locationDoseOne))));
+            }
             renderUndoVaccinationButton(true, undoVaccineButton);
         } else if (StringUtils.isBlank(dateDoseOneGiven)) {
             doseOneGivenTextView.setVisibility(View.GONE);
@@ -142,6 +148,7 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
     public void renderUndoVaccinationButton(boolean activate, Button undoButton) {
 
         if (!isValidForUndo()) {
+            undoButton.setVisibility(View.GONE);
             return;
         }
 
