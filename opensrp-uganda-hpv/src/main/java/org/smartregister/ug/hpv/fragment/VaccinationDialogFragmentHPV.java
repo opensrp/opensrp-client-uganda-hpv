@@ -21,8 +21,8 @@ import java.util.List;
 public class VaccinationDialogFragmentHPV extends VaccinationDialogFragment {
 
     public static VaccinationDialogFragmentHPV newInstance(Date dateOfBirth,
-                                                        List<Vaccine> issuedVaccines,
-                                                        ArrayList<VaccineWrapper> tags) {
+                                                           List<Vaccine> issuedVaccines,
+                                                           ArrayList<VaccineWrapper> tags) {
 
         VaccinationDialogFragmentHPV vaccinationDialogFragment = new VaccinationDialogFragmentHPV();
 
@@ -37,8 +37,8 @@ public class VaccinationDialogFragmentHPV extends VaccinationDialogFragment {
     }
 
     public static VaccinationDialogFragmentHPV newInstance(Date dateOfBirth,
-                                                        List<Vaccine> issuedVaccines,
-                                                        ArrayList<VaccineWrapper> tags, boolean disableConstraints) {
+                                                           List<Vaccine> issuedVaccines,
+                                                           ArrayList<VaccineWrapper> tags, boolean disableConstraints) {
 
         VaccinationDialogFragmentHPV vaccinationDialogFragment = new VaccinationDialogFragmentHPV();
 

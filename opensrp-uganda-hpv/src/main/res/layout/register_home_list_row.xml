@@ -53,10 +53,10 @@
             android:hapticFeedbackEnabled="true"
             android:minWidth="250dp"
             android:padding="5dp"
-            android:text="D1 Due"
+            android:text="D2 Due\n 23/11/14\nD1: 23/05/14"
             android:textAllCaps="false"
             android:textColor="@color/status_bar_text_almost_white"
-            android:textSize="13sp"
+            android:textSize="15sp"
             android:typeface="normal" />
 
         <LinearLayout

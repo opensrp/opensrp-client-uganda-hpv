@@ -9,12 +9,16 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.github.ybq.android.spinkit.style.FadingCircle;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -57,9 +61,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import static android.view.View.GONE;
-import static android.view.View.INVISIBLE;
-import static android.view.View.VISIBLE;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.smartregister.ug.hpv.activity.BaseRegisterActivity.TOOLBAR_TITLE;
 import static org.smartregister.ug.hpv.util.Constants.VIEW_CONFIGS.COMMON_REGISTER_HEADER;
@@ -84,6 +85,9 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
     public static final String CLICK_VIEW_NORMAL = "click_view_normal";
     public static final String CLICK_VIEW_DOSAGE_STATUS = "click_view_dosage_status";
 
+    private TextView initialsTextView;
+    private ProgressBar syncProgressBar;
+
     @Override
     protected SecuredNativeSmartRegisterActivity.DefaultOptionsProvider getDefaultOptionsProvider() {
         return new SecuredNativeSmartRegisterActivity.DefaultOptionsProvider() {
@@ -103,7 +107,7 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
 
             @Override
             public SortOption sortOption() {
-                return new CursorCommonObjectSort(getResources().getString(R.string.alphabetical_sort), "last_interacted_with desc");
+                return new CursorCommonObjectSort(getResources().getString(R.string.alphabetical_sort), DBConstants.KEY.LAST_INTERACTED_WITH + " DESC");
             }
 
             @Override
@@ -180,6 +184,7 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
         if (getSearchView() != null) {
             getSearchView().removeTextChangedListener(textWatcher);
             getSearchView().addTextChangedListener(textWatcher);
+            getSearchView().setOnKeyListener(hideKeyboard);
         }
     }
 
@@ -193,7 +198,7 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
         filters = filterString;
         joinTable = joinTableString;
         mainCondition = mainConditionString;
-        getSearchCancelView().setVisibility(isEmpty(filterString) ? INVISIBLE : VISIBLE);
+        getSearchCancelView().setVisibility(isEmpty(filterString) ? View.INVISIBLE : View.VISIBLE);
         CountExecute();
         filterandSortExecute();
     }
@@ -209,9 +214,9 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
     @Override
     public void setupViews(View view) {
         super.setupViews(view);
-        clientsView.setVisibility(VISIBLE);
-        clientsProgressView.setVisibility(INVISIBLE);
-        view.findViewById(R.id.sorted_by_bar).setVisibility(GONE);
+        clientsView.setVisibility(View.VISIBLE);
+        clientsProgressView.setVisibility(View.INVISIBLE);
+        view.findViewById(R.id.sorted_by_bar).setVisibility(View.GONE);
         processViewConfigurations();
         initializeQueries();
         updateSearchView();
@@ -221,7 +226,7 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
         View qrCode = view.findViewById(R.id.scan_qr_code);
         qrCode.setOnClickListener(registerActionHandler);
 
-        TextView nameInitials = (TextView) view.findViewById(R.id.name_initials);
+        initialsTextView = (TextView) view.findViewById(R.id.name_initials);
 
         AllSharedPreferences allSharedPreferences = context().allSharedPreferences();
         String preferredName = allSharedPreferences.getANMPreferredName(allSharedPreferences.fetchRegisteredANM());
@@ -233,11 +238,15 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
             } else if (preferredNameArray.length == 1) {
                 initials = String.valueOf(preferredNameArray[0].charAt(0));
             }
-            nameInitials.setText(initials);
+            initialsTextView.setText(initials);
         }
 
         facilitySelection = (LocationPickerView) view.findViewById(R.id.facility_selection);
         facilitySelection.init();
+
+        syncProgressBar = (ProgressBar) view.findViewById(R.id.sync_progress_bar);
+        FadingCircle circle = new FadingCircle();
+        syncProgressBar.setIndeterminateDrawable(circle);
     }
 
     @Override
@@ -314,7 +323,7 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
 
     protected void populateClientListHeaderView(View view, View headerLayout_, String viewConfigurationIdentifier) {
         LinearLayout clientsHeaderLayout = (LinearLayout) view.findViewById(org.smartregister.R.id.clients_header_layout);
-        clientsHeaderLayout.setVisibility(GONE);
+        clientsHeaderLayout.setVisibility(View.GONE);
 
         View headerLayout = headerLayout_;
 
@@ -499,6 +508,7 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
 
         }
 
+        refreshSyncProgressSpinner();
     }
 
     private void startSync() {
@@ -517,6 +527,27 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
         super.onPause();
     }
 
+    protected View.OnKeyListener hideKeyboard = new View.OnKeyListener() {
+
+        @Override
+        public boolean onKey(View v, int keyCode, KeyEvent event) {
+            if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                Utils.hideKeyboard(getActivity());
+                return true;
+            }
+            return false;
+        }
+    };
+
+    private void refreshSyncProgressSpinner() {
+        if (SyncStatusBroadcastReceiver.getInstance().isSyncing()) {
+            syncProgressBar.setVisibility(View.VISIBLE);
+            initialsTextView.setVisibility(View.GONE);
+        } else {
+            syncProgressBar.setVisibility(View.GONE);
+            initialsTextView.setVisibility(View.VISIBLE);
+        }
+    }
 }
 
 

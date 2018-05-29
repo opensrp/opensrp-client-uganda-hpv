@@ -50,7 +50,7 @@ public class LocationPickerView extends CustomFontTextView implements View.OnCli
     public void init() {
         locationPickerDialog = new Dialog(context);
         locationPickerDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        locationPickerDialog.setContentView(R.layout.dialog_location_picker);
+        locationPickerDialog.setContentView(R.layout.location_picker_dialog);
 
         ListView locationsLV = (ListView) locationPickerDialog.findViewById(R.id.locations_lv);
 

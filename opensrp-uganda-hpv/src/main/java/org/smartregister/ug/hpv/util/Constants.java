@@ -110,6 +110,12 @@ public class Constants {
         public static final String NUMBER_2 = "2";
     }
 
+    public static final class HPV_DOSE_NAME {
+
+        public static final String HPV_1 = "HPV 1";
+        public static final String HPV_2 = "HPV 2";
+    }
+
 
     public enum State {
         DUE,

@@ -41,13 +41,13 @@
     <string name="remove_from_register">REMOVE FROM REGISTER</string>
     <string name="contact">Contact</string>
     <string name="contacts">Contacts</string>
-    <string name="add_contact">ADD CONTACT</string>
+    <string name="edit_contact">EDIT CONTACT</string>
     <string name="caretaker">Caretaker</string>
     <string name="vht">VHT</string>
     <string name="url_separator">/</string>
     <string name="clients_key">clients</string>
     <string name="events_key">events</string>
-    <string name="manual_sync">Manual Sync</string>
+    <string name="sync">Sync</string>
     <string name="sync_round_complete">Sync round complete&#8230;</string>
     <string name="device_timezone_changed">"The device's timezone changed. Please login again."</string>
     <string name="device_time_changed">"The device's time has changed. Please login again."</string>
@@ -61,5 +61,6 @@
     <string name="sync_">Sync%1$s</string>
     <string name="last_sync">(last %1$s)</string>
     <string name="manual_sync_triggered">Manual Sync triggered&#8230;</string>
+    <string name="copy_to_clipboard">Copy to clipboard</string>
 
 </resources>

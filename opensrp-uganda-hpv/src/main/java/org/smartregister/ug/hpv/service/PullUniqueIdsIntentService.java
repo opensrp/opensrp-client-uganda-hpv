@@ -9,15 +9,11 @@ import org.json.JSONObject;
 import org.smartregister.domain.Response;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.ug.hpv.application.HpvApplication;
+import org.smartregister.ug.hpv.exception.PullUniqueIdsException;
+import org.smartregister.ug.hpv.receiver.AlarmReceiver;
 import org.smartregister.ug.hpv.repository.UniqueIdRepository;
 import org.smartregister.ug.hpv.util.Constants;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,8 +47,10 @@ public class PullUniqueIdsIntentService extends IntentService {
             if (ids != null && ids.has(IDENTIFIERS)) {
                 parseResponse(ids);
             }
-        } catch (Exception e1) {
-            e1.printStackTrace();
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage(), e);
+        } finally {
+            AlarmReceiver.completeWakefulIntent(intent);
         }
     }
 
@@ -69,50 +67,15 @@ public class PullUniqueIdsIntentService extends IntentService {
         Log.i(PullUniqueIdsIntentService.class.getName(), "URL: " + url);
 
         if (httpAgent == null) {
-            throw new Exception(ID_URL + " http agent is null");
+            throw new PullUniqueIdsException(ID_URL + " http agent is null");
         }
 
         Response resp = httpAgent.fetch(url);
         if (resp.isFailure()) {
-            throw new Exception(ID_URL + " not returned data");
+            throw new PullUniqueIdsException(ID_URL + " not returned data");
         }
 
         return new JSONObject((String) resp.payload());
-    }
-
-    /**
-     * @param connection object; note: before calling this function,
-     *                   ensure that the connection is already be open, and any writes to
-     *                   the connection's output stream should have already been completed.
-     * @return String containing the body of the connection response or null if the input stream could not be read correctly
-     */
-    private String readInputStreamToString(HttpURLConnection connection) {
-        String result = null;
-        StringBuilder sb = new StringBuilder();
-        InputStream is = null;
-
-        try {
-            is = new BufferedInputStream(connection.getInputStream());
-            BufferedReader br = new BufferedReader(new InputStreamReader(is));
-            String inputLine = "";
-            while ((inputLine = br.readLine()) != null) {
-                sb.append(inputLine);
-            }
-            result = sb.toString();
-        } catch (Exception e) {
-            Log.i(TAG, "Error reading InputStream");
-            result = null;
-        } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (IOException e) {
-                    Log.i(TAG, "Error closing InputStream");
-                }
-            }
-        }
-
-        return result;
     }
 
     private void parseResponse(JSONObject idsFromOMRS) throws Exception {
