@@ -3,10 +3,10 @@
 configure(allprojects) { project ->
     buildscript {
         repositories {
-            jcenter()
+            mavenLocal()
             mavenCentral()
             maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
-            mavenLocal()
+            jcenter()
         }
     }
 }
