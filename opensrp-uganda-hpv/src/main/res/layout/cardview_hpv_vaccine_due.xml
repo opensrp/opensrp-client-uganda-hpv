@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/clientFollowupCardView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -42,7 +43,7 @@
         style="@style/CustomFontTextViewStyle.ClientList.Light"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="20dp"
         android:paddingLeft="0dp"
         android:text="Dose 1 given 10/3/2017"
         android:textColor="@color/dark_grey_text"
@@ -82,6 +83,28 @@
         android:text="Location: Kasayole High School"
         android:textColor="@color/dark_grey_text"
         android:textSize="18sp"
+        android:visibility="gone" />
+
+
+    <Button
+        android:id="@+id/undo_vaccine_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:background="@drawable/undo_vaccine_button_border"
+        android:hapticFeedbackEnabled="true"
+        android:inputType="textCapCharacters"
+        android:minWidth="170dp"
+        android:paddingBottom="15dp"
+        android:paddingTop="15dp"
+        android:text="@string/undo_vaccination"
+        android:textAllCaps="true"
+        android:textAppearance="?android:textAppearanceSmall"
+        android:textColor="#2e66d7"
+        android:textSize="14sp"
+        app:textAllCaps="true"
+        android:layout_marginTop="@dimen/undo_vaccine_btn_vertical_margin"
+        android:layout_marginBottom="@dimen/undo_vaccine_btn_vertical_margin"
         android:visibility="gone" />
 
 </LinearLayout>

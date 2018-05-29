@@ -24,7 +24,7 @@ import org.smartregister.ug.hpv.event.JsonFormSaveCompleteEvent;
 import org.smartregister.ug.hpv.event.PatientRemovedEvent;
 import org.smartregister.ug.hpv.event.PictureUpdatedEvent;
 import org.smartregister.ug.hpv.event.SyncEvent;
-import org.smartregister.ug.hpv.event.VaccineGivenEvent;
+import org.smartregister.ug.hpv.event.VaccineUpdatedEvent;
 import org.smartregister.ug.hpv.helper.LocationHelper;
 import org.smartregister.ug.hpv.helper.view.RenderContactCardHelper;
 import org.smartregister.ug.hpv.helper.view.RenderPatientDemographicCardHelper;
@@ -160,7 +160,7 @@ public abstract class BasePatientDetailsFragment extends SecuredFragment impleme
     }
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
-    public void refreshVaccineDueView(VaccineGivenEvent event) {
+    public void refreshVaccineDueView(VaccineUpdatedEvent event) {
         if (event != null) {
             Utils.removeStickyEvent(event);
             renderPatientFollowupCardHelper.refreshVaccinesDueView(commonPersonObjectClient.getCaseId());
@@ -426,4 +426,8 @@ public abstract class BasePatientDetailsFragment extends SecuredFragment impleme
         ServiceTools.startSyncService(getActivity());
     }
 
+    public RenderPatientFollowupCardHelper getRenderPatientFollowupCardHelper() {
+        return renderPatientFollowupCardHelper;
+    }
 }
+

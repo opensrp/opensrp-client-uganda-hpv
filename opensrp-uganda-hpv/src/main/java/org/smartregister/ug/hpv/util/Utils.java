@@ -1,5 +1,6 @@
 package org.smartregister.ug.hpv.util;
 
+import android.content.ContentValues;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -20,6 +21,8 @@ import android.widget.Toast;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
+
+import net.sqlcipher.database.SQLiteDatabase;
 
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
@@ -42,6 +45,8 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 
+import static org.smartregister.immunization.repository.VaccineRepository.ID_COLUMN;
+import static org.smartregister.immunization.repository.VaccineRepository.VACCINE_TABLE_NAME;
 import static android.content.Context.INPUT_METHOD_SERVICE;
 import static org.smartregister.util.Log.logError;
 
@@ -231,10 +236,21 @@ public class Utils {
 
     }
 
-    public static void updateEcPatient(Vaccine vaccine) {
+    public static void updateEcPatient(String baseEntityId, String vaccineName, @Nullable Date date, @Nullable  String locationId) {
         Log.d(TAG, "Starting processEC_Patient table");
 
-        PatientRepository.updateDoseDates(vaccine);
+        String vaccine = vaccineName;
+        String doseNumber = "one";
+        if ("HPV 2".equals(vaccineName)) {
+            doseNumber = "two";
+        }
+
+        String dateString = null;
+        if (date != null) {
+            dateString = org.smartregister.ug.hpv.util.Utils.convertDateFormat(date, new SimpleDateFormat("yyyy-MM-dd"));
+        }
+
+        PatientRepository.updateDoseDates(baseEntityId, dateString, doseNumber, locationId);
 
         Log.d(TAG, "Finish processEC_Patient table");
     }
@@ -390,7 +406,6 @@ public class Utils {
         return expiryDate.isBeforeNow();
     }
 
-
     private Drawable getDoseButtonBackground(@NonNull Context context, DoseStatus doseStatus) {
 
         int backgroundResource;
@@ -414,6 +429,25 @@ public class Utils {
         DateTime expiryDate = doseDate.plusDays(DOSE_EXPIRY_WINDOW_DAYS);
 
         return expiryDate.isBeforeNow();
+    }
+
+    public static void updateVaccineTable(SQLiteDatabase database, Vaccine vaccine, Map<String, String> contentVals) {
+
+        if (vaccine == null || vaccine.getId() == null) {
+            return;
+        }
+
+        ContentValues contentValues = new ContentValues();
+        for (Map.Entry<String, String> entry : contentVals.entrySet()) {
+            contentValues.put(entry.getKey(), entry.getValue());
+        }
+
+        try {
+            String idSelection = ID_COLUMN + " = ?";
+            database.update(VACCINE_TABLE_NAME, contentValues, idSelection, new String[]{vaccine.getId().toString()});
+        } catch (Exception e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        }
     }
 
     public static void hideKeyboard(Activity activityContext) {

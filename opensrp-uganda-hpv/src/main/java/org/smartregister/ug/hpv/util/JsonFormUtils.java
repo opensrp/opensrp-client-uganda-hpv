@@ -414,6 +414,12 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
                 .withFormSubmissionId(generateRandomUUIDString())
                 .withDateCreated(new Date());
 
+        String currLocation = HpvApplication.getInstance().getContext().allSharedPreferences().fetchCurrentLocality();
+        LocationHelper locationHelper = LocationHelper.getInstance();
+        locationHelper.setParentAndChildLocationIds(currLocation);
+
+        e.setChildLocationId(locationHelper.getChildId());
+
         for (int i = 0; i < fields.length(); i++) {
             JSONObject jsonObject = getJSONObject(fields, i);
             String value = getString(jsonObject, VALUE);
