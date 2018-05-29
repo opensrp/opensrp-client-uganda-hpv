@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/patient_details_nav_bar_container"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:focusableInTouchMode="true"
     tools:showIn="@layout/toolbar_patient_details"
     android:background="@color/top_bar_gray">
@@ -12,7 +12,7 @@
         android:id="@+id/facility_selection"
         style="@style/CustomFontTextViewStyle.NavBar.Bold"
         android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
+        android:layout_height="match_parent"
         android:layout_alignParentTop="true"
         android:background="@drawable/transparent_gray_background"
         android:gravity="left|center_vertical"

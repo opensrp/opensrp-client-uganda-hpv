@@ -140,7 +140,7 @@ public class HpvClientProcessorForJava extends ClientProcessorForJava {
                 }
                 vaccineObj.setDate(date);
                 vaccineObj.setAnmId(contentValues.getAsString(VaccineRepository.ANMID));
-                vaccineObj.setLocationId(contentValues.getAsString(VaccineRepository.LOCATIONID));
+                vaccineObj.setLocationId(contentValues.getAsString(VaccineRepository.LOCATION_ID));
                 vaccineObj.setTeamId(contentValues.getAsString(VaccineRepository.TEAM_ID));
                 vaccineObj.setTeam(contentValues.getAsString(VaccineRepository.TEAM));
                 vaccineObj.setSyncStatus(VaccineRepository.TYPE_Synced);

@@ -3,10 +3,12 @@ package org.smartregister.ug.hpv.activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -141,6 +143,13 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
             }
             // Continue only if the File was successfully created
             if (photoFile != null) {
+
+                //We need this for backward compatibility
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+                    StrictMode.setVmPolicy(builder.build());
+                }
+
                 currentfile = photoFile;
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
                         Uri.fromFile(photoFile));
