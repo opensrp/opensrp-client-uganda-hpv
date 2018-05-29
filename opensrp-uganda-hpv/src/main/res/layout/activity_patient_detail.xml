@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/customAppThemeGray"
-    android:fitsSystemWindows="true"
+    android:fitsSystemWindows="false"
     tools:context=".activity.PatientDetailActivity">
 
     <include layout="@layout/toolbar_patient_details" />
