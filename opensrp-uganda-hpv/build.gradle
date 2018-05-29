@@ -150,9 +150,6 @@ dependencies {
         exclude group: 'com.google.guava', module: 'guava'
         exclude group: 'com.android.support', module: 'appcompat-v7:22.1.1'
         exclude group: 'net.zetetic', module: 'android-database-sqlcipher'
-        
-        
-
     }
 
     compile 'net.zetetic:android-database-sqlcipher:3.5.9@aar'
@@ -179,7 +176,10 @@ dependencies {
 
 
     }
-    compile group: 'com.crashlytics.sdk.android', name: 'crashlytics', version: '2.6.8'
+
+    compile('com.crashlytics.sdk.android:crashlytics:2.9.3@aar') {
+        transitive = true;
+    }
 
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile group: 'commons-validator', name: 'commons-validator', version: '1.4.0'
