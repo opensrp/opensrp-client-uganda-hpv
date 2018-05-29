@@ -226,7 +226,7 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
         View qrCode = view.findViewById(R.id.scan_qr_code);
         qrCode.setOnClickListener(registerActionHandler);
 
-        initialsTextView = (TextView) view.findViewById(R.id.name_initials);
+        initialsTextView = view.findViewById(R.id.name_initials);
 
         AllSharedPreferences allSharedPreferences = context().allSharedPreferences();
         String preferredName = allSharedPreferences.getANMPreferredName(allSharedPreferences.fetchRegisteredANM());
@@ -241,10 +241,10 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
             initialsTextView.setText(initials);
         }
 
-        facilitySelection = (LocationPickerView) view.findViewById(R.id.facility_selection);
+        facilitySelection = view.findViewById(R.id.facility_selection);
         facilitySelection.init();
 
-        syncProgressBar = (ProgressBar) view.findViewById(R.id.sync_progress_bar);
+        syncProgressBar = view.findViewById(R.id.sync_progress_bar);
         FadingCircle circle = new FadingCircle();
         syncProgressBar.setIndeterminateDrawable(circle);
     }
@@ -263,6 +263,7 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
         updateSearchView();
         processViewConfigurations();
         updateLocationText();
+        refreshSyncProgressSpinner();
     }
 
     protected void initializeQueries() {
@@ -322,7 +323,7 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
     protected abstract void populateClientListHeaderView(View view);
 
     protected void populateClientListHeaderView(View view, View headerLayout_, String viewConfigurationIdentifier) {
-        LinearLayout clientsHeaderLayout = (LinearLayout) view.findViewById(org.smartregister.R.id.clients_header_layout);
+        LinearLayout clientsHeaderLayout = view.findViewById(org.smartregister.R.id.clients_header_layout);
         clientsHeaderLayout.setVisibility(View.GONE);
 
         View headerLayout = headerLayout_;

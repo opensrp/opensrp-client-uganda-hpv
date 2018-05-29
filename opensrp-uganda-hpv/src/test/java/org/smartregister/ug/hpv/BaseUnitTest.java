@@ -13,10 +13,8 @@ import org.smartregister.ug.hpv.application.TestHpvApplication;
  */
 
 
-@RunWith(PowerMockRunner.class)
-@PowerMockRunnerDelegate(RobolectricTestRunner.class)
-@Config(application = TestHpvApplication.class, constants = BuildConfig.class)
-@PowerMockIgnore({"org.mockito.*", "org.robolectric.*", "android.*"})
+@RunWith(RobolectricTestRunner.class)
+@Config(application = TestHpvApplication.class, constants = BuildConfig.class, sdk = 21)
 public abstract class BaseUnitTest {
 
 }
