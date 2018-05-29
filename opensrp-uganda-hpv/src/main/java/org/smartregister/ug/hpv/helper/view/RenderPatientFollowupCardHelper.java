@@ -46,8 +46,6 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
     private VaccinationHelper vaccinationHelper;
     private RenderPatientFollowupCardHelper helperContext;
     private View view;
-    Map<String, String> patientDetailsTest;
-
 
     public RenderPatientFollowupCardHelper(Context context, CommonPersonObjectClient client) {
         super(context, client);
@@ -180,10 +178,7 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
             }
         }
 
-        if ((hpv1IsUnsynced && !hpv2Exists)) {
-            return true;
-        }
-        return false;
+        return (hpv1IsUnsynced && !hpv2Exists) || false;
     }
 
     private void renderFollowupButton(RenderPatientFollowupCardHelper helperContext, Button followUpView, boolean isDoseOneGiven, boolean isDoseTwoGiven, String nextVisitDate) {
@@ -351,7 +346,7 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
 
     private class ShowUndoVaccinationDialogTask extends AsyncTask<Void, Void, Void> {
 
-        VaccineWrapper vaccineWrapper = new VaccineWrapper();
+        private VaccineWrapper vaccineWrapper = new VaccineWrapper();
         protected Void doInBackground(Void... urls) {
 
             final Map<String, String> patientDetails = PatientRepository.getPatientVaccinationDetails(commonPersonObjectClient.entityId());

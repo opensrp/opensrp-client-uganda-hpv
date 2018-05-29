@@ -239,7 +239,6 @@ public class Utils {
     public static void updateEcPatient(String baseEntityId, String vaccineName, @Nullable Date date, @Nullable  String locationId) {
         Log.d(TAG, "Starting processEC_Patient table");
 
-        String vaccine = vaccineName;
         String doseNumber = "one";
         if ("HPV 2".equals(vaccineName)) {
             doseNumber = "two";
