@@ -242,10 +242,10 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
 
         LocationPickerView locationPickerView = ((PatientDetailsFragment) mBaseFragment).getLocationPickerView();
         LocationHelper locationHelper = LocationHelper.getInstance();
-        vaccine.setLocationId(locationHelper.getOpenMrsLocationId(locationPickerView.getSelectedItem()));
 
         locationHelper.setParentAndChildLocationIds(locationPickerView.getSelectedItem());
-        vaccine.setChildLocationId(locationHelper.getChildId());
+        vaccine.setLocationId(locationHelper.getParentLocationId());
+        vaccine.setChildLocationId(locationHelper.getChildLocationId());
 
         AllSharedPreferences sharedPreferences = getOpenSRPContext().allSharedPreferences();
         vaccine.setTeam(sharedPreferences.fetchDefaultTeam(sharedPreferences.fetchRegisteredANM()));

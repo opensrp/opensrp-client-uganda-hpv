@@ -418,7 +418,7 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
         LocationHelper locationHelper = LocationHelper.getInstance();
         locationHelper.setParentAndChildLocationIds(currLocation);
 
-        e.setChildLocationId(locationHelper.getChildId());
+        e.setChildLocationId(locationHelper.getChildLocationId());
 
         for (int i = 0; i < fields.length(); i++) {
             JSONObject jsonObject = getJSONObject(fields, i);

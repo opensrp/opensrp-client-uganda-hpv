@@ -552,27 +552,27 @@ public class LocationHelper {
     public void setParentAndChildLocationIds(String currLocation) {
 
         Pair<String, String> parentAndChildLocationIds = getParentAndChildLocationIds(currLocation);
-        setParentId(parentAndChildLocationIds.first);
-        setChildId(parentAndChildLocationIds.second);
+        setParentLocationId(parentAndChildLocationIds.first);
+        setChildLocationId(parentAndChildLocationIds.second);
     }
 
 
-    public String getParentId() {
+    public String getParentLocationId() {
 
         return parentLocationId;
     }
 
-    public String getChildId() {
+    public String getChildLocationId() {
 
         return childLocationId;
     }
 
-    private void setParentId(String parentId) {
+    private void setParentLocationId(String parentId) {
 
         parentLocationId =  parentId;
     }
 
-    private void setChildId(String childId) {
+    private void setChildLocationId(String childId) {
 
         childLocationId = childId;
     }
