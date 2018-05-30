@@ -16,11 +16,11 @@ import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 
+import net.sqlcipher.database.SQLiteDatabase;
+
 import org.apache.commons.lang3.StringUtils;
-import org.joda.time.DateTime;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.immunization.domain.Vaccine;
-import org.smartregister.immunization.domain.VaccineSchedule;
 import org.smartregister.immunization.domain.VaccineWrapper;
 import org.smartregister.immunization.listener.VaccinationActionListener;
 import org.smartregister.immunization.repository.VaccineRepository;
@@ -29,7 +29,7 @@ import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.adapter.HPVRegisterActivityPagerAdapter;
 import org.smartregister.ug.hpv.application.HpvApplication;
-import org.smartregister.ug.hpv.event.VaccineGivenEvent;
+import org.smartregister.ug.hpv.event.VaccineUpdatedEvent;
 import org.smartregister.ug.hpv.fragment.BasePatientDetailsFragment;
 import org.smartregister.ug.hpv.fragment.PatientDetailsFragment;
 import org.smartregister.ug.hpv.helper.LocationHelper;
@@ -38,7 +38,6 @@ import org.smartregister.ug.hpv.helper.view.RenderContactCardHelper;
 import org.smartregister.ug.hpv.util.Constants;
 import org.smartregister.ug.hpv.view.LocationPickerView;
 import org.smartregister.util.PermissionUtils;
-import org.smartregister.util.Utils;
 import org.smartregister.view.viewpager.OpenSRPViewPager;
 
 import java.io.File;
@@ -47,12 +46,17 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
+import static org.smartregister.ug.hpv.util.Utils.addVaccine;
+import static org.smartregister.ug.hpv.util.Utils.postStickyEvent;
 import static org.smartregister.ug.hpv.util.Utils.updateEcPatient;
+import static org.smartregister.ug.hpv.util.Utils.updateVaccineTable;
 import static org.smartregister.util.Utils.startAsyncTask;
 
 /**
@@ -93,7 +97,6 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
         mPager.setAdapter(mPagerAdapter);
 
         vaccinationHelper = new VaccinationHelper(this, commonPersonObjectClient);
-
     }
 
     @Override
@@ -235,10 +238,12 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
 
     @Override
     public void onUndoVaccination(VaccineWrapper tag, View v) {
-        startAsyncTask(new UndoVaccineTask(tag, v), null);
+        startAsyncTask(new UndoVaccineTask(tag), null);
     }
 
     private void saveVaccine(ArrayList<VaccineWrapper> vaccineWrappers, final View view) {
+
+
         if (vaccineWrappers.isEmpty()) {
             return;
         }
@@ -250,7 +255,6 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
         backgroundTask.setVaccineRepository(vaccineRepository);
         backgroundTask.setView(view);
         startAsyncTask(backgroundTask, arrayTags);
-
     }
 
 
@@ -269,7 +273,11 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
         vaccine.setAnmId(getOpenSRPContext().allSharedPreferences().fetchRegisteredANM());
 
         LocationPickerView locationPickerView = ((PatientDetailsFragment) mBaseFragment).getLocationPickerView();
-        vaccine.setLocationId(LocationHelper.getInstance().getOpenMrsLocationId(locationPickerView.getSelectedItem()));
+        LocationHelper locationHelper = LocationHelper.getInstance();
+
+        locationHelper.setParentAndChildLocationIds(locationPickerView.getSelectedItem());
+        vaccine.setLocationId(locationHelper.getParentLocationId());
+        vaccine.setChildLocationId(locationHelper.getChildLocationId());
 
         AllSharedPreferences sharedPreferences = getOpenSRPContext().allSharedPreferences();
         vaccine.setTeam(sharedPreferences.fetchDefaultTeam(sharedPreferences.fetchRegisteredANM()));
@@ -281,14 +289,27 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
         } else {
             vaccine.setCalculation(-1);
         }
-        org.smartregister.ug.hpv.util.Utils.addVaccine(vaccineRepository, vaccine);
+
+        addVaccine(vaccineRepository, vaccine);
+
+        String CHILD_LOCATION_ID = "child_location_id";
+
         vaccineWrapper.setDbKey(vaccine.getId());
 
-        updateEcPatient(vaccine);
+        // update childLocationId
+        SQLiteDatabase db = vaccineRepository.getWritableDatabase();
+        Map<String, String> contentValues = new HashMap<>();
+        contentValues.put(CHILD_LOCATION_ID, vaccine.getChildLocationId());
+        updateVaccineTable(db, vaccine, contentValues);
 
-        org.smartregister.ug.hpv.util.Utils.postStickyEvent(new VaccineGivenEvent());
+        // update patient record
+        String baseEntityId = vaccine.getBaseEntityId();
+        String vaccineName = vaccine.getName();
+        Date vaccineDate = vaccine.getDate();
+        String locationId = vaccine.getLocationId();
+
+        updateEcPatient(baseEntityId, vaccineName, vaccineDate, locationId);
     }
-
 
     private void updateVaccineGroupViews(View view, final ArrayList<VaccineWrapper> wrappers, List<Vaccine> vaccineList) {
         updateVaccineGroupViews(view, wrappers, vaccineList, false);
@@ -339,58 +360,6 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
 
     //////////////////////////////// AsyncTasks ////////////////////////////////////
 
-
-    private class UndoVaccineTask extends AsyncTask<Void, Void, Void> {
-        private final VaccineWrapper tag;
-        private final View view;
-        private final VaccineRepository vaccineRepository;
-        private List<Vaccine> vaccineList;
-        private List<String> affectedVaccines;
-
-        public UndoVaccineTask(VaccineWrapper tag, View view) {
-            this.tag = tag;
-            this.view = view;
-            vaccineRepository = HpvApplication.getInstance().vaccineRepository();
-        }
-
-        @Override
-        protected void onPreExecute() {
-            showProgressDialog(getString(R.string.updating_dialog_title), null);
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            if (tag != null && tag.getDbKey() != null) {
-                Long dbKey = tag.getDbKey();
-                vaccineRepository.deleteVaccine(dbKey);
-
-                String dobString = Utils.getValue(commonPersonObjectClient.getColumnmaps(), Constants.DOB, false);
-                DateTime dateTime = org.smartregister.ug.hpv.util.Utils.dobStringToDateTime(dobString);
-                if (dateTime != null) {
-                    affectedVaccines = VaccineSchedule.updateOfflineAlerts(commonPersonObjectClient.entityId(), dateTime, Constants.KEY.CHILD);
-                }
-                vaccineList = vaccineRepository.findByEntityId(commonPersonObjectClient.entityId());
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void params) {
-            hideProgressDialog();
-            super.onPostExecute(params);
-
-            // Refresh the vaccine group with the updated vaccine
-            tag.setUpdatedVaccineDate(null, false);
-            tag.setDbKey(null);
-
-            View view = getLastOpenedView();
-
-            ArrayList<VaccineWrapper> wrappers = new ArrayList<>();
-            wrappers.add(tag);
-            updateVaccineGroupViews(view, wrappers, vaccineList, true);
-        }
-    }
-
     private class SaveVaccinesTask extends AsyncTask<VaccineWrapper, Void, Pair<ArrayList<VaccineWrapper>, List<Vaccine>>> {
 
         private View view;
@@ -416,6 +385,7 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
         protected void onPostExecute(Pair<ArrayList<VaccineWrapper>, List<Vaccine>> pair) {
             hideProgressDialog();
             updateVaccineGroupViews(view, pair.first, pair.second);
+            postStickyEvent(new VaccineUpdatedEvent());
         }
 
         @Override
@@ -436,8 +406,47 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
         }
     }
 
-    public VaccinationHelper getVaccinationHelper() {
+    private class UndoVaccineTask extends AsyncTask<Void, Void, Void> {
 
-        return vaccinationHelper;
+        private final VaccineWrapper tag;
+        private final VaccineRepository vaccineRepository;
+
+        public UndoVaccineTask(VaccineWrapper tag) {
+            this.tag = tag;
+            vaccineRepository = HpvApplication.getInstance().vaccineRepository();
+        }
+
+        @Override
+        protected void onPreExecute() {
+            showProgressDialog(getString(R.string.updating_dialog_title), null);
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            if (tag != null && tag.getDbKey() != null) {
+                Long dbKey = tag.getDbKey();
+                vaccineRepository.deleteVaccine(dbKey);
+            }
+
+            String vaccineName = tag.getName();
+            updateEcPatient(commonPersonObjectClient.entityId(), vaccineName, null, null);
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void params) {
+            hideProgressDialog();
+            super.onPostExecute(params);
+
+            // Refresh the vaccine group with the updated vaccine
+            tag.setUpdatedVaccineDate(null, false);
+            tag.setDbKey(null);
+
+            ArrayList<VaccineWrapper> wrappers = new ArrayList<>();
+            wrappers.add(tag);
+
+            postStickyEvent(new VaccineUpdatedEvent());
+        }
     }
 }

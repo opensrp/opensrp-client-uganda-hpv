@@ -1,6 +1,7 @@
 package org.smartregister.ug.hpv.helper;
 
 import android.util.Log;
+import android.util.Pair;
 
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.domain.jsonmapping.Location;
@@ -34,8 +35,12 @@ public class LocationHelper {
     private static final String DEFAULT_LOCATION_LEVEL = "Health Facility";
     private static LocationHelper instance;
 
+    private String childLocationId;
+    private String parentLocationId;
     private ArrayList<String> locationIds;
     private ArrayList<String> locationNames;
+    private List<String> locationNameHierarchy;
+    private HashMap<String, Pair<String, String>> childAndParentLocationIds;
     private String defaultLocation;
 
     public static final String SCHOOL = "School";
@@ -44,6 +49,12 @@ public class LocationHelper {
         ALLOWED_LEVELS = new ArrayList<>();
         ALLOWED_LEVELS.add(DEFAULT_LOCATION_LEVEL);
         ALLOWED_LEVELS.add(SCHOOL);
+    }
+
+    private LocationHelper() {
+
+        childAndParentLocationIds = new HashMap<>();
+        setParentAndChildLocationIds(getDefaultLocation());
     }
 
     public static LocationHelper getInstance() {
@@ -100,7 +111,6 @@ public class LocationHelper {
         }
         return defaultLocation;
     }
-
 
     public String getOpenMrsLocationId(String locationName) {
         if (StringUtils.isBlank(locationName)) {
@@ -506,6 +516,66 @@ public class LocationHelper {
         return sortedTree;
     }
 
+    /**
+     *  Maps location name {@param currLocation} to both its parent and child (self) OpenMRS location ids
+     *
+     *  The child location is taken to be the {@param currLocation} and the method attempts to find
+     *  its location id and that of its parent
+     *
+     *  @return a  {@link Pair} representing the parent and child OpenMRS location ids
+     */
+    private Pair<String, String> getParentAndChildLocationIds(String currLocation) {
+
+        if (childAndParentLocationIds.containsKey(currLocation)) {
+            return childAndParentLocationIds.get(currLocation);
+        }
+
+        String currLocationId = getOpenMrsLocationId(currLocation);
+        Pair<String, String> result;
+        if (currLocationId == null) {
+            result = new Pair<>(getDefaultLocation(), getDefaultLocation());
+        } else {
+            locationNameHierarchy = getOpenMrsLocationHierarchy(currLocationId);
+
+            String childLocationName = locationNameHierarchy.get(locationNameHierarchy.size() - 1);
+            String parentLocationName = locationNameHierarchy.get(0);
+
+            childLocationId = getOpenMrsLocationId(childLocationName);
+            parentLocationId = getOpenMrsLocationId(parentLocationName);
+
+            result = new Pair<>(parentLocationId, childLocationId);
+            childAndParentLocationIds.put(currLocation, result);
+        }
+        return result;
+    }
+
+    public void setParentAndChildLocationIds(String currLocation) {
+
+        Pair<String, String> parentAndChildLocationIds = getParentAndChildLocationIds(currLocation);
+        setParentLocationId(parentAndChildLocationIds.first);
+        setChildLocationId(parentAndChildLocationIds.second);
+    }
+
+
+    public String getParentLocationId() {
+
+        return parentLocationId;
+    }
+
+    public String getChildLocationId() {
+
+        return childLocationId;
+    }
+
+    private void setParentLocationId(String parentId) {
+
+        parentLocationId =  parentId;
+    }
+
+    private void setChildLocationId(String childId) {
+
+        childLocationId = childId;
+    }
 
     private List<String> getOpenMrsLocationHierarchy(String locationId,
                                                      TreeNode<String, Location> openMrsLocation,

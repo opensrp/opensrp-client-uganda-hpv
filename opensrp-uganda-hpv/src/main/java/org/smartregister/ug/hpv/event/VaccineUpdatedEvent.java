@@ -4,7 +4,7 @@ package org.smartregister.ug.hpv.event;
  * Created by ndegwamartin on 15/05/2018.
  */
 
-public class VaccineGivenEvent extends BaseEvent {
+public class VaccineUpdatedEvent extends BaseEvent {
     private String vaccine;
 
     public String getVaccine() {

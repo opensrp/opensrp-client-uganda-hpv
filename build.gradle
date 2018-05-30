@@ -3,11 +3,11 @@
 configure(allprojects) { project ->
     buildscript {
         repositories {
+            mavenLocal()
             google()
             jcenter()
             mavenCentral()
             maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
-            mavenLocal()
         }
     }
 }

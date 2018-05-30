@@ -8,14 +8,12 @@ import com.google.common.collect.ImmutableMap;
 
 import net.sqlcipher.database.SQLiteDatabase;
 
-import org.smartregister.immunization.domain.Vaccine;
 import org.smartregister.ug.hpv.application.HpvApplication;
-import org.smartregister.ug.hpv.util.Constants;
 import org.smartregister.ug.hpv.util.DBConstants;
 import org.smartregister.ug.hpv.util.Utils;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -54,28 +52,23 @@ public class PatientRepository {
         return null;
     }
 
-    public static void updateDoseDates(Vaccine vaccine) {
+    public static void updateDoseDates(String baseEntityID, String date, String doseNumber, String locationId) {
 
         try {
-
-            String doseNumber = "one";
-
-            if (vaccine.getName().equals(Constants.HPV_DOSE_NAME.HPV_2) || "hpv_2".equals(vaccine.getName())) {
-                doseNumber = "two";
-            }
-
-            String date = Utils.convertDateFormat(vaccine.getDate(), new SimpleDateFormat("yyyy-MM-dd"));
 
             SQLiteDatabase db = HpvApplication.getInstance().getRepository().getWritableDatabase();
             ContentValues values = new ContentValues();
             values.put("date_dose_" + doseNumber + "_given", date);
-            if ("one".equalsIgnoreCase(doseNumber)) {
-                values.put("dose_two_date", Utils.calculateVaccineDueDate(date));
-            }
-            values.put("dose_" + doseNumber + "_given_location", vaccine.getLocationId());
-            values.put(DBConstants.KEY.LAST_INTERACTED_WITH, Calendar.getInstance().getTimeInMillis());
-            db.update(DBConstants.PATIENT_TABLE_NAME, values, DBConstants.KEY.BASE_ENTITY_ID + " = ?", new String[]{vaccine.getBaseEntityId()});
 
+            if ("one".equalsIgnoreCase(doseNumber) && date != null) {
+                values.put("dose_two_date", Utils.calculateVaccineDueDate(date));
+            } else if ("one".equalsIgnoreCase(doseNumber) && date == null){
+                values.put("dose_two_date", date);
+            }
+
+            values.put("dose_" + doseNumber + "_given_location", locationId);
+            values.put(DBConstants.KEY.LAST_INTERACTED_WITH, Calendar.getInstance().getTimeInMillis());
+            db.update(DBConstants.PATIENT_TABLE_NAME, values, DBConstants.KEY.BASE_ENTITY_ID + " = ?", new String[]{baseEntityID});
         } catch (Exception e) {
             Log.e(TAG, Log.getStackTraceString(e));
         }
@@ -92,13 +85,11 @@ public class PatientRepository {
             if (cursor != null && cursor.moveToFirst()) {
 
                 if (cursor.getString(cursor.getColumnIndex(DBConstants.KEY.DATE_DOSE_TWO_GIVEN)) != null) {
-                    return ImmutableMap.of(DBConstants.KEY.DOSE_TWO_DATE, cursor.getString(cursor.getColumnIndex(DBConstants.KEY.DOSE_TWO_DATE)), DBConstants.KEY.DATE_DOSE_ONE_GIVEN, cursor.getString(cursor.getColumnIndex(DBConstants.KEY.DATE_DOSE_ONE_GIVEN)), DBConstants.KEY.DOSE_ONE_GIVEN_LOCATION, cursor.getString(cursor.getColumnIndex(DBConstants.KEY.DOSE_ONE_GIVEN_LOCATION)), DBConstants.KEY.DATE_DOSE_TWO_GIVEN, cursor.getString(cursor.getColumnIndex(DBConstants.KEY.DATE_DOSE_TWO_GIVEN)), DBConstants.KEY.DOSE_TWO_GIVEN_LOCATION, cursor.getString(cursor.getColumnIndex(DBConstants.KEY.DOSE_TWO_GIVEN_LOCATION)));
+                    return getPatientVaccinationDetailsMap(cursor, true, true);
                 } else {
                     boolean isDoseOneGiven = cursor.getString(cursor.getColumnIndex(DBConstants.KEY.DATE_DOSE_ONE_GIVEN)) != null;
-                    return ImmutableMap.of(isDoseOneGiven ? DBConstants.KEY.DOSE_TWO_DATE : DBConstants.KEY.DOSE_ONE_DATE, cursor.getString(cursor.getColumnIndex(isDoseOneGiven ? DBConstants.KEY.DOSE_TWO_DATE : DBConstants.KEY.DOSE_ONE_DATE)), DBConstants.KEY.DATE_DOSE_ONE_GIVEN, cursor.getString(cursor.getColumnIndex(DBConstants.KEY.DATE_DOSE_ONE_GIVEN)), DBConstants.KEY.DOSE_ONE_GIVEN_LOCATION, cursor.getString(cursor.getColumnIndex(DBConstants.KEY.DOSE_ONE_GIVEN_LOCATION)));
-
+                    return getPatientVaccinationDetailsMap(cursor, isDoseOneGiven, false);
                 }
-
             }
             return null;
         } catch (Exception e) {
@@ -109,5 +100,23 @@ public class PatientRepository {
             }
         }
         return null;
+    }
+
+
+    private static Map<String, String> getPatientVaccinationDetailsMap(Cursor cursor, boolean doseOneIsGiven, boolean doseTwoIsGiven) {
+
+        Map<String, String> patientDetailsMap = new HashMap<>();
+        if (doseTwoIsGiven) {
+            patientDetailsMap.put(DBConstants.KEY.DOSE_TWO_DATE, cursor.getString(cursor.getColumnIndex(DBConstants.KEY.DOSE_TWO_DATE)));
+            patientDetailsMap.put(DBConstants.KEY.DATE_DOSE_ONE_GIVEN, cursor.getString(cursor.getColumnIndex(DBConstants.KEY.DATE_DOSE_ONE_GIVEN)));
+            patientDetailsMap.put(DBConstants.KEY.DOSE_ONE_GIVEN_LOCATION, cursor.getString(cursor.getColumnIndex(DBConstants.KEY.DOSE_ONE_GIVEN_LOCATION)));
+            patientDetailsMap.put(DBConstants.KEY.DATE_DOSE_TWO_GIVEN, cursor.getString(cursor.getColumnIndex(DBConstants.KEY.DATE_DOSE_TWO_GIVEN)));
+            patientDetailsMap.put(DBConstants.KEY.DOSE_TWO_GIVEN_LOCATION,  cursor.getString(cursor.getColumnIndex(DBConstants.KEY.DOSE_TWO_GIVEN_LOCATION)));
+        } else {
+            patientDetailsMap.put(doseOneIsGiven ? DBConstants.KEY.DOSE_TWO_DATE : DBConstants.KEY.DOSE_ONE_DATE, cursor.getString(cursor.getColumnIndex(doseOneIsGiven ? DBConstants.KEY.DOSE_TWO_DATE : DBConstants.KEY.DOSE_ONE_DATE)));
+            patientDetailsMap.put(DBConstants.KEY.DATE_DOSE_ONE_GIVEN, cursor.getString(cursor.getColumnIndex(DBConstants.KEY.DATE_DOSE_ONE_GIVEN)));
+            patientDetailsMap.put(DBConstants.KEY.DOSE_ONE_GIVEN_LOCATION, cursor.getString(cursor.getColumnIndex(DBConstants.KEY.DOSE_ONE_GIVEN_LOCATION)));
+        }
+        return patientDetailsMap;
     }
 }
