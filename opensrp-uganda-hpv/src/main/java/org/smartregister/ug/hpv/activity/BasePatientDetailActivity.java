@@ -37,8 +37,8 @@ import org.smartregister.ug.hpv.helper.LocationHelper;
 import org.smartregister.ug.hpv.helper.VaccinationHelper;
 import org.smartregister.ug.hpv.helper.view.RenderContactCardHelper;
 import org.smartregister.ug.hpv.util.Constants;
-import org.smartregister.ug.hpv.util.PermissionUtils;
 import org.smartregister.ug.hpv.view.LocationPickerView;
+import org.smartregister.util.PermissionUtils;
 import org.smartregister.util.Utils;
 import org.smartregister.view.viewpager.OpenSRPViewPager;
 

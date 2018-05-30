@@ -19,9 +19,9 @@ import org.smartregister.ug.hpv.repository.PatientRepository;
 import org.smartregister.ug.hpv.util.Constants;
 import org.smartregister.ug.hpv.util.DBConstants;
 import org.smartregister.ug.hpv.util.JsonFormUtils;
-import org.smartregister.ug.hpv.util.PermissionUtils;
 import org.smartregister.ug.hpv.util.Utils;
 import org.smartregister.ug.hpv.view.CopyToClipboardDialog;
+import org.smartregister.util.PermissionUtils;
 
 import java.util.Map;
 
