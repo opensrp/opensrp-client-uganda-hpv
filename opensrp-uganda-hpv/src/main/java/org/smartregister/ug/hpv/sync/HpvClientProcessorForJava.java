@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static org.smartregister.ug.hpv.util.Utils.addVaccine;
 import static org.smartregister.ug.hpv.util.Utils.updateEcPatient;
 
 /**
@@ -139,7 +140,7 @@ public class HpvClientProcessorForJava extends ClientProcessorForJava {
                 }
                 vaccineObj.setDate(date);
                 vaccineObj.setAnmId(contentValues.getAsString(VaccineRepository.ANMID));
-                vaccineObj.setLocationId(contentValues.getAsString(VaccineRepository.LOCATIONID));
+                vaccineObj.setLocationId(contentValues.getAsString(VaccineRepository.LOCATION_ID));
                 vaccineObj.setTeamId(contentValues.getAsString(VaccineRepository.TEAM_ID));
                 vaccineObj.setTeam(contentValues.getAsString(VaccineRepository.TEAM));
                 vaccineObj.setSyncStatus(VaccineRepository.TYPE_Synced);
@@ -151,10 +152,16 @@ public class HpvClientProcessorForJava extends ClientProcessorForJava {
                 Date createdAt = getDate(createdAtString);
                 vaccineObj.setCreatedAt(createdAt);
 
-                Utils.addVaccine(vaccineRepository, vaccineObj);
+                addVaccine(vaccineRepository, vaccineObj);
                 Log.d(TAG, "Ending processVaccine table: " + vaccineTable.name);
 
-                updateEcPatient(vaccineObj);
+                // update patient record
+                String baseEntityId = vaccineObj.getBaseEntityId();
+                String vaccineName = vaccineObj.getName();
+                Date vaccineDate = vaccineObj.getDate();
+                String locationId = vaccineObj.getLocationId();
+
+                updateEcPatient(baseEntityId, vaccineName, vaccineDate, locationId);
             }
 
             return true;

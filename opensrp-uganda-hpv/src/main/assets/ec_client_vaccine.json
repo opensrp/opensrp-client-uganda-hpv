@@ -42,6 +42,12 @@
       }
     },
     {
+      "column_name": "child_location_id",
+      "json_mapping": {
+        "field": "childLocationId"
+      }
+    },
+    {
       "column_name": "team",
       "json_mapping": {
         "field": "team"

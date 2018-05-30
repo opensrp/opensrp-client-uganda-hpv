@@ -95,7 +95,7 @@ public class SyncIntentService extends IntentService {
 
     private synchronized void fetchRetry(final int count) {
         try {
-// Fetch team
+            // Fetch team
             AllSharedPreferences sharedPreferences = HpvApplication.getInstance().getContext().userService().getAllSharedPreferences();
             String teamId = sharedPreferences.fetchDefaultTeamId(sharedPreferences.fetchRegisteredANM());
             if (StringUtils.isBlank(teamId)) {

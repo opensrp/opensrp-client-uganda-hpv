@@ -2,11 +2,10 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
 
     <org.smartregister.view.customcontrols.CustomFontTextView
-        android:id="@+id/patient_header"
+        android:id="@+id/header1"
         style="@style/CustomFontTextViewStyle.ClientList.Medium"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="4"
         android:text="@string/name"
         android:textAllCaps="true"
         android:textColor="@color/dark_grey_text"
@@ -18,7 +17,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_weight="2.6"
+        android:layout_weight="2.5"
         android:gravity="center_horizontal"
         android:paddingLeft="0dp"
         android:text="Header 2"
