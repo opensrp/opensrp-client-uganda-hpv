@@ -306,7 +306,7 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
         String baseEntityId = vaccine.getBaseEntityId();
         String vaccineName = vaccine.getName();
         Date vaccineDate = vaccine.getDate();
-        String locationId = vaccine.getLocationId();
+        String locationId = vaccine.getChildLocationId();
 
         updateEcPatient(baseEntityId, vaccineName, vaccineDate, locationId);
     }

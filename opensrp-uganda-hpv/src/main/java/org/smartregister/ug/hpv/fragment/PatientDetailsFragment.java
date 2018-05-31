@@ -26,14 +26,14 @@ public class PatientDetailsFragment extends BasePatientDetailsFragment implement
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.activity_patient_detail, container, false);
-        Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.patient_details_toolbar);
+        Toolbar toolbar = rootView.findViewById(R.id.patient_details_toolbar);
         AppCompatActivity activity = ((AppCompatActivity) getActivity());
         activity.setSupportActionBar(toolbar);
         activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         activity.getSupportActionBar().setTitle(activity.getIntent().getStringExtra(Constants.INTENT_KEY.REGISTER_TITLE));
         setupViews(rootView);
 
-        locationPickerView = (LocationPickerView) rootView.findViewById(R.id.facility_selection);
+        locationPickerView = rootView.findViewById(R.id.facility_selection);
         return rootView;
     }
 

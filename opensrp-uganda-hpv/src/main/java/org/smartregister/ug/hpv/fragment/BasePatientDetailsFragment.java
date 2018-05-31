@@ -228,7 +228,7 @@ public abstract class BasePatientDetailsFragment extends SecuredFragment impleme
         languageTranslations = config == null ? null : config.getLabels();
 
 
-        facilitySelection = (LocationPickerView) rootView.findViewById(R.id.facility_selection);
+        facilitySelection = rootView.findViewById(R.id.facility_selection);
         facilitySelection.init();
 
         setUpButtons(rootView);

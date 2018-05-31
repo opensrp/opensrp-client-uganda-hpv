@@ -26,7 +26,6 @@ import org.smartregister.ug.hpv.application.HpvApplication;
 import org.smartregister.ug.hpv.helper.ECSyncHelper;
 import org.smartregister.ug.hpv.util.Constants;
 import org.smartregister.ug.hpv.util.DBConstants;
-import org.smartregister.ug.hpv.util.Utils;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -141,6 +140,7 @@ public class HpvClientProcessorForJava extends ClientProcessorForJava {
                 vaccineObj.setDate(date);
                 vaccineObj.setAnmId(contentValues.getAsString(VaccineRepository.ANMID));
                 vaccineObj.setLocationId(contentValues.getAsString(VaccineRepository.LOCATION_ID));
+                vaccineObj.setChildLocationId(contentValues.getAsString(VaccineRepository.CHILD_LOCATION_ID));
                 vaccineObj.setTeamId(contentValues.getAsString(VaccineRepository.TEAM_ID));
                 vaccineObj.setTeam(contentValues.getAsString(VaccineRepository.TEAM));
                 vaccineObj.setSyncStatus(VaccineRepository.TYPE_Synced);
@@ -159,7 +159,7 @@ public class HpvClientProcessorForJava extends ClientProcessorForJava {
                 String baseEntityId = vaccineObj.getBaseEntityId();
                 String vaccineName = vaccineObj.getName();
                 Date vaccineDate = vaccineObj.getDate();
-                String locationId = vaccineObj.getLocationId();
+                String locationId = vaccineObj.getChildLocationId();
 
                 updateEcPatient(baseEntityId, vaccineName, vaccineDate, locationId);
             }
