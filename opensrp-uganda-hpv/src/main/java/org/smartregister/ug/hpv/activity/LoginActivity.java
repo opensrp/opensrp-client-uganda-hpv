@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -64,8 +63,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static org.smartregister.domain.LoginResponse.NO_INTERNET_CONNECTIVITY;
@@ -165,7 +162,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void initializeBuildDetails() {
-        TextView buildDetailsView = (TextView) findViewById(R.id.login_build_text_view);
+        TextView buildDetailsView = findViewById(R.id.login_build_text_view);
         try {
             buildDetailsView.setText("Version " + getVersion() + ", Built on: " + getBuildDate());
         } catch (Exception e) {
@@ -376,10 +373,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private String getBuildDate() throws PackageManager.NameNotFoundException, IOException {
-        ApplicationInfo applicationInfo = getPackageManager().getApplicationInfo(getPackageName(), 0);
-        ZipFile zipFile = new ZipFile(applicationInfo.sourceDir);
-        ZipEntry zipEntry = zipFile.getEntry("classes.dex");
-        return new SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(new Date(zipEntry.getTime()));
+        return new SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(new Date(BuildConfig.BUILD_TIMESTAMP));
     }
 
     public static void setLanguage() {

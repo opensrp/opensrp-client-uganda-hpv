@@ -1,12 +1,12 @@
 package org.smartregister.ug.hpv.helper.view;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -21,6 +21,7 @@ import org.smartregister.ug.hpv.util.DBConstants;
 import org.smartregister.ug.hpv.util.JsonFormUtils;
 import org.smartregister.ug.hpv.util.Utils;
 import org.smartregister.ug.hpv.view.CopyToClipboardDialog;
+import org.smartregister.util.PermissionUtils;
 
 import java.util.Map;
 
@@ -38,6 +39,7 @@ public class RenderContactCardHelper extends BaseRenderHelper implements View.On
     private final String TAG = RenderContactCardHelper.class.getCanonicalName();
     private RelativeLayout vhtContactWrapperView;
     private View vhtTitleTextView;
+    public static String phoneNumber;
 
     public RenderContactCardHelper(Context context, CommonPersonObjectClient client) {
         super(context, client);
@@ -96,7 +98,8 @@ public class RenderContactCardHelper extends BaseRenderHelper implements View.On
     @Override
     public void onClick(View view) {
         if (view.getTag(R.id.CONTACT) != null) {
-            launchPhoneDialer(view.getTag(R.id.CONTACT).toString());
+            phoneNumber = view.getTag(R.id.CONTACT).toString();
+            launchPhoneDialer(context, phoneNumber);
         } else if (view.getTag() != null && view.getTag().equals(Constants.ADD_CONTACT)) {
 
             String formMetadata = JsonFormUtils.getAutoPopulatedJsonEditFormString(context, commonPersonObjectClient);
@@ -107,18 +110,19 @@ public class RenderContactCardHelper extends BaseRenderHelper implements View.On
 
     }
 
-    private void launchPhoneDialer(String phoneNumber) {
-        try {
-            Intent intent = new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", phoneNumber, null));
-            context.startActivity(intent);
-        } catch (Exception e) {
-            Log.d(TAG, e.getMessage());
+    public static void launchPhoneDialer(Context context, String phoneNumber) {
+        if (PermissionUtils.isPermissionGranted((BasePatientDetailActivity) context, Manifest.permission.READ_PHONE_STATE, PermissionUtils.PHONE_STATE_PERMISSION_REQUEST_CODE)) {
+            try {
+                Intent intent = new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", phoneNumber, null));
+                context.startActivity(intent);
+            } catch (Exception e) {
 
-            CopyToClipboardDialog copyToClipboardDialog = new CopyToClipboardDialog(context, R.style.copy_clipboard_dialog);
-            copyToClipboardDialog.setContent(phoneNumber);
-            copyToClipboardDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            copyToClipboardDialog.show();
+                CopyToClipboardDialog copyToClipboardDialog = new CopyToClipboardDialog(context, R.style.copy_clipboard_dialog);
+                copyToClipboardDialog.setContent(phoneNumber);
+                copyToClipboardDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                copyToClipboardDialog.show();
 
+            }
         }
     }
 

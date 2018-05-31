@@ -44,7 +44,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
                 android:layout_centerInParent="true"
-                android:text="@string/edit_contact"
+                android:text="@string/edit_contacts"
                 android:textAllCaps="true"
                 android:textColor="#3269D4"
                 android:textSize="14sp"
