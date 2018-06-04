@@ -242,11 +242,15 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
         }
 
         facilitySelection = view.findViewById(R.id.facility_selection);
-        facilitySelection.init();
+        if (facilitySelection != null) {
+            facilitySelection.init();
+        }
 
         syncProgressBar = view.findViewById(R.id.sync_progress_bar);
-        FadingCircle circle = new FadingCircle();
-        syncProgressBar.setIndeterminateDrawable(circle);
+        if (syncProgressBar != null) {
+            FadingCircle circle = new FadingCircle();
+            syncProgressBar.setIndeterminateDrawable(circle);
+        }
     }
 
     @Override

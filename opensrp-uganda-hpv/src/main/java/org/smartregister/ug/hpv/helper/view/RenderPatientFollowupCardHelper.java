@@ -82,7 +82,7 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
 
     private void renderHPVVaccineDueCore(Map<String, String> patientDetails, View view, RenderPatientFollowupCardHelper helperContext) {
 
-        Button followUpView = (Button) view.findViewById(R.id.follow_up_button);
+        Button followUpView = view.findViewById(R.id.follow_up_button);
         followUpView.setAllCaps(false);
         String dateDoseOneGiven = patientDetails.get(DBConstants.KEY.DATE_DOSE_ONE_GIVEN);
         String nextVisitDate = StringUtils.isBlank(dateDoseOneGiven) ? patientDetails.get(DBConstants.KEY.DOSE_ONE_DATE) : patientDetails.get(DBConstants.KEY.DOSE_TWO_DATE);
@@ -93,9 +93,9 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
 
         renderFollowupButton(helperContext, followUpView, StringUtils.isBlank(dateDoseOneGiven), StringUtils.isNotBlank(dateDoseTwoGiven), nextVisitDate);
 
-        TextView doseOneGivenTextView = (TextView) view.findViewById(R.id.dateDoseOneGivenTextView);
-        TextView locationTextView = (TextView) view.findViewById(R.id.locationVaccineOneGivenTextView);
-        Button undoVaccineButton = (Button) view.findViewById(R.id.undo_vaccine_btn);
+        TextView doseOneGivenTextView = view.findViewById(R.id.dateDoseOneGivenTextView);
+        TextView locationTextView = view.findViewById(R.id.locationVaccineOneGivenTextView);
+        Button undoVaccineButton =  view.findViewById(R.id.undo_vaccine_btn);
         if (StringUtils.isNotBlank(dateDoseOneGiven) && StringUtils.isBlank(dateDoseTwoGiven)) {
             doseOneGivenTextView.setText(String.format(context.getString(R.string.dose_given_date), Constants.HPV_DOSE.NUMBER_1, Utils.formatDate(dateDoseOneGiven)));
             doseOneGivenTextView.setVisibility(View.VISIBLE);
@@ -125,7 +125,8 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
         }
 
         TextView doseTwoGivenTextView = view.findViewById(R.id.dateDoseTwoGivenTextView);
-        TextView locationTwoTextView =  view.findViewById(R.id.locationVaccineTwoGivenTextView);
+
+        TextView locationTwoTextView = view.findViewById(R.id.locationVaccineTwoGivenTextView);
         if (StringUtils.isNotBlank(dateDoseTwoGiven)) {
             doseTwoGivenTextView.setText(String.format(context.getString(R.string.dose_given_date), Constants.HPV_DOSE.NUMBER_2, Utils.formatDate(dateDoseTwoGiven)));
             doseTwoGivenTextView.setVisibility(View.VISIBLE);
@@ -142,6 +143,7 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
             doseTwoGivenTextView.setVisibility(View.GONE);
         }
     }
+
 
     private void renderUndoVaccinationButton(boolean activate, Button undoButton) {
 
