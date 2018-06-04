@@ -162,7 +162,7 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
 
     private boolean isValidForUndo() {
 
-        List<Vaccine> vaccines = vaccineRepository.findByEntityId(commonPersonObjectClient.entityId());
+        List<Vaccine> vaccines = getVaccineRepository().findByEntityId(commonPersonObjectClient.entityId());
         boolean hpv1IsUnsynced = false;
         for (Vaccine vaccine : vaccines) {
 
@@ -369,7 +369,7 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
             }
 
             // get vaccines given (shouldn't be more than two)
-            List<Vaccine> vaccineList = vaccineRepository.findByEntityId(commonPersonObjectClient.entityId());
+            List<Vaccine> vaccineList = getVaccineRepository().findByEntityId(commonPersonObjectClient.entityId());
 
             if (("hpv 1".equalsIgnoreCase(vaccineList.get(0).getName()) && StringUtils.isBlank(dateDoseTwoGiven)) ||
                     ("hpv 2".equalsIgnoreCase(vaccineList.get(0).getName()))) {
