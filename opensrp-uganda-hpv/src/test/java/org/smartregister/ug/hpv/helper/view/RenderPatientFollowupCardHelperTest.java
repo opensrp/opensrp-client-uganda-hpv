@@ -24,6 +24,7 @@ import org.smartregister.ug.hpv.activity.PatientDetailActivity;
 
 import java.util.ArrayList;
 
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.TestCase.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -154,7 +155,7 @@ public class RenderPatientFollowupCardHelperTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        assert(undoBtn.getVisibility() == View.VISIBLE);
+        assertEquals(undoBtn.getVisibility(), View.VISIBLE);
     }
 
     @Test
@@ -173,7 +174,7 @@ public class RenderPatientFollowupCardHelperTest {
         } catch (Exception e) {
              e.printStackTrace();
         }
-        assert(undoBtn.getVisibility() == View.GONE);
+        assertEquals(undoBtn.getVisibility(), View.GONE);
     }
 
     private ArrayList<Vaccine> generateVaccines(int numDoses, String hpv1Status, String hpv2Status) {
