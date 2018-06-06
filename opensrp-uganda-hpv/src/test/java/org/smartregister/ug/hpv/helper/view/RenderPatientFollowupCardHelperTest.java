@@ -15,6 +15,7 @@ import org.powermock.reflect.Whitebox;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
+import org.robolectric.annotation.Config;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.immunization.domain.Vaccine;
 import org.smartregister.immunization.repository.VaccineRepository;
@@ -28,6 +29,7 @@ import static junit.framework.TestCase.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 
 @RunWith(RobolectricTestRunner.class)
+@Config(sdk = 21)
 public class RenderPatientFollowupCardHelperTest {
 
     @Mock
@@ -69,6 +71,7 @@ public class RenderPatientFollowupCardHelperTest {
 
     @Test
     public void testIsValidForUndo_hpv1AndHpv2AreNotSynced_shouldReturnTrue() {
+
         try {
             ArrayList<Vaccine> vaccines = generateVaccines(2, "Unsynced", "Unsynced");
 
@@ -86,6 +89,7 @@ public class RenderPatientFollowupCardHelperTest {
 
     @Test
     public void testIsValidForUndo_hpv1IsSyncedHpv2IsNotSynced_shouldReturnTrue() {
+
         try {
             ArrayList<Vaccine> vaccines = generateVaccines(2, "Synced", "Unsynced");
 
@@ -102,6 +106,7 @@ public class RenderPatientFollowupCardHelperTest {
 
     @Test
     public void testIsValidForUndo_hpv1IsNotSyncedAndHpv2DoesNotExist_shouldReturnTrue() {
+
         try {
             ArrayList<Vaccine> vaccines = generateVaccines(1, "Unsynced", null);
 
@@ -118,6 +123,7 @@ public class RenderPatientFollowupCardHelperTest {
 
     @Test
     public void testIsValidForUndo_hpv1IsSyncedAndHpv2DoesNotExist_shouldReturnFalse() {
+
         try {
             ArrayList<Vaccine> vaccines = generateVaccines(1, "Synced", null);
 
@@ -133,7 +139,7 @@ public class RenderPatientFollowupCardHelperTest {
     }
 
     @Test
-    public void testRenderUndoVaccinationButton_buttonShouldBeVisible() {
+    public void testRenderUndoVaccinationButton_activateIsTrue_buttonShouldBeVisible() {
 
         ArrayList<Vaccine> vaccines = generateVaccines(2, "Unsynced", "Unsynced");
 
@@ -152,7 +158,7 @@ public class RenderPatientFollowupCardHelperTest {
     }
 
     @Test
-    public void testRenderUndoVaccinationButton_buttonShouldNotBeVisible() {
+    public void testRenderUndoVaccinationButton_activateIsFalse_buttonShouldNotBeVisible() {
 
         ArrayList<Vaccine> vaccines = generateVaccines(2, "Unsynced", "Unsynced");
 
