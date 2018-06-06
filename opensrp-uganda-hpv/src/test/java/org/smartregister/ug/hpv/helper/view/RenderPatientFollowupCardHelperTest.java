@@ -139,7 +139,7 @@ public class RenderPatientFollowupCardHelperTest {
     }
 
     @Test
-    public void testRenderUndoVaccinationButtonShouldBeVisibleIfActivateIsTrue() {
+    public void testRenderUndoVaccinationButtonShouldRenderButtonIfActivateIsTrue() {
 
         ArrayList<Vaccine> vaccines = generateVaccines(2, "Unsynced", "Unsynced");
 
@@ -158,7 +158,7 @@ public class RenderPatientFollowupCardHelperTest {
     }
 
     @Test
-    public void testRenderUndoVaccinationButtonShouldNotBeVisibleIfActivateIsFalse() {
+    public void testRenderUndoVaccinationButtonShouldNotRenderButtonIfActivateIsFalse() {
 
         ArrayList<Vaccine> vaccines = generateVaccines(2, "Unsynced", "Unsynced");
 
