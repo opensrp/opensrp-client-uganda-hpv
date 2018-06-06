@@ -53,7 +53,7 @@ public class RenderPatientFollowupCardHelperTest {
     }
 
     @Test
-    public void testIsValidForUndo_hpv2IsSynced_shouldReturnFalse() {
+    public void testIsValidForUndoShouldReturnFalseIfHpv2IsSynced() {
 
         try {
             ArrayList<Vaccine> vaccines = generateVaccines(2, "Unsynced", "Synced");
@@ -70,7 +70,7 @@ public class RenderPatientFollowupCardHelperTest {
     }
 
     @Test
-    public void testIsValidForUndo_hpv1AndHpv2AreNotSynced_shouldReturnTrue() {
+    public void testIsValidForUndoShouldReturnTrueIfHpv1AndHpv2AreNotSynced() {
 
         try {
             ArrayList<Vaccine> vaccines = generateVaccines(2, "Unsynced", "Unsynced");
@@ -88,7 +88,7 @@ public class RenderPatientFollowupCardHelperTest {
 
 
     @Test
-    public void testIsValidForUndo_hpv1IsSyncedHpv2IsNotSynced_shouldReturnTrue() {
+    public void testIsValidForUndoShouldReturnTrueIfHpv1IsSyncedAndHpv2IsNotSynced() {
 
         try {
             ArrayList<Vaccine> vaccines = generateVaccines(2, "Synced", "Unsynced");
@@ -105,7 +105,7 @@ public class RenderPatientFollowupCardHelperTest {
     }
 
     @Test
-    public void testIsValidForUndo_hpv1IsNotSyncedAndHpv2DoesNotExist_shouldReturnTrue() {
+    public void testIsValidForUndoShouldReturnTrueIfHpv1IsNotSyncedAndHpv2DoesNotExist() {
 
         try {
             ArrayList<Vaccine> vaccines = generateVaccines(1, "Unsynced", null);
@@ -122,7 +122,7 @@ public class RenderPatientFollowupCardHelperTest {
     }
 
     @Test
-    public void testIsValidForUndo_hpv1IsSyncedAndHpv2DoesNotExist_shouldReturnFalse() {
+    public void testIsValidForUndoShouldReturnFalseIfHpv1IsSyncedAndHpv2DoesNotExist() {
 
         try {
             ArrayList<Vaccine> vaccines = generateVaccines(1, "Synced", null);
@@ -139,7 +139,7 @@ public class RenderPatientFollowupCardHelperTest {
     }
 
     @Test
-    public void testRenderUndoVaccinationButton_activateIsTrue_buttonShouldBeVisible() {
+    public void testRenderUndoVaccinationButtonShouldBeVisibleIfActivateIsTrue() {
 
         ArrayList<Vaccine> vaccines = generateVaccines(2, "Unsynced", "Unsynced");
 
@@ -158,7 +158,7 @@ public class RenderPatientFollowupCardHelperTest {
     }
 
     @Test
-    public void testRenderUndoVaccinationButton_activateIsFalse_buttonShouldNotBeVisible() {
+    public void testRenderUndoVaccinationButtonShouldNotBeVisibleIfActivateIsFalse() {
 
         ArrayList<Vaccine> vaccines = generateVaccines(2, "Unsynced", "Unsynced");
 
