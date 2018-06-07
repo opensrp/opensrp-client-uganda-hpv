@@ -42,6 +42,7 @@ import static org.smartregister.util.Utils.getValue;
 
 public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements View.OnClickListener {
 
+    private VaccineRepository vaccineRepository = null;
     private static final String TAG = RenderPatientFollowupCardHelper.class.getCanonicalName();
     private VaccinationHelper vaccinationHelper;
     private RenderPatientFollowupCardHelper helperContext;
@@ -124,6 +125,7 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
         }
 
         TextView doseTwoGivenTextView = view.findViewById(R.id.dateDoseTwoGivenTextView);
+
         TextView locationTwoTextView = view.findViewById(R.id.locationVaccineTwoGivenTextView);
         if (StringUtils.isNotBlank(dateDoseTwoGiven)) {
             doseTwoGivenTextView.setText(String.format(context.getString(R.string.dose_given_date), Constants.HPV_DOSE.NUMBER_2, Utils.formatDate(dateDoseTwoGiven)));
@@ -142,7 +144,8 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
         }
     }
 
-    public void renderUndoVaccinationButton(boolean activate, Button undoButton) {
+
+    private void renderUndoVaccinationButton(boolean activate, Button undoButton) {
 
         if (!isValidForUndo()) {
             undoButton.setVisibility(View.GONE);
@@ -159,14 +162,9 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
 
     private boolean isValidForUndo() {
 
-        VaccineRepository vaccineRepository = HpvApplication.getInstance().vaccineRepository();
-        List<Vaccine> vaccines = vaccineRepository.findByEntityId(commonPersonObjectClient.entityId());
-        boolean hpv2Exists = false;
+        List<Vaccine> vaccines = getVaccineRepository().findByEntityId(commonPersonObjectClient.entityId());
         boolean hpv1IsUnsynced = false;
         for (Vaccine vaccine : vaccines) {
-            if ("hpv 2".equals(vaccine.getName())) {
-                hpv2Exists = true;
-            }
 
             if ("hpv 2".equals(vaccine.getName()) && "Unsynced".equals(vaccine.getSyncStatus())) {
                 return true;
@@ -177,7 +175,7 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
             }
         }
 
-        return (hpv1IsUnsynced && !hpv2Exists) || false;
+        return hpv1IsUnsynced || false;
     }
 
     private void renderFollowupButton(RenderPatientFollowupCardHelper helperContext, Button followUpView, boolean isDoseOneGiven, boolean isDoseTwoGiven, String nextVisitDate) {
@@ -239,6 +237,18 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
         }).start();
 
 
+    }
+
+    public void setVaccineRepository(VaccineRepository vaccineRepository) {
+        this.vaccineRepository = vaccineRepository;
+    }
+
+    public VaccineRepository getVaccineRepository() {
+
+         if (vaccineRepository != null) {
+             return  vaccineRepository;
+         }
+         return HpvApplication.getInstance().vaccineRepository();
     }
 
     private void updateCommonPersonObjectClient(Map<String, String> patientDetails) {
@@ -359,8 +369,7 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
             }
 
             // get vaccines given (shouldn't be more than two)
-            VaccineRepository vaccineRepository = HpvApplication.getInstance().vaccineRepository();
-            List<Vaccine> vaccineList = vaccineRepository.findByEntityId(commonPersonObjectClient.entityId());
+            List<Vaccine> vaccineList = getVaccineRepository().findByEntityId(commonPersonObjectClient.entityId());
 
             if (("hpv 1".equalsIgnoreCase(vaccineList.get(0).getName()) && StringUtils.isBlank(dateDoseTwoGiven)) ||
                     ("hpv 2".equalsIgnoreCase(vaccineList.get(0).getName()))) {

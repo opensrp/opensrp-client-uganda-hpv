@@ -37,11 +37,12 @@ public class LocationHelper {
 
     private String childLocationId;
     private String parentLocationId;
-    private ArrayList<String> locationIds;
+    private List<String> locationIds;
     private ArrayList<String> locationNames;
     private List<String> locationNameHierarchy;
     private HashMap<String, Pair<String, String>> childAndParentLocationIds;
     private String defaultLocation;
+    private HpvApplication application;
 
     public static final String SCHOOL = "School";
 
@@ -166,9 +167,11 @@ public class LocationHelper {
      * This method returns the name hierarchy of a location given it's id
      *
      * @param locationId The ID for the location we want the hierarchy for
+     * @param  onlyAllowedLevels Restrict the location name hierarchy to only the allowed levels
+     *
      * @return The name hierarchy (starting with the top-most parent) for the location or {@code NULL} if location id is not found
      */
-    public List<String> getOpenMrsLocationHierarchy(String locationId) {
+    public List<String> getOpenMrsLocationHierarchy(String locationId, boolean onlyAllowedLevels) {
         if (StringUtils.isBlank(locationId)) {
             Log.e(TAG, "Location id is null");
             return new ArrayList<>();
@@ -179,7 +182,7 @@ public class LocationHelper {
             LinkedHashMap<String, TreeNode<String, Location>> map = map();
             if (!Utils.isEmptyMap(map)) {
                 for (Map.Entry<String, TreeNode<String, Location>> entry : map.entrySet()) {
-                    List<String> curResult = getOpenMrsLocationHierarchy(locationId, entry.getValue(), new ArrayList<String>());
+                    List<String> curResult = getOpenMrsLocationHierarchy(locationId, entry.getValue(), new ArrayList<String>(), onlyAllowedLevels);
                     if (!Utils.isEmptyCollection(curResult)) {
                         response = curResult;
                         break;
@@ -201,7 +204,7 @@ public class LocationHelper {
         }
 
         try {
-            AllSharedPreferences allSharedPreferences = HpvApplication.getInstance().getContext().allSharedPreferences();
+            AllSharedPreferences allSharedPreferences = getApplication().getContext().allSharedPreferences();
             String defaultLocationUuid = allSharedPreferences.fetchDefaultLocalityId(allSharedPreferences.fetchRegisteredANM());
 
             LinkedHashMap<String, TreeNode<String, Location>> map = map();
@@ -535,10 +538,13 @@ public class LocationHelper {
         if (currLocationId == null) {
             result = new Pair<>(getDefaultLocation(), getDefaultLocation());
         } else {
-            locationNameHierarchy = getOpenMrsLocationHierarchy(currLocationId);
+            locationNameHierarchy = getOpenMrsLocationHierarchy(currLocationId, true);
 
             String childLocationName = locationNameHierarchy.get(locationNameHierarchy.size() - 1);
-            String parentLocationName = locationNameHierarchy.get(0);
+            String parentLocationName = locationNameHierarchy.get(locationNameHierarchy.size() - 1);
+            if (locationNameHierarchy.size() > 1) {
+               parentLocationName = locationNameHierarchy.get(locationNameHierarchy.size() - 2);
+            }
 
             childLocationId = getOpenMrsLocationId(childLocationName);
             parentLocationId = getOpenMrsLocationId(parentLocationName);
@@ -567,19 +573,19 @@ public class LocationHelper {
         return childLocationId;
     }
 
-    private void setParentLocationId(String parentId) {
+    public void setParentLocationId(String parentId) {
 
         parentLocationId =  parentId;
     }
 
-    private void setChildLocationId(String childId) {
+    public void setChildLocationId(String childId) {
 
         childLocationId = childId;
     }
 
     private List<String> getOpenMrsLocationHierarchy(String locationId,
                                                      TreeNode<String, Location> openMrsLocation,
-                                                     List<String> parents) {
+                                                     List<String> parents, boolean onlyAllowedLevels) {
         List<String> hierarchy = new ArrayList<>(parents);
         if (openMrsLocation == null) {
             return null;
@@ -590,8 +596,19 @@ public class LocationHelper {
             return null;
         }
 
+        if (onlyAllowedLevels) {
+            Set<String> levels = node.getTags();
+            if (!Utils.isEmptyCollection(levels)) {
+                for (String level : levels) {
+                    if (ALLOWED_LEVELS.contains(level)) {
+                        hierarchy.add(node.getName());
+                    }
+                }
+            }
+        } else {
+            hierarchy.add(node.getName());
+        }
 
-        hierarchy.add(node.getName());
         String id = node.getLocationId();
         Log.d(TAG, "Current location id is " + id);
         if (locationId.equals(id)) {
@@ -601,7 +618,7 @@ public class LocationHelper {
         LinkedHashMap<String, TreeNode<String, Location>> childMap = childMap(openMrsLocation);
         if (!Utils.isEmptyMap(childMap)) {
             for (Map.Entry<String, TreeNode<String, Location>> childEntry : childMap.entrySet()) {
-                List<String> curResult = getOpenMrsLocationHierarchy(locationId, childEntry.getValue(), hierarchy);
+                List<String> curResult = getOpenMrsLocationHierarchy(locationId, childEntry.getValue(), hierarchy, onlyAllowedLevels);
                 if (!Utils.isEmptyCollection(curResult)) {
                     return curResult;
                 }
@@ -615,13 +632,25 @@ public class LocationHelper {
 
 
     private LinkedHashMap<String, TreeNode<String, Location>> map() {
-        String locationData = HpvApplication.getInstance().getContext().anmLocationController().get();
+        String locationData = getApplication().getContext().anmLocationController().get();
         LocationTree locationTree = AssetHandler.jsonStringToJava(locationData, LocationTree.class);
         if (locationTree != null) {
             return locationTree.getLocationsHierarchy();
         }
 
         return null;
+    }
+
+    public HpvApplication getApplication() {
+
+        if (application == null) {
+            return HpvApplication.getInstance();
+        }
+        return application;
+    }
+
+    public void setApplication(HpvApplication application) {
+        this.application = application;
     }
 
     private LinkedHashMap<String, TreeNode<String, Location>> childMap
