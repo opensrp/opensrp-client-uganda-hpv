@@ -73,6 +73,18 @@ public class LocationHelperTest {
         }
     }
 
+
+    @Test
+    public void testGetChildLocationIdForBukesaUrbanHealthCentre() {
+
+        try {
+            Pair<String, String> parentAndChildLocationIds = Whitebox.invokeMethod(locationHelper, "getParentAndChildLocationIds", "Bukesa Urban Health Centre");
+            assertEquals("44de66fb-e6c6-4bae-92bb-386dfe626eba", parentAndChildLocationIds.second);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     @Test
     public void testGetParentLocationIdForNsaloGirlsSchool() {
 
@@ -89,6 +101,17 @@ public class LocationHelperTest {
 
         try {
             Pair<String, String> parentAndChildLocationIds = Whitebox.invokeMethod(locationHelper, "getParentAndChildLocationIds", "Jambula Girls School");
+            assertEquals("44de66fb-e6c6-4bae-92bb-386dfe626eba", parentAndChildLocationIds.first);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void testGetParentLocationIdForBukesaUrbanHealthCentre() {
+
+        try {
+            Pair<String, String> parentAndChildLocationIds = Whitebox.invokeMethod(locationHelper, "getParentAndChildLocationIds", "Bukesa Urban Health Centre");
             assertEquals("44de66fb-e6c6-4bae-92bb-386dfe626eba", parentAndChildLocationIds.first);
         } catch (Exception e) {
             e.printStackTrace();
