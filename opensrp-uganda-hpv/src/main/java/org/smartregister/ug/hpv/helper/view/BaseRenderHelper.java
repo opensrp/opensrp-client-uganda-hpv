@@ -19,4 +19,12 @@ public abstract class BaseRenderHelper {
     }
 
     public abstract void renderView(View containerView);
+
+    public CommonPersonObjectClient getCommonPersonObjectClient() {
+        return commonPersonObjectClient;
+    }
+
+    public void setCommonPersonObjectClient(CommonPersonObjectClient commonPersonObjectClient) {
+        this.commonPersonObjectClient = commonPersonObjectClient;
+    }
 }

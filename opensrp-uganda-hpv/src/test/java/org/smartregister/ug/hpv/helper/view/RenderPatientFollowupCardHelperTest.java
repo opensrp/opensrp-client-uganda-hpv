@@ -21,14 +21,25 @@ import org.smartregister.immunization.domain.Vaccine;
 import org.smartregister.immunization.repository.VaccineRepository;
 import org.smartregister.ug.hpv.activity.BasePatientDetailActivity;
 import org.smartregister.ug.hpv.activity.PatientDetailActivity;
+import org.smartregister.ug.hpv.util.DBConstants;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
 import static junit.framework.TestCase.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 
+
+/************** test name convention followed ****************
+ *
+ *   testMethodNameShouldExpectedBehaviorIfStateUnderTest
+ *
+ */
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 21)
 public class RenderPatientFollowupCardHelperTest {
@@ -44,10 +55,12 @@ public class RenderPatientFollowupCardHelperTest {
 
     private RenderPatientFollowupCardHelper followupCardHelper;
 
+    private BasePatientDetailActivity activity;
+
     @Before
     public void setUp() {
 
-        BasePatientDetailActivity activity = Robolectric.buildActivity(PatientDetailActivity.class).get();
+        activity = Robolectric.buildActivity(PatientDetailActivity.class).get();
         followupCardHelper = new RenderPatientFollowupCardHelper(activity, client);
 
         Mockito.when(client.entityId()).thenReturn("noString");
@@ -175,6 +188,231 @@ public class RenderPatientFollowupCardHelperTest {
              e.printStackTrace();
         }
         assertEquals(undoBtn.getVisibility(), View.GONE);
+    }
+
+    @Test
+    public void testUpdateCommonPersonObjectClientShouldUpdateDoseOneDateWithNonNullValueIfDoseOneDateIsNotNull() {
+
+        Map<String, String> patientDetails = new HashMap<>();
+        CommonPersonObjectClient client = new CommonPersonObjectClient("caseId", patientDetails, "noName");
+        client.setColumnmaps(patientDetails);
+        RenderPatientFollowupCardHelper followupCardHelper = new RenderPatientFollowupCardHelper(activity, client);
+
+        Map<String, String> clientDetails = new HashMap<>();
+        clientDetails.put(DBConstants.KEY.DOSE_ONE_DATE, "Not null");
+        try {
+            Whitebox.invokeMethod(followupCardHelper, "updateCommonPersonObjectClient", clientDetails);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        assertNotNull(followupCardHelper.getCommonPersonObjectClient().getColumnmaps().get(DBConstants.KEY.DOSE_ONE_DATE));
+    }
+
+    @Test
+    public void testUpdateCommonPersonObjectClientShouldUpdateDoseOneDateWithNullValueIfDoseOneDateDoesNotExist() {
+
+        Map<String, String> patientDetails = new HashMap<>();
+        CommonPersonObjectClient client = new CommonPersonObjectClient("caseId", patientDetails, "noName");
+        client.setColumnmaps(patientDetails);
+        RenderPatientFollowupCardHelper followupCardHelper = new RenderPatientFollowupCardHelper(activity, client);
+
+        Map<String, String> clientDetails = new HashMap<>();
+        try {
+            Whitebox.invokeMethod(followupCardHelper, "updateCommonPersonObjectClient",clientDetails);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        assertNull(followupCardHelper.getCommonPersonObjectClient().getColumnmaps().get(DBConstants.KEY.DOSE_ONE_DATE));
+    }
+
+    @Test
+    public void testUpdateCommonPersonObjectClientShouldUpdateDateDoseOneGivenWithNonNullValueIfDateDoseOneGivenIsNotNull() {
+
+        Map<String, String> patientDetails = new HashMap<>();
+        CommonPersonObjectClient client = new CommonPersonObjectClient("caseId", patientDetails, "noName");
+        client.setColumnmaps(patientDetails);
+        RenderPatientFollowupCardHelper followupCardHelper = new RenderPatientFollowupCardHelper(activity, client);
+
+        Map<String, String> clientDetails = new HashMap<>();
+        clientDetails.put(DBConstants.KEY.DATE_DOSE_ONE_GIVEN, "Not null");
+        try {
+            Whitebox.invokeMethod(followupCardHelper, "updateCommonPersonObjectClient",clientDetails);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        assertNotNull(followupCardHelper.getCommonPersonObjectClient().getColumnmaps().get(DBConstants.KEY.DATE_DOSE_ONE_GIVEN));
+    }
+
+    @Test
+    public void testUpdateCommonPersonObjectClientShouldUpdateDateDoseOneGivenWithNullValueIfDateDoseOneGivenIsNull() {
+
+        Map<String, String> patientDetails = new HashMap<>();
+        CommonPersonObjectClient client = new CommonPersonObjectClient("caseId", patientDetails, "noName");
+        client.setColumnmaps(patientDetails);
+        RenderPatientFollowupCardHelper followupCardHelper = new RenderPatientFollowupCardHelper(activity, client);
+
+        Map<String, String> clientDetails = new HashMap<>();
+        try {
+            Whitebox.invokeMethod(followupCardHelper, "updateCommonPersonObjectClient",clientDetails);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        assertNull(followupCardHelper.getCommonPersonObjectClient().getColumnmaps().get(DBConstants.KEY.DATE_DOSE_ONE_GIVEN));
+    }
+
+    @Test
+    public void testUpdateCommonPersonObjectClientShouldUpdateDoseOneGivenLocationWithNonNullValueIfDoseOneGivenLocationIsNotNull() {
+
+        Map<String, String> patientDetails = new HashMap<>();
+        CommonPersonObjectClient client = new CommonPersonObjectClient("caseId", patientDetails, "noName");
+        client.setColumnmaps(patientDetails);
+        RenderPatientFollowupCardHelper followupCardHelper = new RenderPatientFollowupCardHelper(activity, client);
+
+        Map<String, String> clientDetails = new HashMap<>();
+        clientDetails.put(DBConstants.KEY.DOSE_ONE_GIVEN_LOCATION, "Not null");
+        try {
+            Whitebox.invokeMethod(followupCardHelper, "updateCommonPersonObjectClient",clientDetails);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        assertNotNull(followupCardHelper.getCommonPersonObjectClient().getColumnmaps().get(DBConstants.KEY.DOSE_ONE_GIVEN_LOCATION));
+    }
+
+    @Test
+    public void testUpdateCommonPersonObjectClientShouldUpdateDoseOneGivenLocationWithNullValueIfDoseOneGivenLocationIsNull() {
+
+        Map<String, String> patientDetails = new HashMap<>();
+        CommonPersonObjectClient client = new CommonPersonObjectClient("caseId", patientDetails, "noName");
+        client.setColumnmaps(patientDetails);
+        RenderPatientFollowupCardHelper followupCardHelper = new RenderPatientFollowupCardHelper(activity, client);
+
+        Map<String, String> clientDetails = new HashMap<>();
+        try {
+            Whitebox.invokeMethod(followupCardHelper, "updateCommonPersonObjectClient",clientDetails);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        assertNull(followupCardHelper.getCommonPersonObjectClient().getColumnmaps().get(DBConstants.KEY.DOSE_ONE_GIVEN_LOCATION));
+    }
+
+    @Test
+    public void testUpdateCommonPersonObjectClientShouldUpdateDoseTwoDateWithNonNullValueIfDoseTwoDateIsNotNull() {
+
+        Map<String, String> patientDetails = new HashMap<>();
+        CommonPersonObjectClient client = new CommonPersonObjectClient("caseId", patientDetails, "noName");
+        client.setColumnmaps(patientDetails);
+        RenderPatientFollowupCardHelper followupCardHelper = new RenderPatientFollowupCardHelper(activity, client);
+
+        Map<String, String> clientDetails = new HashMap<>();
+        clientDetails.put(DBConstants.KEY.DOSE_TWO_DATE, "Not null");
+        try {
+            Whitebox.invokeMethod(followupCardHelper, "updateCommonPersonObjectClient",clientDetails);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        assertNotNull(followupCardHelper.getCommonPersonObjectClient().getColumnmaps().get(DBConstants.KEY.DOSE_TWO_DATE));
+    }
+
+    @Test
+    public void testUpdateCommonPersonObjectClientShouldUpdateDoseTwoDateWithNullValueIfDoseTwoDateIsNull() {
+
+
+        Map<String, String> patientDetails = new HashMap<>();
+        CommonPersonObjectClient client = new CommonPersonObjectClient("caseId", patientDetails, "noName");
+        client.setColumnmaps(patientDetails);
+        RenderPatientFollowupCardHelper followupCardHelper = new RenderPatientFollowupCardHelper(activity, client);
+
+        Map<String, String> clientDetails = new HashMap<>();
+        try {
+            Whitebox.invokeMethod(followupCardHelper, "updateCommonPersonObjectClient",clientDetails);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        assertNull(followupCardHelper.getCommonPersonObjectClient().getColumnmaps().get(DBConstants.KEY.DOSE_TWO_DATE));
+    }
+
+    @Test
+    public void testUpdateCommonPersonObjectClientShouldUpdateDateDoseTwoGivenWithNonNullValueIfDateDoseTwoIsNotNull() {
+
+        Map<String, String> patientDetails = new HashMap<>();
+        CommonPersonObjectClient client = new CommonPersonObjectClient("caseId", patientDetails, "noName");
+        client.setColumnmaps(patientDetails);
+        RenderPatientFollowupCardHelper followupCardHelper = new RenderPatientFollowupCardHelper(activity, client);
+
+        Map<String, String> clientDetails = new HashMap<>();
+        clientDetails.put(DBConstants.KEY.DATE_DOSE_TWO_GIVEN, "Not null");
+        try {
+            Whitebox.invokeMethod(followupCardHelper, "updateCommonPersonObjectClient",clientDetails);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        assertNotNull(followupCardHelper.getCommonPersonObjectClient().getColumnmaps().get(DBConstants.KEY.DATE_DOSE_TWO_GIVEN));
+    }
+
+    @Test
+    public void testUpdateCommonPersonObjectClientShouldUpdateDateDoseTwoGivenWithNullValueIfDateDoseTwoGivenIsNull() {
+
+
+        Map<String, String> patientDetails = new HashMap<>();
+        CommonPersonObjectClient client = new CommonPersonObjectClient("caseId", patientDetails, "noName");
+        client.setColumnmaps(patientDetails);
+        RenderPatientFollowupCardHelper followupCardHelper = new RenderPatientFollowupCardHelper(activity, client);
+
+        Map<String, String> clientDetails = new HashMap<>();
+        try {
+            Whitebox.invokeMethod(followupCardHelper, "updateCommonPersonObjectClient",clientDetails);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        assertNull(followupCardHelper.getCommonPersonObjectClient().getColumnmaps().get(DBConstants.KEY.DATE_DOSE_TWO_GIVEN));
+    }
+
+    @Test
+    public void testUpdateCommonPersonObjectClientShouldUpdateDoseTwoGivenLocationWithNonNullValueIfDoseTwoGivenLocationIsNotNull() {
+
+        Map<String, String> patientDetails = new HashMap<>();
+        CommonPersonObjectClient client = new CommonPersonObjectClient("caseId", patientDetails, "noName");
+        client.setColumnmaps(patientDetails);
+        RenderPatientFollowupCardHelper followupCardHelper = new RenderPatientFollowupCardHelper(activity, client);
+
+        Map<String, String> clientDetails = new HashMap<>();
+        clientDetails.put(DBConstants.KEY.DOSE_TWO_GIVEN_LOCATION, "Not null");
+        try {
+            Whitebox.invokeMethod(followupCardHelper, "updateCommonPersonObjectClient",clientDetails);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        assertNotNull(followupCardHelper.getCommonPersonObjectClient().getColumnmaps().get(DBConstants.KEY.DOSE_TWO_GIVEN_LOCATION));
+    }
+
+    @Test
+    public void testUpdateCommonPersonObjectClientShouldUpdateDoseTwoGivenLocationWithNullValueIfDoseTwoGivenLocationIsNull() {
+
+
+        Map<String, String> patientDetails = new HashMap<>();
+        CommonPersonObjectClient client = new CommonPersonObjectClient("caseId", patientDetails, "noName");
+        client.setColumnmaps(patientDetails);
+        RenderPatientFollowupCardHelper followupCardHelper = new RenderPatientFollowupCardHelper(activity, client);
+
+        Map<String, String> clientDetails = new HashMap<>();
+        try {
+            Whitebox.invokeMethod(followupCardHelper, "updateCommonPersonObjectClient",clientDetails);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        assertNull(followupCardHelper.getCommonPersonObjectClient().getColumnmaps().get(DBConstants.KEY.DOSE_TWO_GIVEN_LOCATION));
     }
 
     private ArrayList<Vaccine> generateVaccines(int numDoses, String hpv1Status, String hpv2Status) {
