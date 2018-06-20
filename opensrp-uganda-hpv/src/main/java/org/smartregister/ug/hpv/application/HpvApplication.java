@@ -80,7 +80,7 @@ public class HpvApplication extends DrishtiApplication implements TimeChangedBro
         //Initialize Modules
         CoreLibrary.init(context);
         ConfigurableViewsLibrary.init(context, getRepository());
-        ImmunizationLibrary.init(context, getRepository(), createCommonFtsObject());
+        ImmunizationLibrary.init(context, getRepository(), createCommonFtsObject(), BuildConfig.VERSION_CODE, BuildConfig.DATABASE_VERSION);
 
         SyncStatusBroadcastReceiver.init(this);
         TimeChangedBroadcastReceiver.init(this);
