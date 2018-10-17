@@ -18,6 +18,7 @@ import org.smartregister.configurableviews.helper.JsonSpecHelper;
 import org.smartregister.configurableviews.model.MainConfig;
 import org.smartregister.configurableviews.repository.ConfigurableViewsRepository;
 import org.smartregister.configurableviews.service.PullConfigurableViewsIntentService;
+import org.smartregister.helper.LocationHelper;
 import org.smartregister.immunization.ImmunizationLibrary;
 import org.smartregister.immunization.domain.VaccineSchedule;
 import org.smartregister.immunization.domain.jsonmapping.VaccineGroup;
@@ -103,6 +104,11 @@ public class HpvApplication extends DrishtiApplication implements TimeChangedBro
     public static synchronized HpvApplication getInstance() {
         return (HpvApplication) mInstance;
     }
+
+    public static LocationHelper getLocationHelper() {
+        return LocationHelper.getInstance(Utils.ALLOWED_LEVELS, "Health Facility");
+    }
+
 
     @Override
     public Repository getRepository() {

@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.smartregister.ug.hpv.R;
-import org.smartregister.ug.hpv.helper.LocationHelper;
+import org.smartregister.ug.hpv.application.HpvApplication;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -54,8 +54,8 @@ public class ServiceLocationsAdapter extends BaseAdapter {
             View view = inflater.inflate(R.layout.location_picker_dropdown_item, null);
             view.setId(position + 2321);
 
-            TextView text1 = (TextView) view.findViewById(android.R.id.text1);
-            text1.setText(LocationHelper.getInstance().getOpenMrsReadableName(locationNames.get(position)));
+            TextView text1 = view.findViewById(android.R.id.text1);
+            text1.setText(HpvApplication.getLocationHelper().getOpenMrsReadableName(locationNames.get(position)));
             views.put(locationNames.get(position), view);
         }
 

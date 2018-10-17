@@ -39,6 +39,7 @@ import org.smartregister.ug.hpv.repository.PatientRepository;
 import org.smartregister.util.DateUtil;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -59,6 +60,17 @@ public class Utils {
     private static final String TAG = Utils.class.getCanonicalName();
     private static final SimpleDateFormat DB_DF = new SimpleDateFormat("yyyy-MM-dd");
     public static final int DOSE_EXPIRY_WINDOW_DAYS = 10;
+    public static final ArrayList<String> ALLOWED_LEVELS;
+    private static final String DEFAULT_LOCATION_LEVEL = "Health Facility";
+    public static final String SCHOOL = "School";
+
+
+    static {
+        ALLOWED_LEVELS = new ArrayList<>();
+        ALLOWED_LEVELS.add(DEFAULT_LOCATION_LEVEL);
+        ALLOWED_LEVELS.add(SCHOOL);
+    }
+
 
     public static void addVaccine(VaccineRepository vaccineRepository, Vaccine vaccine) {
         try {

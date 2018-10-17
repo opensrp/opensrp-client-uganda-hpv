@@ -30,6 +30,7 @@ import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.Photo;
 import org.smartregister.domain.ProfileImage;
+import org.smartregister.helper.LocationHelper;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.BaseRepository;
 import org.smartregister.repository.EventClientRepository;
@@ -43,7 +44,6 @@ import org.smartregister.ug.hpv.domain.FormLocation;
 import org.smartregister.ug.hpv.event.JsonFormSaveCompleteEvent;
 import org.smartregister.ug.hpv.event.PatientRemovedEvent;
 import org.smartregister.ug.hpv.helper.ECSyncHelper;
-import org.smartregister.ug.hpv.helper.LocationHelper;
 import org.smartregister.ug.hpv.repository.UniqueIdRepository;
 import org.smartregister.ug.hpv.sync.HpvClientProcessorForJava;
 import org.smartregister.ug.hpv.view.LocationPickerView;
@@ -415,7 +415,7 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
                 .withDateCreated(new Date());
 
         String currLocation = HpvApplication.getInstance().getContext().allSharedPreferences().fetchCurrentLocality();
-        LocationHelper locationHelper = LocationHelper.getInstance();
+        LocationHelper locationHelper = HpvApplication.getLocationHelper();
         locationHelper.setParentAndChildLocationIds(currLocation);
 
         e.setChildLocationId(locationHelper.getChildLocationId());
@@ -528,8 +528,8 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
             healthFacilities.add("School");
 
 
-            List<String> defaultFacility = LocationHelper.getInstance().generateDefaultLocationHierarchy(healthFacilities);
-            List<FormLocation> upToFacilities = LocationHelper.getInstance().generateLocationHierarchyTree(false, healthFacilities);
+            List<String> defaultFacility = HpvApplication.getLocationHelper().generateDefaultLocationHierarchy(healthFacilities);
+            List<org.smartregister.domain.form.FormLocation> upToFacilities = HpvApplication.getLocationHelper().generateLocationHierarchyTree(false, healthFacilities);
 
             String defaultFacilityString = AssetHandler.javaToJsonString(defaultFacility,
                     new TypeToken<List<String>>() {
@@ -540,7 +540,7 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
                     }.getType());
 
             for (int i = 0; i < questions.length(); i++) {
-                if (questions.getJSONObject(i).getString(Constants.KEY.KEY).equalsIgnoreCase(LocationHelper.SCHOOL)) {
+                if (questions.getJSONObject(i).getString(Constants.KEY.KEY).equalsIgnoreCase(Utils.SCHOOL)) {
                     if (StringUtils.isNotBlank(upToFacilitiesString)) {
                         questions.getJSONObject(i).put(Constants.KEY.TREE, new JSONArray(upToFacilitiesString));
                     }
@@ -640,7 +640,7 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
                 form.put(JsonFormUtils.ENTITY_ID, commonPersonObjectClient.entityId());
                 form.put(JsonFormUtils.ENCOUNTER_TYPE, Constants.EventType.UPDATE_REGISTRATION);
                 JSONObject metadata = form.getJSONObject(JsonFormUtils.METADATA);
-                String lastLocationId = LocationHelper.getInstance().getOpenMrsLocationId(lpv.getSelectedItem());
+                String lastLocationId = HpvApplication.getLocationHelper().getOpenMrsLocationId(lpv.getSelectedItem());
                 metadata.put(JsonFormUtils.ENCOUNTER_LOCATION, lastLocationId);
 
                 form.put(JsonFormUtils.CURRENT_OPENSRP_ID, getValue(commonPersonObjectClient.getColumnmaps(), DBConstants.KEY.OPENSRP_ID, true).replace("-", ""));
@@ -829,7 +829,7 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
                             JSONArray valueArray = new JSONArray(rawValue);
                             if (valueArray.length() > 0) {
                                 lastLocationName = valueArray.getString(valueArray.length() - 1);
-                                lastLocationId = LocationHelper.getInstance().getOpenMrsLocationId(lastLocationName);
+                                lastLocationId = HpvApplication.getLocationHelper().getOpenMrsLocationId(lastLocationName);
                                 fields.getJSONObject(i).put(Constants.KEY.VALUE, lastLocationId);
                             }
                         } catch (Exception e) {

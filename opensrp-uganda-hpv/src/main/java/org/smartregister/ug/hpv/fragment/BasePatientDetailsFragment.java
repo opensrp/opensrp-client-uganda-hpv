@@ -20,12 +20,12 @@ import org.smartregister.configurableviews.model.ViewConfiguration;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.activity.HomeRegisterActivity;
+import org.smartregister.ug.hpv.application.HpvApplication;
 import org.smartregister.ug.hpv.event.JsonFormSaveCompleteEvent;
 import org.smartregister.ug.hpv.event.PatientRemovedEvent;
 import org.smartregister.ug.hpv.event.PictureUpdatedEvent;
 import org.smartregister.ug.hpv.event.SyncEvent;
 import org.smartregister.ug.hpv.event.VaccineUpdatedEvent;
-import org.smartregister.ug.hpv.helper.LocationHelper;
 import org.smartregister.ug.hpv.helper.view.RenderContactCardHelper;
 import org.smartregister.ug.hpv.helper.view.RenderPatientDemographicCardHelper;
 import org.smartregister.ug.hpv.helper.view.RenderPatientFollowupCardHelper;
@@ -199,7 +199,7 @@ public abstract class BasePatientDetailsFragment extends SecuredFragment impleme
 
         try {
 
-            String locationId = LocationHelper.getInstance().getOpenMrsLocationId(facilitySelection.getSelectedItem());
+            String locationId = HpvApplication.getLocationHelper().getOpenMrsLocationId(facilitySelection.getSelectedItem());
 
             JsonFormUtils.startForm(getActivity(), context(), REQUEST_CODE_GET_JSON, Constants.JSON_FORM.PATIENT_REMOVAL, commonPersonObjectClient.getCaseId(),
                     null, locationId);

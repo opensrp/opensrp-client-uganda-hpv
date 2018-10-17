@@ -51,7 +51,6 @@ import org.smartregister.ug.hpv.BuildConfig;
 import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.application.HpvApplication;
 import org.smartregister.ug.hpv.event.ViewConfigurationSyncCompleteEvent;
-import org.smartregister.ug.hpv.helper.LocationHelper;
 import org.smartregister.ug.hpv.receiver.AlarmReceiver;
 import org.smartregister.ug.hpv.util.Constants;
 import org.smartregister.ug.hpv.util.ImageLoaderRequest;
@@ -482,7 +481,7 @@ public class LoginActivity extends AppCompatActivity {
     private class SaveTeamLocationsTask extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params) {
-            LocationHelper.getInstance().locationIdsFromHierarchy();
+            HpvApplication.getLocationHelper().locationIdsFromHierarchy();
             return null;
         }
     }

@@ -41,7 +41,6 @@ import org.smartregister.ug.hpv.event.ShowProgressDialogEvent;
 import org.smartregister.ug.hpv.event.TriggerSyncEvent;
 import org.smartregister.ug.hpv.fragment.BaseRegisterFragment;
 import org.smartregister.ug.hpv.fragment.HomeRegisterFragment;
-import org.smartregister.ug.hpv.helper.LocationHelper;
 import org.smartregister.ug.hpv.util.Constants;
 import org.smartregister.ug.hpv.util.JsonFormUtils;
 import org.smartregister.ug.hpv.util.Utils;
@@ -310,7 +309,7 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
         try {
             if (mBaseFragment instanceof HomeRegisterFragment) {
                 LocationPickerView locationPickerView = ((HomeRegisterFragment) mBaseFragment).getLocationPickerView();
-                String locationId = LocationHelper.getInstance().getOpenMrsLocationId(locationPickerView.getSelectedItem());
+                String locationId = HpvApplication.getLocationHelper().getOpenMrsLocationId(locationPickerView.getSelectedItem());
                 JsonFormUtils.startForm(this, context(), REQUEST_CODE_GET_JSON, formName, entityId,
                         metaData, locationId);
             }

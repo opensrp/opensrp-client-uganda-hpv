@@ -40,8 +40,8 @@ import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.activity.BaseRegisterActivity;
 import org.smartregister.ug.hpv.activity.HomeRegisterActivity;
 import org.smartregister.ug.hpv.activity.PatientDetailActivity;
+import org.smartregister.ug.hpv.application.HpvApplication;
 import org.smartregister.ug.hpv.event.SyncEvent;
-import org.smartregister.ug.hpv.helper.LocationHelper;
 import org.smartregister.ug.hpv.provider.HomeRegisterProvider;
 import org.smartregister.ug.hpv.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.ug.hpv.servicemode.HpvServiceModeOption;
@@ -440,9 +440,9 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
 
     protected void updateLocationText() {
         if (facilitySelection != null) {
-            facilitySelection.setText(LocationHelper.getInstance().getOpenMrsReadableName(
+            facilitySelection.setText(HpvApplication.getLocationHelper().getOpenMrsReadableName(
                     facilitySelection.getSelectedItem()));
-            String locationId = LocationHelper.getInstance().getOpenMrsLocationId(facilitySelection.getSelectedItem());
+            String locationId = HpvApplication.getLocationHelper().getOpenMrsLocationId(facilitySelection.getSelectedItem());
             context().allSharedPreferences().savePreference(Constants.CURRENT_LOCATION_ID, locationId);
 
         }
