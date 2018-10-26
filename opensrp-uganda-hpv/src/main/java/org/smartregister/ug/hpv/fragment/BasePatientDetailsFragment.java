@@ -18,6 +18,7 @@ import org.smartregister.configurableviews.ConfigurableViewsLibrary;
 import org.smartregister.configurableviews.helper.ConfigurableViewsHelper;
 import org.smartregister.configurableviews.model.ViewConfiguration;
 import org.smartregister.domain.FetchStatus;
+import org.smartregister.location.helper.LocationHelper;
 import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.activity.HomeRegisterActivity;
 import org.smartregister.ug.hpv.application.HpvApplication;
@@ -199,7 +200,7 @@ public abstract class BasePatientDetailsFragment extends SecuredFragment impleme
 
         try {
 
-            String locationId = HpvApplication.getLocationHelper().getOpenMrsLocationId(facilitySelection.getSelectedItem());
+            String locationId = LocationHelper.getInstance().getOpenMrsLocationId(facilitySelection.getSelectedItem());
 
             JsonFormUtils.startForm(getActivity(), context(), REQUEST_CODE_GET_JSON, Constants.JSON_FORM.PATIENT_REMOVAL, commonPersonObjectClient.getCaseId(),
                     null, locationId);

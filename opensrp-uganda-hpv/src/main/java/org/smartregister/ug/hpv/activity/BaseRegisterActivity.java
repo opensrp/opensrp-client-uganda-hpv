@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -28,6 +29,7 @@ import org.json.JSONObject;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.configurableviews.ConfigurableViewsLibrary;
 import org.smartregister.domain.FetchStatus;
+import org.smartregister.location.helper.LocationHelper;
 import org.smartregister.provider.SmartRegisterClientsProvider;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.DetailsRepository;
@@ -309,7 +311,7 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
         try {
             if (mBaseFragment instanceof HomeRegisterFragment) {
                 LocationPickerView locationPickerView = ((HomeRegisterFragment) mBaseFragment).getLocationPickerView();
-                String locationId = HpvApplication.getLocationHelper().getOpenMrsLocationId(locationPickerView.getSelectedItem());
+                String locationId = LocationHelper.getInstance().getOpenMrsLocationId(locationPickerView.getSelectedItem());
                 JsonFormUtils.startForm(this, context(), REQUEST_CODE_GET_JSON, formName, entityId,
                         metaData, locationId);
             }

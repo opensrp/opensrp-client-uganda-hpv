@@ -8,6 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.smartregister.location.helper.LocationHelper;
 import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.application.HpvApplication;
 
@@ -55,7 +56,7 @@ public class ServiceLocationsAdapter extends BaseAdapter {
             view.setId(position + 2321);
 
             TextView text1 = view.findViewById(android.R.id.text1);
-            text1.setText(HpvApplication.getLocationHelper().getOpenMrsReadableName(locationNames.get(position)));
+            text1.setText(LocationHelper.getInstance().getOpenMrsReadableName(locationNames.get(position)));
             views.put(locationNames.get(position), view);
         }
 

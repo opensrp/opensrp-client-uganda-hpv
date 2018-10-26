@@ -46,6 +46,7 @@ import org.smartregister.domain.LoginResponse;
 import org.smartregister.domain.TimeStatus;
 import org.smartregister.domain.jsonmapping.LoginResponseData;
 import org.smartregister.event.Listener;
+import org.smartregister.location.helper.LocationHelper;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.ug.hpv.BuildConfig;
 import org.smartregister.ug.hpv.R;
@@ -481,7 +482,7 @@ public class LoginActivity extends AppCompatActivity {
     private class SaveTeamLocationsTask extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params) {
-            HpvApplication.getLocationHelper().locationIdsFromHierarchy();
+            LocationHelper.getInstance().locationIdsFromHierarchy();
             return null;
         }
     }

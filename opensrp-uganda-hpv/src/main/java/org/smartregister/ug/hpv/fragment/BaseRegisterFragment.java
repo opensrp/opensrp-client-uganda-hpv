@@ -34,6 +34,7 @@ import org.smartregister.cursoradapter.SecuredNativeSmartRegisterCursorAdapterFr
 import org.smartregister.cursoradapter.SmartRegisterPaginatedCursorAdapter;
 import org.smartregister.cursoradapter.SmartRegisterQueryBuilder;
 import org.smartregister.domain.FetchStatus;
+import org.smartregister.location.helper.LocationHelper;
 import org.smartregister.provider.SmartRegisterClientsProvider;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.ug.hpv.R;
@@ -440,9 +441,9 @@ public abstract class BaseRegisterFragment extends SecuredNativeSmartRegisterCur
 
     protected void updateLocationText() {
         if (facilitySelection != null) {
-            facilitySelection.setText(HpvApplication.getLocationHelper().getOpenMrsReadableName(
+            facilitySelection.setText(LocationHelper.getInstance().getOpenMrsReadableName(
                     facilitySelection.getSelectedItem()));
-            String locationId = HpvApplication.getLocationHelper().getOpenMrsLocationId(facilitySelection.getSelectedItem());
+            String locationId = LocationHelper.getInstance().getOpenMrsLocationId(facilitySelection.getSelectedItem());
             context().allSharedPreferences().savePreference(Constants.CURRENT_LOCATION_ID, locationId);
 
         }

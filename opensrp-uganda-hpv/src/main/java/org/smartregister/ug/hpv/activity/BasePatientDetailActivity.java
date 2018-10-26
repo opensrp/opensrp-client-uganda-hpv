@@ -20,12 +20,12 @@ import net.sqlcipher.database.SQLiteDatabase;
 
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
-import org.smartregister.helper.LocationHelper;
 import org.smartregister.immunization.domain.Vaccine;
 import org.smartregister.immunization.domain.VaccineWrapper;
 import org.smartregister.immunization.listener.VaccinationActionListener;
 import org.smartregister.immunization.repository.VaccineRepository;
 import org.smartregister.immunization.view.VaccineGroup;
+import org.smartregister.location.helper.LocationHelper;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.adapter.HPVRegisterActivityPagerAdapter;
@@ -273,11 +273,10 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
         vaccine.setAnmId(getOpenSRPContext().allSharedPreferences().fetchRegisteredANM());
 
         LocationPickerView locationPickerView = ((PatientDetailsFragment) mBaseFragment).getLocationPickerView();
-        LocationHelper locationHelper = HpvApplication.getLocationHelper();
 
-        locationHelper.setParentAndChildLocationIds(locationPickerView.getSelectedItem());
-        vaccine.setLocationId(locationHelper.getParentLocationId());
-        vaccine.setChildLocationId(locationHelper.getChildLocationId());
+        LocationHelper.getInstance().setParentAndChildLocationIds(locationPickerView.getSelectedItem());
+        vaccine.setLocationId(LocationHelper.getInstance().getParentLocationId());
+        vaccine.setChildLocationId(LocationHelper.getInstance().getChildLocationId());
 
         AllSharedPreferences sharedPreferences = getOpenSRPContext().allSharedPreferences();
         vaccine.setTeam(sharedPreferences.fetchDefaultTeam(sharedPreferences.fetchRegisteredANM()));

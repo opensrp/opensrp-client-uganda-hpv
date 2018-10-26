@@ -17,6 +17,7 @@ import org.smartregister.immunization.domain.Vaccine;
 import org.smartregister.immunization.domain.VaccineWrapper;
 import org.smartregister.immunization.repository.VaccineRepository;
 import org.smartregister.immunization.view.VaccineGroup;
+import org.smartregister.location.helper.LocationHelper;
 import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.activity.BasePatientDetailActivity;
 import org.smartregister.ug.hpv.application.HpvApplication;
@@ -103,7 +104,7 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
             String locationDoseOne = patientDetails.get(DBConstants.KEY.DOSE_ONE_GIVEN_LOCATION);
             if (StringUtils.isNotBlank(locationDoseOne)) {
                 locationTextView.setVisibility(View.VISIBLE);
-                locationTextView.setText(String.format(context.getString(R.string.patient_location), StringUtils.capitalize(HpvApplication.getLocationHelper().getOpenMrsLocationName(locationDoseOne))));
+                locationTextView.setText(String.format(context.getString(R.string.patient_location), StringUtils.capitalize(LocationHelper.getInstance().getOpenMrsLocationName(locationDoseOne))));
             }
             renderUndoVaccinationButton(true, undoVaccineButton);
         } else if (StringUtils.isNotBlank(dateDoseOneGiven)) {
@@ -113,7 +114,7 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
             String locationDoseOne = patientDetails.get(DBConstants.KEY.DOSE_ONE_GIVEN_LOCATION);
             if (StringUtils.isNotBlank(locationDoseOne)) {
                 locationTextView.setVisibility(View.VISIBLE);
-                locationTextView.setText(String.format(context.getString(R.string.patient_location), StringUtils.capitalize(HpvApplication.getLocationHelper().getOpenMrsLocationName(locationDoseOne))));
+                locationTextView.setText(String.format(context.getString(R.string.patient_location), StringUtils.capitalize(LocationHelper.getInstance().getOpenMrsLocationName(locationDoseOne))));
             }
             renderUndoVaccinationButton(true, undoVaccineButton);
         } else if (StringUtils.isBlank(dateDoseOneGiven)) {
@@ -134,7 +135,7 @@ public class RenderPatientFollowupCardHelper extends BaseRenderHelper implements
             if (StringUtils.isNotBlank(locationDoseTwo)) {
 
                 locationTwoTextView.setVisibility(View.VISIBLE);
-                locationTwoTextView.setText(String.format(context.getString(R.string.patient_location), StringUtils.capitalize(HpvApplication.getLocationHelper().getOpenMrsLocationName(locationDoseTwo))));
+                locationTwoTextView.setText(String.format(context.getString(R.string.patient_location), StringUtils.capitalize(LocationHelper.getInstance().getOpenMrsLocationName(locationDoseTwo))));
             }
             renderUndoVaccinationButton(true, undoVaccineButton);
         } else {
