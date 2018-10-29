@@ -21,7 +21,6 @@ import org.smartregister.domain.FetchStatus;
 import org.smartregister.location.helper.LocationHelper;
 import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.activity.HomeRegisterActivity;
-import org.smartregister.ug.hpv.application.HpvApplication;
 import org.smartregister.ug.hpv.event.JsonFormSaveCompleteEvent;
 import org.smartregister.ug.hpv.event.PatientRemovedEvent;
 import org.smartregister.ug.hpv.event.PictureUpdatedEvent;

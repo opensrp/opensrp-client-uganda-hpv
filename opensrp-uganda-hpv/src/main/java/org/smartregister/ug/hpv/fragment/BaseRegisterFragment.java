@@ -41,7 +41,6 @@ import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.activity.BaseRegisterActivity;
 import org.smartregister.ug.hpv.activity.HomeRegisterActivity;
 import org.smartregister.ug.hpv.activity.PatientDetailActivity;
-import org.smartregister.ug.hpv.application.HpvApplication;
 import org.smartregister.ug.hpv.event.SyncEvent;
 import org.smartregister.ug.hpv.provider.HomeRegisterProvider;
 import org.smartregister.ug.hpv.receiver.SyncStatusBroadcastReceiver;

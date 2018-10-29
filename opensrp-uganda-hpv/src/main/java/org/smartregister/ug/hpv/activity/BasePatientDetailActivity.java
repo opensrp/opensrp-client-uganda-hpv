@@ -33,7 +33,6 @@ import org.smartregister.ug.hpv.application.HpvApplication;
 import org.smartregister.ug.hpv.event.VaccineUpdatedEvent;
 import org.smartregister.ug.hpv.fragment.BasePatientDetailsFragment;
 import org.smartregister.ug.hpv.fragment.PatientDetailsFragment;
-import org.smartregister.ug.hpv.helper.VaccinationHelper;
 import org.smartregister.ug.hpv.helper.view.RenderContactCardHelper;
 import org.smartregister.ug.hpv.util.Constants;
 import org.smartregister.ug.hpv.view.LocationPickerView;
@@ -73,7 +72,6 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
     protected OpenSRPViewPager mPager;
 
     private CommonPersonObjectClient commonPersonObjectClient;
-    private VaccinationHelper vaccinationHelper;
     private Fragment mBaseFragment;
 
     @Override
@@ -96,7 +94,6 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
         mPager.setOffscreenPageLimit(otherFragments.length);
         mPager.setAdapter(mPagerAdapter);
 
-        vaccinationHelper = new VaccinationHelper(this, commonPersonObjectClient);
     }
 
     @Override
