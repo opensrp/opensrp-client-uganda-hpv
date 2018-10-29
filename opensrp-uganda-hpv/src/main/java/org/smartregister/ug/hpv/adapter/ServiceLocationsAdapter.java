@@ -10,7 +10,6 @@ import android.widget.TextView;
 
 import org.smartregister.location.helper.LocationHelper;
 import org.smartregister.ug.hpv.R;
-import org.smartregister.ug.hpv.application.HpvApplication;
 
 import java.util.ArrayList;
 import java.util.HashMap;

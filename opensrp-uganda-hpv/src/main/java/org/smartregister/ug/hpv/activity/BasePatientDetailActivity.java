@@ -73,7 +73,6 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
     protected OpenSRPViewPager mPager;
 
     private CommonPersonObjectClient commonPersonObjectClient;
-    private VaccinationHelper vaccinationHelper;
     private Fragment mBaseFragment;
 
     @Override
@@ -96,7 +95,7 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
         mPager.setOffscreenPageLimit(otherFragments.length);
         mPager.setAdapter(mPagerAdapter);
 
-        vaccinationHelper = new VaccinationHelper(this, commonPersonObjectClient);
+        VaccinationHelper vaccinationHelper = new VaccinationHelper(this, commonPersonObjectClient);
     }
 
     @Override
