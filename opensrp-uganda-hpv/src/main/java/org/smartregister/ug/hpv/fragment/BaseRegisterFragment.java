@@ -34,6 +34,7 @@ import org.smartregister.cursoradapter.SecuredNativeSmartRegisterCursorAdapterFr
 import org.smartregister.cursoradapter.SmartRegisterPaginatedCursorAdapter;
 import org.smartregister.cursoradapter.SmartRegisterQueryBuilder;
 import org.smartregister.domain.FetchStatus;
+import org.smartregister.location.helper.LocationHelper;
 import org.smartregister.provider.SmartRegisterClientsProvider;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.ug.hpv.R;
@@ -41,7 +42,6 @@ import org.smartregister.ug.hpv.activity.BaseRegisterActivity;
 import org.smartregister.ug.hpv.activity.HomeRegisterActivity;
 import org.smartregister.ug.hpv.activity.PatientDetailActivity;
 import org.smartregister.ug.hpv.event.SyncEvent;
-import org.smartregister.ug.hpv.helper.LocationHelper;
 import org.smartregister.ug.hpv.provider.HomeRegisterProvider;
 import org.smartregister.ug.hpv.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.ug.hpv.servicemode.HpvServiceModeOption;

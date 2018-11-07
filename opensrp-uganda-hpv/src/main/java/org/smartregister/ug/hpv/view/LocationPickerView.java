@@ -11,10 +11,10 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import org.smartregister.location.helper.LocationHelper;
 import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.adapter.ServiceLocationsAdapter;
 import org.smartregister.ug.hpv.application.HpvApplication;
-import org.smartregister.ug.hpv.helper.LocationHelper;
 import org.smartregister.ug.hpv.util.Utils;
 import org.smartregister.view.customcontrols.CustomFontTextView;
 

@@ -30,6 +30,7 @@ import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.Photo;
 import org.smartregister.domain.ProfileImage;
+import org.smartregister.location.helper.LocationHelper;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.BaseRepository;
 import org.smartregister.repository.EventClientRepository;
@@ -43,7 +44,6 @@ import org.smartregister.ug.hpv.domain.FormLocation;
 import org.smartregister.ug.hpv.event.JsonFormSaveCompleteEvent;
 import org.smartregister.ug.hpv.event.PatientRemovedEvent;
 import org.smartregister.ug.hpv.helper.ECSyncHelper;
-import org.smartregister.ug.hpv.helper.LocationHelper;
 import org.smartregister.ug.hpv.repository.UniqueIdRepository;
 import org.smartregister.ug.hpv.sync.HpvClientProcessorForJava;
 import org.smartregister.ug.hpv.view.LocationPickerView;
@@ -415,10 +415,9 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
                 .withDateCreated(new Date());
 
         String currLocation = HpvApplication.getInstance().getContext().allSharedPreferences().fetchCurrentLocality();
-        LocationHelper locationHelper = LocationHelper.getInstance();
-        locationHelper.setParentAndChildLocationIds(currLocation);
+        LocationHelper.getInstance().setParentAndChildLocationIds(currLocation);
 
-        e.setChildLocationId(locationHelper.getChildLocationId());
+        e.setChildLocationId(LocationHelper.getInstance().getChildLocationId());
 
         for (int i = 0; i < fields.length(); i++) {
             JSONObject jsonObject = getJSONObject(fields, i);
@@ -529,7 +528,7 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
 
 
             List<String> defaultFacility = LocationHelper.getInstance().generateDefaultLocationHierarchy(healthFacilities);
-            List<FormLocation> upToFacilities = LocationHelper.getInstance().generateLocationHierarchyTree(false, healthFacilities);
+            List<org.smartregister.domain.form.FormLocation> upToFacilities = LocationHelper.getInstance().generateLocationHierarchyTree(false, healthFacilities);
 
             String defaultFacilityString = AssetHandler.javaToJsonString(defaultFacility,
                     new TypeToken<List<String>>() {
@@ -540,7 +539,7 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
                     }.getType());
 
             for (int i = 0; i < questions.length(); i++) {
-                if (questions.getJSONObject(i).getString(Constants.KEY.KEY).equalsIgnoreCase(LocationHelper.SCHOOL)) {
+                if (questions.getJSONObject(i).getString(Constants.KEY.KEY).equalsIgnoreCase(Utils.SCHOOL)) {
                     if (StringUtils.isNotBlank(upToFacilitiesString)) {
                         questions.getJSONObject(i).put(Constants.KEY.TREE, new JSONArray(upToFacilitiesString));
                     }

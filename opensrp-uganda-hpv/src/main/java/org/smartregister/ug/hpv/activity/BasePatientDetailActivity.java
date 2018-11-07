@@ -25,6 +25,7 @@ import org.smartregister.immunization.domain.VaccineWrapper;
 import org.smartregister.immunization.listener.VaccinationActionListener;
 import org.smartregister.immunization.repository.VaccineRepository;
 import org.smartregister.immunization.view.VaccineGroup;
+import org.smartregister.location.helper.LocationHelper;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.ug.hpv.R;
 import org.smartregister.ug.hpv.adapter.HPVRegisterActivityPagerAdapter;
@@ -32,8 +33,6 @@ import org.smartregister.ug.hpv.application.HpvApplication;
 import org.smartregister.ug.hpv.event.VaccineUpdatedEvent;
 import org.smartregister.ug.hpv.fragment.BasePatientDetailsFragment;
 import org.smartregister.ug.hpv.fragment.PatientDetailsFragment;
-import org.smartregister.ug.hpv.helper.LocationHelper;
-import org.smartregister.ug.hpv.helper.VaccinationHelper;
 import org.smartregister.ug.hpv.helper.view.RenderContactCardHelper;
 import org.smartregister.ug.hpv.util.Constants;
 import org.smartregister.ug.hpv.view.LocationPickerView;
@@ -73,7 +72,6 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
     protected OpenSRPViewPager mPager;
 
     private CommonPersonObjectClient commonPersonObjectClient;
-    private VaccinationHelper vaccinationHelper;
     private Fragment mBaseFragment;
 
     @Override
@@ -96,7 +94,6 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
         mPager.setOffscreenPageLimit(otherFragments.length);
         mPager.setAdapter(mPagerAdapter);
 
-        vaccinationHelper = new VaccinationHelper(this, commonPersonObjectClient);
     }
 
     @Override
@@ -273,11 +270,10 @@ public abstract class BasePatientDetailActivity extends BaseActivity implements 
         vaccine.setAnmId(getOpenSRPContext().allSharedPreferences().fetchRegisteredANM());
 
         LocationPickerView locationPickerView = ((PatientDetailsFragment) mBaseFragment).getLocationPickerView();
-        LocationHelper locationHelper = LocationHelper.getInstance();
 
-        locationHelper.setParentAndChildLocationIds(locationPickerView.getSelectedItem());
-        vaccine.setLocationId(locationHelper.getParentLocationId());
-        vaccine.setChildLocationId(locationHelper.getChildLocationId());
+        LocationHelper.getInstance().setParentAndChildLocationIds(locationPickerView.getSelectedItem());
+        vaccine.setLocationId(LocationHelper.getInstance().getParentLocationId());
+        vaccine.setChildLocationId(LocationHelper.getInstance().getChildLocationId());
 
         AllSharedPreferences sharedPreferences = getOpenSRPContext().allSharedPreferences();
         vaccine.setTeam(sharedPreferences.fetchDefaultTeam(sharedPreferences.fetchRegisteredANM()));
